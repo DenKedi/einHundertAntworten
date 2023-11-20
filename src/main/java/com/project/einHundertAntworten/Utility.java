@@ -10,7 +10,7 @@ public class Utility {
     static Pattern pattern = Pattern.compile(regex);
     static final String statusOK = "OK";
     public static String pwMeetsRequirements(String pw){
-        if (pw.length()<6){
+        if (pw.length()<=6){
             return("6 or more characters required.");
         }
         Matcher matcher = pattern.matcher(pw);

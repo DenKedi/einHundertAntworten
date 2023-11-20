@@ -24,10 +24,15 @@ public class userController {
             return new ResponseEntity<>("Username already exists", HttpStatus.BAD_REQUEST);
         }
 
+        if (userRepository.existsByEmail(user.getEmail())) {
+            return new ResponseEntity<>("Email already exists", HttpStatus.BAD_REQUEST);
+        }
+
+        if (Utility.pwMeetsRequirements(user.getPassword()) != Utility.statusOK){
+            return new ResponseEntity<>(Utility.pwMeetsRequirements(user.getPassword()), HttpStatus.BAD_REQUEST);
+        }
         //encrypt password
-        System.out.println(user.getPassword());
         user.setPassword(user.getPassword());
-        System.out.println(user.getPassword());
 
         // Save the user to the database
         userRepository.save(user);
@@ -49,10 +54,10 @@ public class userController {
     public ResponseEntity<String> changePassword(User user, String passwordNew){
 
         if (user.getPassword().equals(passwordNew)){
-            return new ResponseEntity<String>("Passwords are equal.", HttpStatus.CONFLICT);
+            return new ResponseEntity<String>("Passwords are equal.", HttpStatus.BAD_REQUEST);
         }
         if (!Utility.pwMeetsRequirements(passwordNew).equals(Utility.statusOK)){
-            return new ResponseEntity<String>(Utility.pwMeetsRequirements(passwordNew), HttpStatus.CONFLICT);
+            return new ResponseEntity<String>(Utility.pwMeetsRequirements(passwordNew), HttpStatus.BAD_REQUEST);
         }
         user.setPassword(passwordNew);
         return new ResponseEntity<String> ("Password changed.", HttpStatus.CREATED);

@@ -15,9 +15,10 @@ public class User {
 
     // Getters and setters
 
-    public User(String username, String email){
+    public User(String username, String password, String email){
         this.username = username;
         this.password = password;
+        this.email = email;
     }
 
     public String getId() {
@@ -37,6 +38,13 @@ public class User {
     }
 
 
+    public String getEmail() {
+        return email;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
+    }
 
     public void setPassword(String password) {
         // Use BCryptPasswordEncoder to hash the password before storing it

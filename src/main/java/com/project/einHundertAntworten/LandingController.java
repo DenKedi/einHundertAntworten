@@ -12,8 +12,6 @@ public class LandingController {
 
     @GetMapping("/")
     public String landing(Model model) {
-        User user = new User("Peter", "33");
-        model.addAttribute("Peter", 42);
         return "index";
     }
 
