@@ -2,6 +2,7 @@ package com.project.einHundertAntworten.User;
 
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
 
 @Document(collection = "users")
@@ -36,14 +37,14 @@ public class User {
     }
 
 
-    /*
-    * public void setPassword(String password) {
+
+    public void setPassword(String password) {
         // Use BCryptPasswordEncoder to hash the password before storing it
         BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
         this.password = passwordEncoder.encode(password);
 
 
     }
-    * */
+
 
 }

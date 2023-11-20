@@ -26,8 +26,9 @@ public class userController {
 
         //encrypt password
         System.out.println(user.getPassword());
-        //user.setPassword(user.getPassword());
+        user.setPassword(user.getPassword());
         System.out.println(user.getPassword());
+
         // Save the user to the database
         userRepository.save(user);
         return new ResponseEntity<>("User registered successfully", HttpStatus.CREATED);
@@ -42,5 +43,18 @@ public class userController {
     @GetMapping("/getall")
     public List<User> getAllUsers() {
         return userRepository.findAll();
+    }
+
+    @PutMapping("/changePassword")
+    public ResponseEntity<String> changePassword(User user, String passwordNew){
+
+        if (user.getPassword().equals(passwordNew)){
+            return new ResponseEntity<String>("Passwords are equal.", HttpStatus.CONFLICT);
+        }
+        if (!Utility.pwMeetsRequirements(passwordNew).equals(Utility.statusOK)){
+            return new ResponseEntity<String>(Utility.pwMeetsRequirements(passwordNew), HttpStatus.CONFLICT);
+        }
+        user.setPassword(passwordNew);
+        return new ResponseEntity<String> ("Password changed.", HttpStatus.CREATED);
     }
 }
