@@ -1,10 +1,13 @@
 package com.project.einHundertAntworten;
 
 import com.project.einHundertAntworten.User.User;
+import com.project.einHundertAntworten.User.UserLoginRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -15,6 +18,9 @@ public class userController {
 
     @Autowired
     private UserRepository userRepository;
+
+    @Autowired
+    private PasswordEncoder passwordEncoder;
 
     @PostMapping("/register")
     public ResponseEntity<String> registerUser(@RequestBody User user) {
@@ -28,21 +34,45 @@ public class userController {
             return new ResponseEntity<>("Email already exists", HttpStatus.BAD_REQUEST);
         }
 
-        if (Utility.pwMeetsRequirements(user.getPassword()) != Utility.statusOK){
+        if (Utility.pwMeetsRequirements(user.getPassword()) != Utility.statusOK) {
             return new ResponseEntity<>(Utility.pwMeetsRequirements(user.getPassword()), HttpStatus.BAD_REQUEST);
         }
         //encrypt password
-        user.setPassword(user.getPassword());
+        user.setPassword(passwordEncoder.encode(user.getPassword()));
 
+
+        // set User role
+        //user.setRole("USER");
         // Save the user to the database
         userRepository.save(user);
         return new ResponseEntity<>("User registered successfully", HttpStatus.CREATED);
     }
 
     @PostMapping("/login")
-    public ResponseEntity<String> loginUser(@RequestBody User user) {
+    public ResponseEntity<String> loginUser(@RequestBody UserLoginRequest userLoginRequest) {
 
-        return null;
+        System.out.println(userLoginRequest.getEmailOrUsername());
+        System.out.println(userLoginRequest.getPassword());
+
+        if (userRepository.existsByUsername(userLoginRequest.getEmailOrUsername())) {
+            User userDB = userRepository.findByUsername(userLoginRequest.getEmailOrUsername());
+            System.out.println(passwordEncoder.matches(userLoginRequest.getPassword(), userDB.getPassword()));
+
+            if (passwordEncoder.matches(userLoginRequest.getPassword(), userDB.getPassword())) {
+                return new ResponseEntity<>("User logged in successfully", HttpStatus.OK);
+            }
+
+        } else if (userRepository.existsByEmail(userLoginRequest.getEmailOrUsername())) {
+            User userDB = userRepository.findByEmail(userLoginRequest.getEmailOrUsername());
+            if (passwordEncoder.matches(userLoginRequest.getPassword(), userDB.getPassword())) {
+                return new ResponseEntity<>("User logged in successfully", HttpStatus.OK);
+            }
+
+        } else {
+            return new ResponseEntity<>("Username or Password wrong", HttpStatus.BAD_REQUEST);
+
+        }
+        return new ResponseEntity<>("Username or Password wrong", HttpStatus.BAD_REQUEST);
     }
 
     @GetMapping("/getall")
@@ -51,15 +81,15 @@ public class userController {
     }
 
     @PutMapping("/changePassword")
-    public ResponseEntity<String> changePassword(User user, String passwordNew){
+    public ResponseEntity<String> changePassword(User user, String passwordNew) {
 
-        if (user.getPassword().equals(passwordNew)){
+        if (user.getPassword().equals(passwordNew)) {
             return new ResponseEntity<String>("Passwords are equal.", HttpStatus.BAD_REQUEST);
         }
-        if (!Utility.pwMeetsRequirements(passwordNew).equals(Utility.statusOK)){
+        if (!Utility.pwMeetsRequirements(passwordNew).equals(Utility.statusOK)) {
             return new ResponseEntity<String>(Utility.pwMeetsRequirements(passwordNew), HttpStatus.BAD_REQUEST);
         }
         user.setPassword(passwordNew);
-        return new ResponseEntity<String> ("Password changed.", HttpStatus.CREATED);
+        return new ResponseEntity<String>("Password changed.", HttpStatus.CREATED);
     }
 }

@@ -48,8 +48,8 @@ public class User {
 
     public void setPassword(String password) {
         // Use BCryptPasswordEncoder to hash the password before storing it
-        BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
-        this.password = passwordEncoder.encode(password);
+
+        this.password = password;
 
 
     }
