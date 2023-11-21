@@ -1,4 +1,4 @@
-package com.project.einHundertAntworten;
+package com.project.einHundertAntworten.Game;
 
 import java.util.ArrayList;
 import java.util.List;

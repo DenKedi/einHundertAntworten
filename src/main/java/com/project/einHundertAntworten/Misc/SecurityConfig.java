@@ -1,4 +1,4 @@
-package com.project.einHundertAntworten;
+package com.project.einHundertAntworten.Misc;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

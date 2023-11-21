@@ -1,12 +1,9 @@
-package com.project.einHundertAntworten;
+package com.project.einHundertAntworten.User;
 
-import com.project.einHundertAntworten.User.User;
-import com.project.einHundertAntworten.User.UserLoginRequest;
+import com.project.einHundertAntworten.Misc.Utility;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Bean;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
@@ -14,7 +11,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/user")
-public class userController {
+public class UserController {
 
     @Autowired
     private UserRepository userRepository;

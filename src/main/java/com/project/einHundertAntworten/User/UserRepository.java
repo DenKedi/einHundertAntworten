@@ -1,4 +1,4 @@
-package com.project.einHundertAntworten;
+package com.project.einHundertAntworten.User;
 
 import com.project.einHundertAntworten.User.User;
 import org.springframework.data.mongodb.repository.MongoRepository;

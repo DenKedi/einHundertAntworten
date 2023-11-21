@@ -1,7 +1,8 @@
-package com.project.einHundertAntworten;
+package com.project.einHundertAntworten.Misc;
 
 import com.mongodb.*;
 import com.mongodb.client.*;
+import com.project.einHundertAntworten.Game.GameObject;
 import org.bson.Document;
 import org.bson.types.ObjectId;
 

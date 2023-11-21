@@ -1,4 +1,4 @@
-package com.project.einHundertAntworten;
+package com.project.einHundertAntworten.Misc;
 
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -8,7 +8,7 @@ public class Utility {
     static final String specialCharacters = "!\"#$%&'()*+,-./:;<=>?@[\\\\]^_`~";
     static String regex = ".*[" + Pattern.quote(specialCharacters) + "].*";
     static Pattern pattern = Pattern.compile(regex);
-    static final String statusOK = "OK";
+    public static final String statusOK = "OK";
     public static String pwMeetsRequirements(String pw){
         if (pw.length()<=6){
             return("6 or more characters required.");
