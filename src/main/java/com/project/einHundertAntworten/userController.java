@@ -92,4 +92,21 @@ public class userController {
         user.setPassword(passwordNew);
         return new ResponseEntity<String>("Password changed.", HttpStatus.CREATED);
     }
+
+    @DeleteMapping("/delete/{id}")
+    public ResponseEntity<String> deleteUser(@PathVariable String id){
+
+        if (!userRepository.existsById(id)){
+            return new ResponseEntity<String>("User not found.", HttpStatus.BAD_REQUEST);
+        }
+        /*
+        if (userRepository.findById(id).get().getRole().equals("ADMIN")){
+            return new ResponseEntity<String>("Admins cannot be deleted.", HttpStatus.BAD_REQUEST);
+        }
+        */
+
+        userRepository.deleteById(id);
+
+        return new ResponseEntity<String>("User deleted.", HttpStatus.OK);
+    }
 }
