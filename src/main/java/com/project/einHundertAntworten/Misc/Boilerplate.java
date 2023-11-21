@@ -40,14 +40,12 @@ public class Boilerplate {
                 for (Document document : documents) {
                     // Access the fields in each document
                     ObjectId objectId = document.getObjectId("_id"); // Use getObjectId for the _id field
-                    String answerText = document.getString("answerText");
-                    List<String> questionSet = document.getList("questionSet", String.class);
+                    String answer = document.getString("answer");
+                    String question = document.getString("question");
                     // Perform actions with the retrieved data
                     System.out.println("Object ID: " + objectId);
-                    System.out.println("Answer Text: " + answerText);
-                    for (String question : questionSet) {
-                        System.out.println("Question: " + question);
-                    }
+                    System.out.println("Answer Text: " + answer);
+                    System.out.println("Question: " + question);
                 }
 
 

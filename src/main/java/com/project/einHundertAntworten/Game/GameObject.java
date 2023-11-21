@@ -1,18 +1,19 @@
 package com.project.einHundertAntworten.Game;
 
-import java.util.ArrayList;
-import java.util.List;
+import org.springframework.data.mongodb.core.mapping.Document;
 
+@Document(collection = "gameobjects")
 public class GameObject {
     private String id;
-    private String answerText;
-    private List<String> questionSet = new ArrayList<>();
+    private String answer;
+    private String question;
+    private String category;
 
-    public GameObject(String id, String answerText, List<String> questionSet){
+    public GameObject(String id, String answer, String question, String category){
         this.id = id;
-        this.answerText = answerText;
-        this.questionSet = questionSet;
-
+        this.answer = answer;
+        this.question = question;
+        this.category = category;
     }
 
     public String getId() {
@@ -23,19 +24,27 @@ public class GameObject {
         this.id = id;
     }
 
-    public String getAnswerText() {
-        return answerText;
+    public String getAnswer() {
+        return answer;
     }
 
-    public void setAnswerText(String answerText) {
-        this.answerText = answerText;
+    public void setAnswer(String answer) {
+        this.answer = answer;
     }
 
-    public List<String> getQuestionSet() {
-        return questionSet;
+    public String getQuestion() {
+        return question;
     }
 
-    public void setQuestionSet(List<String> questionSet) {
-        this.questionSet = questionSet;
+    public void setQuestion(String question) {
+        this.question = question;
+    }
+
+    public String getCategory() {
+        return category;
+    }
+
+    public void setCategory(String category) {
+        this.category = category;
     }
 }
