@@ -61,8 +61,6 @@
 				<artifactId>spring-security-web</artifactId>
 				<version>6.1.0</version>
 			</dependency>
-
-
 	</dependencies>
 	<repositories>
 		<!-- ... possibly other repository elements ... -->
