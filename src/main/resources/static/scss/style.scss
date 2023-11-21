@@ -1,0 +1,4 @@
+@mixin darken($color, $amount) {
+  @return mix($color, black, $amount);
+}
+
