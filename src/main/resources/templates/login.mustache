@@ -13,6 +13,9 @@
             crossorigin="anonymous"
     ></script>
     <title>100 Antworten</title>
+    <script>
+
+    </script>
 </head>
 <body class="bodylogin">
 <div class="mainlogin">
@@ -23,7 +26,7 @@
         <form id="registerForm">
             <label for="go" aria-hidden="true">Registrieren</label>
             <div id="notification" style="display: none;"></div>
-            <input type="text" name="txt" placeholder="User name" required="">
+            <input type="text" name="user" placeholder="Username" required="">
             <input type="email" name="email" placeholder="Email" required="">
             <input type="password" name="pswd" placeholder="Password" required="">
             <button type="button" onclick="submitRegisterForm()">Registrieren</button>
@@ -32,7 +35,7 @@
     <div class="login">
         <form id="loginForm">
             <label for="go" aria-hidden="true">Anmelden</label>
-            <input type="email" name="email" placeholder="Email" required="">
+            <input type="email" name="usermail" placeholder="Username/Email" required="">
             <input type="password" name="pswd" placeholder="Password" required="">
             <button type="button" onclick="submitLoginForm()">Anmelden</button>
             <button2>Passwort vergessen</button2>
@@ -47,69 +50,90 @@
             var RES;
             // Create a JSON object from the form data
             const formData = {
-                username: form.querySelector('[name="txt"]').value,
+                username: form.querySelector('[name="user"]').value,
                 email: form.querySelector('[name="email"]').value,
                 password: form.querySelector('[name="pswd"]').value,
             };
 
-            // Make a POST request using fetch
-            await fetch(url, {
-                method: 'POST',
-                body: JSON.stringify(formData), // Convert JSON object to a string
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-            })
-                    .then(response => response.json())
-                    .then(data => {
-                        if (!response.ok) {
-                            throw new Error('Network response was not ok');
-                        }
-                        RES = response.status;
-                        return response.text(); // Change to response.text() to handle non-JSON responses
+            try {
+                const response = await fetch(url, {
+                    method: 'POST',
+                    body: JSON.stringify(formData), // Convert JSON object to a string
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                });
 
+                if (!response.ok) {
+                    throw new Error('Network response was not ok');
+                }
 
-                        try {
-                            responseData = JSON.parse(data);
-                            console.log('JSON Data:', responseData);
-                        } catch (error) {
-                            console.error('Error parsing JSON:', error);
-                        }
-                    }).catch(error => {
-                        // Handle errors
-                        console.error('Error during fetch operation:', error);
-                    });
+                RES = response.status;
+
+                responseData = await response.json(); // Change to response.text() to handle non-JSON responses
+
+                try {
+
+                    console.log('JSON Data:', responseData);
+                } catch (error) {
+                    console.error('Error parsing JSON:', error);
+                }
+            } catch (error) {
+                // Handle errors
+                console.error('Error during fetch operation:', error);
+            }
             console.log(responseData);
+            var token = responseData.token;
+            console.log(token);
+            localStorage.setItem("token", token);
         }
 
     </script>
     <script>
-        function submitLoginForm() {
-            const form = document.getElementById('myForm');
-            const url = 'https://api.example.com/submit'; // Replace with your API endpoint
+        async function submitLoginForm() {
+            const form = document.getElementById('loginForm');
+            const url = '/user/login'; // Replace with your API endpoint
+            var responseData;
+            var RES;
 
             // Create a FormData object from the form
-            const formData = new FormData(form);
+            const formData = {
+                emailOrUsername: form.querySelector('[name="usermail"]').value,
+                password: form.querySelector('[name="pswd"]').value,
+            };
 
             // Make a POST request using fetch
-            fetch(url, {
-                method: 'POST',
-                body: formData
-            })
-                    .then(response => {
-                        if (!response.ok) {
-                            throw new Error('Network response was not ok');
-                        }
-                        return response.json();
-                    })
-                    .then(data => {
-                        // Handle the data from the response
-                        console.log('Data received:', data);
-                    })
-                    .catch(error => {
-                        // Handle errors
-                        console.error('Error during fetch operation:', error);
-                    });
+            try {
+                const response = await fetch(url, {
+                    method: 'POST',
+                    body: JSON.stringify(formData), // Convert JSON object to a string
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                });
+
+                if (!response.ok) {
+                    throw new Error('Network response was not ok');
+                }
+
+                RES = response.status;
+
+                responseData = await response.json(); // Change to response.text() to handle non-JSON responses
+
+                try {
+
+                    console.log('JSON Data:', responseData);
+                } catch (error) {
+                    console.error('Error parsing JSON:', error);
+                }
+            } catch (error) {
+                // Handle errors
+                console.error('Error during fetch operation:', error);
+            }
+            console.log(responseData);
+            var token = responseData.token;
+            console.log(token);
+            localStorage.setItem("token", token);
         }
     </script>
 </div>

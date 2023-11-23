@@ -16,6 +16,39 @@
 
     </style>
     <title>100 Antworten</title>
+    <script>const token = localStorage.getItem('token');
+    if(token) {
+        console.log("Token available");
+    }
+
+
+    async function visitProfile() {
+        var url = '/profile';
+
+        try {
+            const response = await fetch(url, {
+                method: 'GET',
+                headers: {
+                    'Authorization': `Bearer ${token}`,
+                    'Content-Type': 'application/json',
+
+                },
+            })
+            if (!response.ok) {
+                throw new Error('Network response was not ok');
+            }else{
+                window.location.href = "/profile";
+
+            }
+
+        }catch (error) {
+            // Handle errors
+            console.error('Error during fetch operation:', error);
+        }
+
+    }
+
+    </script>
 </head>
 <body>
 
@@ -23,7 +56,7 @@
     <p><a class="title" href="/home">100 Antworten</a></p>
 
     <div>
-        <a class="navIcon" href="/profile"><i class="fa-regular fa-user"></i></a>
+        <a class="navIcon" onclick="visitProfile()"><i class="fa-regular fa-user"></i></a>
         <a class="navIcon" href="/user/logout"><i class="fa-solid fa-arrow-right-from-bracket"></i></a>
     </div>
 

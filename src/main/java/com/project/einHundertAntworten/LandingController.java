@@ -36,4 +36,9 @@ public class LandingController {
         return "errorPage";
     }
 
+    @GetMapping("/quiz")
+    public String getQuiz() {
+        return "quiz";
+    }
+
 }

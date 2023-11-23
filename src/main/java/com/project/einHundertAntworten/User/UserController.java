@@ -63,34 +63,35 @@ public class UserController {
         // Save the user to the database
         userRepository.save(user);
         System.out.println("User registered successfully");
-        return new ResponseEntity<>(Collections.singletonMap("message", "User registered successfully. Token: " + loadUserAndToken(user.getUsername(), false)), HttpStatus.CREATED);
+        return new ResponseEntity<>(Collections.singletonMap("token", loadUserAndToken(user.getUsername(), false)), HttpStatus.CREATED);
     }
 
     @PostMapping("/login")
-    public ResponseEntity<String> loginUser(@RequestBody UserLoginRequest userLoginRequest) {
+    public ResponseEntity<Map<String, String>> loginUser(@RequestBody UserLoginRequest userLoginRequest) {
         String token;
         System.out.println(userLoginRequest.getEmailOrUsername());
         System.out.println(userLoginRequest.getPassword());
 
+        User userDB;
         if (userRepository.existsByUsername(userLoginRequest.getEmailOrUsername())) {
-            User userDB = userRepository.findByUsername(userLoginRequest.getEmailOrUsername());
+            userDB = userRepository.findByUsername(userLoginRequest.getEmailOrUsername());
             System.out.println(passwordEncoder.matches(userLoginRequest.getPassword(), userDB.getPassword()));
             if (passwordEncoder.matches(userLoginRequest.getPassword(), userDB.getPassword())) {
                 token = loadUserAndToken(userLoginRequest.getEmailOrUsername(), false);
             }else {
-                return new ResponseEntity<>("Username or Password wrong", HttpStatus.BAD_REQUEST);
+                return new ResponseEntity<>(Collections.singletonMap("message","Username or Password wrong"), HttpStatus.BAD_REQUEST);
             }
         } else if (userRepository.existsByEmail(userLoginRequest.getEmailOrUsername())) {
-            User userDB = userRepository.findByEmail(userLoginRequest.getEmailOrUsername());
+            userDB = userRepository.findByEmail(userLoginRequest.getEmailOrUsername());
             if (passwordEncoder.matches(userLoginRequest.getPassword(), userDB.getPassword())) {
                 token = loadUserAndToken(userLoginRequest.getEmailOrUsername(), true);
             } else {
-                return new ResponseEntity<>("Username or Password wrong", HttpStatus.BAD_REQUEST);
+                return new ResponseEntity<>(Collections.singletonMap("message", "Username or Password wrong"), HttpStatus.BAD_REQUEST);
             }
         }else{
-            return new ResponseEntity<>("Username or Password wrong", HttpStatus.BAD_REQUEST);
+            return new ResponseEntity<>(Collections.singletonMap("message", "Username or Password wrong"), HttpStatus.BAD_REQUEST);
         }
-        return new ResponseEntity<>("User logged in successfully, Token: " + token, HttpStatus.OK);
+        return new ResponseEntity<>(Collections.singletonMap("token", token), HttpStatus.CREATED);
     }
         @GetMapping("/getall")
         public List<User> getAllUsers (@RequestHeader("Authorization") String authorizationHeader){
@@ -102,18 +103,32 @@ public class UserController {
         }
 
         @PutMapping("/changePassword")
-        public ResponseEntity<String> changePassword (User user, String passwordNew){
+        public ResponseEntity<String> changePassword (PasswordChangeRequest loginRequest) {
+            User userDB;
+            System.out.println(loginRequest.getPasswordNew());
+            System.out.println(loginRequest.getEmailOrUsername());
+            if (userRepository.existsByUsername(loginRequest.getEmailOrUsername())) {
+                 userDB = userRepository.findByUsername(loginRequest.getEmailOrUsername());
 
-            if (user.getPassword().equals(passwordNew)) {
-                return new ResponseEntity<String>("Passwords are equal.", HttpStatus.BAD_REQUEST);
+            } else if (userRepository.existsByEmail(loginRequest.getEmailOrUsername())) {
+                 userDB = userRepository.findByEmail(loginRequest.getEmailOrUsername());
+
+            }else {
+                System.out.println("something");
+                return new ResponseEntity<>("Username or Password wrong", HttpStatus.BAD_REQUEST);
             }
-            if (!Utility.pwMeetsRequirements(passwordNew).equals(Utility.statusOK)) {
-                return new ResponseEntity<String>(Utility.pwMeetsRequirements(passwordNew), HttpStatus.BAD_REQUEST);
+            if (passwordEncoder.matches(loginRequest.getPasswordOld(), userDB.getPassword())) {
+                if (Utility.pwMeetsRequirements(loginRequest.getPasswordNew()) != Utility.statusOK) {
+                    return new ResponseEntity<>(Utility.pwMeetsRequirements(loginRequest.getPasswordNew()), HttpStatus.OK);
+                }
+                userDB.setPassword(passwordEncoder.encode(loginRequest.getPasswordNew()));
+                userRepository.save(userDB);
+                return new ResponseEntity<>("Password changed", HttpStatus.OK);
+            } else {
+                return new ResponseEntity<>("Username or Password wrong", HttpStatus.BAD_REQUEST);
             }
-            user.setPassword(passwordNew);
-            return new ResponseEntity<String>("Password changed.", HttpStatus.CREATED);
+
         }
-
         @DeleteMapping("/delete/{id}")
         public ResponseEntity<String> deleteUser (@PathVariable String id){
 
