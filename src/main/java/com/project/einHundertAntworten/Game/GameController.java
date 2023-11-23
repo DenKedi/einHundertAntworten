@@ -1,5 +1,6 @@
 package com.project.einHundertAntworten.Game;
 
+import com.project.einHundertAntworten.User.User;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -22,8 +23,13 @@ public class GameController {
         return gameRepository.findAll();
     }
 
-//    @PostMapping("/create")
-//    public ResponseEntity<String> addGameObject(@RequestBody GameObject gameObject) {
+    @GetMapping("/get")
+    public List<GameObject> getGameObjectsByCategory(@RequestParam("category") String searchRequest) {
+        return gameRepository.findAllByCategory(searchRequest);
+    }
+
+    @PostMapping("/create")
+    public ResponseEntity<String> addGameObject(@RequestBody GameObject gameObject) {
 //        String answer = gameObject.getAnswer();
 //        List<String> questions = gameObject.getQuestions();
 //
@@ -32,11 +38,11 @@ public class GameController {
 //        }
 //
 //        gameRepository.save(gameObject);
-//        return new ResponseEntity<>("Game Object created.", HttpStatus.OK);
-//    }
-//
-//    @PutMapping("/update")
-//    public ResponseEntity<String> updateGameObject(@RequestBody GameObject gameObject) {
+        return new ResponseEntity<>("Game Object created.", HttpStatus.OK);
+    }
+
+    @PutMapping("/update")
+    public ResponseEntity<String> updateGameObject(@RequestBody GameObject gameObject) {
 //        String answer = gameObject.getAnswer();
 //        List<String> questions = gameObject.getQuestions();
 //
@@ -46,16 +52,16 @@ public class GameController {
 //
 //        GameObject go = gameRepository.findByAnswer(answer);
 //        gameRepository.save(go);
-//        return new ResponseEntity<>("Game Object updated.", HttpStatus.OK);
-//    }
-//
-//    public boolean checkIfGameObjectExists(String answer, List<String> questions) {
-//        if (gameRepository.existsByAnswer(answer)) {
-//            GameObject go = gameRepository.findByAnswer(answer);
-//            return new HashSet<>(go.getQuestions()).equals(new HashSet<>(questions));
-//        }
-//        return false;
-//    }
+        return new ResponseEntity<>("Game Object updated.", HttpStatus.OK);
+    }
+
+    public boolean checkIfGameObjectExists(String answer, List<String> questions) {
+        if (gameRepository.existsByAnswer(answer)) {
+            GameObject go = gameRepository.findByAnswer(answer);
+            return new HashSet<>(go.getQuestions()).equals(new HashSet<>(questions));
+        }
+        return false;
+    }
 }
 
 
