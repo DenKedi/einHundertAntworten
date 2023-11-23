@@ -180,10 +180,29 @@ button{
     border-radius: 5px;
     transition: .2s ease-in;
     cursor: pointer;
-
+}
+button2 {
+    width: 30%;
+    height: 20px;
+    margin: 60px auto;
+    padding-top: 8px;
+    justify-content: center;
+    text-align: center;
+    display: block;
+    color: #fff;
+    background: #a6a6a6;
+    font-size: .6em;
+    outline: none;
+    border: none;
+    border-radius: 5px;
+    transition: .2s ease-in;
+    cursor: pointer;
 }
 button:hover{
     background: #7cc93f;
+}
+button2:hover{
+    background: #333333;
 }
 .login{
     height: 500px;
