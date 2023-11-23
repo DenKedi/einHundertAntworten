@@ -103,7 +103,7 @@ public class UserController {
         }
 
         @PutMapping("/changePassword")
-        public ResponseEntity<String> changePassword (PasswordChangeRequest loginRequest) {
+        public ResponseEntity<String> changePassword (@RequestBody PasswordChangeRequest loginRequest) {
             User userDB;
             System.out.println(loginRequest.getPasswordNew());
             System.out.println(loginRequest.getEmailOrUsername());
