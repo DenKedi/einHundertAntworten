@@ -166,21 +166,21 @@ input{
     border-radius: 5px;
 }
 button{
-    width: 60%;
+    width: 66%;
     height: 40px;
-    margin: 10px auto;
+    margin: auto;
     justify-content: center;
     display: block;
     color: #fff;
     background: #508d28;
     font-size: 1em;
     font-weight: bold;
-    margin-top: 20px;
     outline: none;
     border: none;
     border-radius: 5px;
     transition: .2s ease-in;
     cursor: pointer;
+
 }
 button:hover{
     background: #7cc93f;
