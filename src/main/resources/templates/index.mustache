@@ -5,7 +5,7 @@
     <meta name="viewport"
           content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <link href="../static/css/style.css" type="text/css" rel="stylesheet">
+    <link href="css/style.css" type="text/css" rel="stylesheet">
     <script src="http://localhost:35729/livereload.js" rel="preload" async></script>
     <script
             src="https://kit.fontawesome.com/dd8ea2651b.js"
@@ -13,94 +13,13 @@
     ></script>
     <title>Document</title>
     <style>
-
-        body {
-            font-family: Arial, sans-serif;
-            margin: 0;
-            padding: 0;
-
-        }
-
-        nav {
-            background-color: #333;
-            padding: 15px 15px 0rem;
-            text-align: center;
-            color: white;
-            display: flex;
-            justify-content: space-between;
-        }
-
-        .title {
-            color: white;
-            text-decoration: none;
-            font-size: 1.8rem;
-
-            &:hover{
-                color: #3787ee;
-            }
-        }
-
-        nav div {
-            text-decoration: none;
-            color: #333;
-            display: flex;
-            justify-content: space-between;
-
-        }
-
-        .navIcon {
-            padding: 0rem 2rem 0rem 2rem;
-            color: white;
-            text-decoration: none;
-            margin-top: auto;
-            margin-bottom: auto;
-
-            :hover{
-                color: #3787ee;
-            }
-        }
-
-        .main {
-            width: 50%;
-            padding-top: 2%;
-            margin: auto;
-        }
-
-        h1 {
-            text-align: center;
-        }
-
-        .button-container {
-            margin-top: 3rem;
-            display: flex;
-            justify-content: center;
-            flex-direction: column;
-            gap: 10px;
-        }
-
-        .button {
-            background-color: #1c87c9;
-            color: white;
-            padding: 20px 34px;
-            text-align: center;
-            text-decoration: none;
-            font-size: 1.5rem;
-            margin: 4px 2px;
-            cursor: pointer;
-            border-radius: 10rem;
-
-            &:hover {
-                opacity: 0.7;
-            }
-        }
-
     </style>
     <title>100 Antworten</title>
 </head>
 <body>
 
 <nav>
-    <p><a class="title" href="/">100 Antworten</a></p>
+    <p><a class="title" href="/home">100 Antworten</a></p>
 
     <div>
         <a class="navIcon" href="/profile"><i class="fa-regular fa-user"></i></a>
@@ -112,10 +31,10 @@
 <div class="main">
     <h1>Willkommen bei 100 Antworten!</h1>
 
-    <div class="button-container">
-        <a href="/quizpanel" class="button">Quiz Panel</a>
-        <a href="/login" class="button">Einloggen</a>
-        <a href="/register" class="button">Registrieren</a>
+    <div class="home-button-container">
+        <a href="/quizpanel" class="home-button">Quiz Panel</a>
+        <a href="/login" class="home-button">Einloggen</a>
+        <a href="/register" class="home-button">Registrieren</a>
         </div>
     </div>
 </div>
