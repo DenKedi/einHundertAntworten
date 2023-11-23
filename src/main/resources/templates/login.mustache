@@ -1,4 +1,5 @@
 <!doctype html>
+<!--suppress ALL -->
 <html lang="en">
 <head>
     <meta charset="UTF-8">
@@ -22,24 +23,97 @@
     <input type="checkbox" id="go" aria-hidden="true">
 
     <div class="signup">
-        <form>
+        <form id="registerForm">
             <label for="go" aria-hidden="true">Registrieren</label>
+            <div id="notification" style="display: none;"></div>
             <input type="text" name="txt" placeholder="User name" required="">
             <input type="email" name="email" placeholder="Email" required="">
             <input type="password" name="pswd" placeholder="Password" required="">
-            <button>Registrieren</button>
+            <button type="button" onclick="submitRegisterForm()">Registrieren</button>
         </form>
     </div>
-
     <div class="login">
-        <form>
+        <form id="loginForm">
             <label for="go" aria-hidden="true">Anmelden</label>
             <input type="email" name="email" placeholder="Email" required="">
             <input type="password" name="pswd" placeholder="Password" required="">
-            <button>Anmelden</button>
-            <button2>Passwort vergessen</button2>
+            <button type="button" onclick="submitLoginForm()">Anmelden</button>
         </form>
+
     </div>
+    <script>
+        async function submitRegisterForm() {
+            const form = document.getElementById('registerForm');
+            const url = '/user/register';
+            var responseData;
+            var RES;
+            // Create a JSON object from the form data
+            const formData = {
+                username: form.querySelector('[name="txt"]').value,
+                email: form.querySelector('[name="email"]').value,
+                password: form.querySelector('[name="pswd"]').value,
+            };
+
+            // Make a POST request using fetch
+            await fetch(url, {
+                method: 'POST',
+                body: JSON.stringify(formData), // Convert JSON object to a string
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+            })
+                    .then(response => response.json())
+                    .then(data => {
+                        if (!response.ok) {
+                            throw new Error('Network response was not ok');
+                        }
+                        RES = response.status;
+                        return response.text(); // Change to response.text() to handle non-JSON responses
+
+
+                        try {
+                            responseData = JSON.parse(data);
+                            console.log('JSON Data:', responseData);
+                        } catch (error) {
+                            console.error('Error parsing JSON:', error);
+                        }
+                    }).catch(error => {
+                        // Handle errors
+                        console.error('Error during fetch operation:', error);
+                    });
+            console.log(responseData);
+        }
+
+    </script>
+    <script>
+        function submitLoginForm() {
+            const form = document.getElementById('myForm');
+            const url = 'https://api.example.com/submit'; // Replace with your API endpoint
+
+            // Create a FormData object from the form
+            const formData = new FormData(form);
+
+            // Make a POST request using fetch
+            fetch(url, {
+                method: 'POST',
+                body: formData
+            })
+                    .then(response => {
+                        if (!response.ok) {
+                            throw new Error('Network response was not ok');
+                        }
+                        return response.json();
+                    })
+                    .then(data => {
+                        // Handle the data from the response
+                        console.log('Data received:', data);
+                    })
+                    .catch(error => {
+                        // Handle errors
+                        console.error('Error during fetch operation:', error);
+                    });
+        }
+    </script>
 </div>
 </body>
 </html>

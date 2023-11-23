@@ -9,7 +9,9 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/user")
@@ -28,30 +30,40 @@ public class UserController {
     private PasswordEncoder passwordEncoder;
 
     @PostMapping("/register")
-    public ResponseEntity<String> registerUser(@RequestBody User user) {
+    public ResponseEntity<Map<String, String>> registerUser(@RequestBody User user) {
         // Check if the username or email already exists
 
         if (userRepository.existsByUsername(user.getUsername())) {
-            return new ResponseEntity<>("Username already exists", HttpStatus.BAD_REQUEST);
+            String message = "Username already exists";
+            System.out.println(message);
+            return new ResponseEntity<>(Collections.singletonMap("message", message), HttpStatus.OK);
         }
 
         if (userRepository.existsByEmail(user.getEmail())) {
-            return new ResponseEntity<>("Email already exists", HttpStatus.BAD_REQUEST);
+            String message = "Email already exists";
+            System.out.println(message);
+            return new ResponseEntity<>(Collections.singletonMap("message", message), HttpStatus.OK);
         }
 
         if (Utility.pwMeetsRequirements(user.getPassword()) != Utility.statusOK) {
-            return new ResponseEntity<>(Utility.pwMeetsRequirements(user.getPassword()), HttpStatus.BAD_REQUEST);
+            System.out.println(Utility.pwMeetsRequirements(user.getPassword()));
+            return new ResponseEntity<>(Collections.singletonMap("message", Utility.pwMeetsRequirements(user.getPassword())), HttpStatus.OK);
         }
+        if (Utility.usernameMeetsRequirements(user.getUsername()) != Utility.statusOK) {
+            System.out.println(Utility.usernameMeetsRequirements(user.getUsername()));
+            return new ResponseEntity<>(Collections.singletonMap("message", Utility.usernameMeetsRequirements(user.getUsername())), HttpStatus.OK);
+        }
+
         //encrypt password
-        //user.setPassword(passwordEncoder.encode(user.getPassword()));
+        user.setPassword(passwordEncoder.encode(user.getPassword()));
 
 
         // set User role
         //user.setRole("USER");
         // Save the user to the database
         userRepository.save(user);
-
-        return new ResponseEntity<>("User registered successfully. Token: " + loadUserAndToken(user.getUsername(), false), HttpStatus.CREATED);
+        System.out.println("User registered successfully");
+        return new ResponseEntity<>(Collections.singletonMap("message", "User registered successfully. Token: " + loadUserAndToken(user.getUsername(), false)), HttpStatus.CREATED);
     }
 
     @PostMapping("/login")
