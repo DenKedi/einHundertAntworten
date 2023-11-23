@@ -1,5 +1,7 @@
 package com.project.einHundertAntworten.service;
 
+import com.project.einHundertAntworten.Misc.CustomUserDetailsService;
+import com.project.einHundertAntworten.User.User;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.oauth2.jwt.JwtClaimsSet;
@@ -20,7 +22,12 @@ public class TokenService {
         this.encoder = encoder;
     }
 
-    public String generateToken(Authentication authentication) {
+    public String generateToken(CustomUserDetailsService customUserDetailsService) {
+        Authentication authentication = customUserDetailsService.getLastAuthentication();
+        // Use the authentication object for token generation
+        // ...
+
+        // For example:
         Instant now = Instant.now();
         String scope = authentication.getAuthorities().stream()
                 .map(GrantedAuthority::getAuthority)
@@ -34,4 +41,6 @@ public class TokenService {
                 .build();
         return this.encoder.encode(JwtEncoderParameters.from(claims)).getTokenValue();
     }
+
+
 }

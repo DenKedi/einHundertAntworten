@@ -6,10 +6,14 @@ import com.nimbusds.jose.jwk.RSAKey;
 import com.nimbusds.jose.jwk.source.ImmutableJWKSet;
 import com.nimbusds.jose.jwk.source.JWKSource;
 import com.nimbusds.jose.proc.SecurityContext;
+import org.springframework.boot.autoconfigure.security.reactive.PathRequest;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.Customizer;
 import static org.springframework.security.config.Customizer.withDefaults;
+
+import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.builders.WebSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
@@ -32,11 +36,13 @@ import org.springframework.security.web.SecurityFilterChain;
 public class SecurityConfig  {
 
     private final RsaKeyProperties rsaKeys;
-
-    public SecurityConfig(RsaKeyProperties rsaKeys) {
+    private final CustomUserDetailsService customUserDetailsService;
+    public SecurityConfig(RsaKeyProperties rsaKeys, CustomUserDetailsService customUserDetailsService) {
         this.rsaKeys = rsaKeys;
+        this.customUserDetailsService = customUserDetailsService;
     }
 
+    /*
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception{
         return http.csrf(AbstractHttpConfigurer::disable).authorizeRequests(auth-> {
@@ -44,15 +50,13 @@ public class SecurityConfig  {
                 })
                 .build();
     }
-
+*/
 
     @Bean
-    public InMemoryUserDetailsManager user() {
-        return new InMemoryUserDetailsManager(
-                User.withUsername("derkedi")
-                        .password("{noop}password")
-                        .authorities("read")
-                        .build());
+    public AuthenticationManager authManager(HttpSecurity http) throws Exception {
+        AuthenticationManagerBuilder auth = http.getSharedObject(AuthenticationManagerBuilder.class);
+        auth.userDetailsService(customUserDetailsService).passwordEncoder(passwordEncoder());
+        return auth.build();
     }
 
 
@@ -61,6 +65,8 @@ public class SecurityConfig  {
         return http
                 .csrf(csrf -> csrf.disable())
                 .authorizeHttpRequests(auth -> auth
+                        .requestMatchers("/user/register", "/user/login", "/home", "/login", "/quizpanel").permitAll()
+                        .requestMatchers("/css/**", "/img/**").permitAll() // Permit access to static resources
                         .anyRequest().authenticated()
                 )
                 .oauth2ResourceServer(oauth2 -> oauth2
@@ -84,10 +90,10 @@ public class SecurityConfig  {
 
 
 
-    /*@Bean
+    @Bean
     public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
     }
-    */
+
 
 }
