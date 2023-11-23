@@ -48,6 +48,7 @@
             </div>
         </div>
         <script>
+            const token = localStorage.getItem('token');
             window.onload = function() {
                 selectCategoryListener();
             };
@@ -104,7 +105,7 @@
                 await fetch(url, {
                     method: 'GET',
                     headers: {
-                        Authorization: 'Bearer eyJhbGciOiJSUzI1NiJ9.eyJpc3MiOiJzZWxmIiwic3ViIjoidXNlcjEiLCJleHAiOjE3MDA3ODIzMzcsImlhdCI6MTcwMDc3ODczNywic2NvcGUiOiJVU0VSIn0.bbppaJGIHxib5bbFJTxG4lAT9awiTI28IC5ikojypcu7nmB0-V7qNPPMYOry1d0M8Cio1kBaclw1XNnvG9C6VKYmBtPqedAFo4CyWe6NgWSXG8f7z3lXlPgbnMgT2O-p4exmvt8gLkPe1HjyQmKLPeEx9gRMQWsNhJXW3slmk0H4Rt0SXsb2jhLgwMGn7MIp1pacmemzbUWLHXvEGdMkwBuMWx10NWiW2wE6tTo6bPD2zGb0lmAjyqpvHlIm_3lZ9dr7sjaLV4NrhsCkPsNPammiFBDy2AY3g8I2fMn3QdVAovUqO9Sp5zd_bi4EETvS1vE91xLELIk4ZV7bbtdnbQ',
+                        'Authorization': `Bearer ${token}`,
                     },
                 })
                 .then(res => res.json())
