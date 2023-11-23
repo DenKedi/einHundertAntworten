@@ -4,5 +4,7 @@ import org.springframework.data.mongodb.repository.MongoRepository;
 
 public interface GameRepository extends MongoRepository<GameObject, String> {
 
+    boolean existsByAnswer(String answer);
 
+    GameObject findByAnswer(String answer);
 }

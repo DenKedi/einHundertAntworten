@@ -1,18 +1,27 @@
 package com.project.einHundertAntworten.Game;
 
+import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
+
+import java.util.ArrayList;
+import java.util.List;
 
 @Document(collection = "gameobjects")
 public class GameObject {
+    @Id
     private String id;
+
+    // e.g. "Paris"
     private String answer;
-    private String question;
+
+    // e.g. ["Wo liegt der Eiffelturm?", "Was ist die Hauptstadt von Frankreich?"]
+    private List<String> questions = new ArrayList<>();
     private String category;
 
-    public GameObject(String id, String answer, String question, String category){
+    public GameObject(String id, String answer, List<String> questions, String category){
         this.id = id;
         this.answer = answer;
-        this.question = question;
+        this.questions = questions;
         this.category = category;
     }
 
@@ -32,12 +41,16 @@ public class GameObject {
         this.answer = answer;
     }
 
-    public String getQuestion() {
-        return question;
+    public List<String> getQuestions() {
+        return questions;
     }
 
-    public void setQuestion(String question) {
-        this.question = question;
+    public void setQuestions(List<String> questions) {
+        this.questions = questions;
+    }
+
+    public void addQuestions(List<String> questions) {
+        this.questions.addAll(questions);
     }
 
     public String getCategory() {
