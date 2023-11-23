@@ -1,7 +1,6 @@
 package com.project.einHundertAntworten;
 
 import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 @Controller
 public class LandingController {
@@ -9,6 +8,11 @@ public class LandingController {
     @GetMapping("/home")
     public String getLanding() {
         return "index";
+    }
+
+    @GetMapping("/overview")
+    public String getQuizOverview() {
+        return "quizOverview";
     }
 
     @GetMapping("/quizpanel")
@@ -33,7 +37,7 @@ public class LandingController {
 
     @GetMapping("/error")
     public String getError() {
-        return "errorPage";
+        return "error";
     }
 
     @GetMapping("/quiz")

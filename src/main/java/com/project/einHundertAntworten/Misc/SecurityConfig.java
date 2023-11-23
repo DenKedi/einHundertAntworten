@@ -65,7 +65,7 @@ public class SecurityConfig  {
         return http
                 .csrf(csrf -> csrf.disable())
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/user/register", "/user/login", "/home", "/login", "/quizpanel", "profile").permitAll()
+                        .requestMatchers("/user/register", "/user/login", "/home", "/login", "/quizpanel", "profile", "/overview").permitAll()
                         .requestMatchers("/css/**", "/img/**", "/js/**").permitAll() // Permit access to static resources
                         .anyRequest().authenticated()
                 )
