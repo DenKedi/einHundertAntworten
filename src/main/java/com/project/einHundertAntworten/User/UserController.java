@@ -16,9 +16,9 @@ public class UserController {
     @Autowired
     private UserRepository userRepository;
 
-    @Autowired
+    /*@Autowired
     private PasswordEncoder passwordEncoder;
-
+*/
     @PostMapping("/register")
     public ResponseEntity<String> registerUser(@RequestBody User user) {
         // Check if the username or email already exists
@@ -35,7 +35,7 @@ public class UserController {
             return new ResponseEntity<>(Utility.pwMeetsRequirements(user.getPassword()), HttpStatus.BAD_REQUEST);
         }
         //encrypt password
-        user.setPassword(passwordEncoder.encode(user.getPassword()));
+        //user.setPassword(passwordEncoder.encode(user.getPassword()));
 
 
         // set User role
@@ -53,17 +53,17 @@ public class UserController {
 
         if (userRepository.existsByUsername(userLoginRequest.getEmailOrUsername())) {
             User userDB = userRepository.findByUsername(userLoginRequest.getEmailOrUsername());
-            System.out.println(passwordEncoder.matches(userLoginRequest.getPassword(), userDB.getPassword()));
+            //System.out.println(passwordEncoder.matches(userLoginRequest.getPassword(), userDB.getPassword()));
 
-            if (passwordEncoder.matches(userLoginRequest.getPassword(), userDB.getPassword())) {
+            /*if (passwordEncoder.matches(userLoginRequest.getPassword(), userDB.getPassword())) {
                 return new ResponseEntity<>("User logged in successfully", HttpStatus.OK);
             }
-
+*/
         } else if (userRepository.existsByEmail(userLoginRequest.getEmailOrUsername())) {
             User userDB = userRepository.findByEmail(userLoginRequest.getEmailOrUsername());
-            if (passwordEncoder.matches(userLoginRequest.getPassword(), userDB.getPassword())) {
+           /* if (passwordEncoder.matches(userLoginRequest.getPassword(), userDB.getPassword())) {
                 return new ResponseEntity<>("User logged in successfully", HttpStatus.OK);
-            }
+            }*/
 
         } else {
             return new ResponseEntity<>("Username or Password wrong", HttpStatus.BAD_REQUEST);
