@@ -146,6 +146,14 @@ public class UserController {
             return new ResponseEntity<String>("User deleted.", HttpStatus.OK);
         }
 
+        @PostMapping("/logout")
+        public ResponseEntity<String> logoutUser (@RequestHeader("Authorization") String authorizationHeader){
+            // Now, you can use the authorizationHeader variable to access the value of the "Authorization" header.
+            // For example, you can print it:
+            System.out.println("Authorization Header: " + authorizationHeader);
+            // Your existing logic to fetch and return users
+            return new ResponseEntity<String>("User logged out.", HttpStatus.OK);
+        }
     private String loadUserAndToken(String principal, Boolean isEmail){
     if(isEmail) {
         principal = principal.concat("@");

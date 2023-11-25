@@ -23,7 +23,7 @@
 
 
     async function visitProfile() {
-        var url = '/profile';
+        const url = '/profile';
 
         try {
             const response = await fetch(url, {
@@ -37,6 +37,7 @@
             if (!response.ok) {
                 throw new Error('Network response was not ok');
             }else{
+
                 window.location.href = "/profile";
 
             }
