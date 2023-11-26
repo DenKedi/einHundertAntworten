@@ -2,7 +2,6 @@ package com.project.einHundertAntworten;
 
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestHeader;
 
 @Controller
 public class LandingController {
@@ -25,11 +24,6 @@ public class LandingController {
     @GetMapping("/login")
     public String getLogin() {
         return "login";
-    }
-
-    @GetMapping("/register")
-    public String getRegister() {
-        return "register";
     }
 
     @GetMapping("/profile")
