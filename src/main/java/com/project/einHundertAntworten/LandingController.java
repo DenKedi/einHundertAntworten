@@ -28,7 +28,6 @@ public class LandingController {
 
     @GetMapping("/profile")
     public String getProfile() {
-
         return "profile";
     }
 

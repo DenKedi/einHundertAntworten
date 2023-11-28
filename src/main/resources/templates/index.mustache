@@ -31,14 +31,14 @@
                 headers: {
                     'Authorization': `Bearer ${token}`,
                     'Content-Type': 'application/json',
-
-                },
-            })
+                    'Accept': '*/*,' ,
+                    'Connection': "keep-alive",
+            }});
             if (!response.ok) {
                 throw new Error('Network response was not ok');
             }else{
 
-                window.location.href = "/profile";
+                window.location.replace("/profile");
 
             }
 

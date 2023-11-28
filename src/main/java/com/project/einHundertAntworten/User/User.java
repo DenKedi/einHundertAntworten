@@ -6,13 +6,14 @@ import org.springframework.data.mongodb.core.mapping.Document;
 public class User {
     @Id
     private String id;
+    private String profileID;
     private String username;
     private String password;
     private String email;
 
     // Getters and setters
 
-    public User(String username, String password, String email){
+    public User(String username, String email, String password){
         this.username = username;
         this.password = password;
         this.email = email;
@@ -20,6 +21,14 @@ public class User {
 
     public String getId() {
         return id;
+    }
+
+    public String getProfileID() {
+        return profileID;
+    }
+
+    public void setProfileID(String profileID) {
+        this.profileID = profileID;
     }
 
     public String getUsername() {
@@ -48,5 +57,7 @@ public class User {
 
 
     }
+
+
 
 }

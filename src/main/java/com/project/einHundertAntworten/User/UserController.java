@@ -3,15 +3,16 @@ package com.project.einHundertAntworten.User;
 import com.project.einHundertAntworten.Misc.CustomUserDetailsService;
 import com.project.einHundertAntworten.Misc.Utility;
 import com.project.einHundertAntworten.service.TokenService;
+import org.bson.codecs.DateCodec;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.auditing.CurrentDateTimeProvider;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
+import java.time.LocalDateTime;
+import java.util.*;
 
 @RestController
 @RequestMapping("/user")
@@ -19,6 +20,8 @@ public class UserController {
 
     @Autowired
     private UserRepository userRepository;
+    @Autowired
+    private UserProfileRepository userProfileRepository;
     private final TokenService tokenService;
     private final CustomUserDetailsService customUserDetailsService;
     public UserController(TokenService tokenService, CustomUserDetailsService customUserDetailsService) {
@@ -56,13 +59,23 @@ public class UserController {
 
         //encrypt password
         user.setPassword(passwordEncoder.encode(user.getPassword()));
-
-
         // set User role
         //user.setRole("USER");
         // Save the user to the database
         userRepository.save(user);
         System.out.println("User registered successfully");
+        // Create User Profile
+        UserProfile userProfile = new UserProfile(user.getId(), user.getUsername(), user.getUsername(), "", user.getEmail(), 0, LocalDateTime.now().toString(), 0);
+        // Save the user profile to the database
+        userProfileRepository.save(userProfile);
+        userProfile = userProfileRepository.findByUserID(user.getId());
+        user.setProfileID(userProfile.getId());
+        userRepository.save(user);
+        if (userProfileRepository.existsByUserID(user.getId())) {
+            System.out.println("User Profile created successfully");
+        } else{
+            System.out.println("User Profile not created");
+        }
         return new ResponseEntity<>(Collections.singletonMap("token", loadUserAndToken(user.getUsername(), false)), HttpStatus.CREATED);
     }
 
@@ -91,9 +104,35 @@ public class UserController {
         }else{
             return new ResponseEntity<>(Collections.singletonMap("message", "Username or Password wrong"), HttpStatus.BAD_REQUEST);
         }
-        return new ResponseEntity<>(Collections.singletonMap("token", token), HttpStatus.CREATED);
+        return new ResponseEntity<>(Collections.singletonMap("token", token), HttpStatus.OK);
     }
-        @GetMapping("/getall")
+        @GetMapping("/userID")
+        public ResponseEntity<Map<String, String>> getUserID (@RequestParam String username){
+            System.out.println(username);
+            User userDB = userRepository.findByUsername(username);
+            if (userDB == null) {
+                return new ResponseEntity<>(Collections.singletonMap("message", "User not found"), HttpStatus.BAD_REQUEST);
+            }
+            String userID = userDB.getId();
+            return new ResponseEntity<>(Collections.singletonMap("userID", userID), HttpStatus.CREATED);
+
+        }
+        @GetMapping("/getUser/{userID}")
+        public ResponseEntity<List<UserProfile>> getUserProfile(@PathVariable String userID) {
+            Optional<User> userOptional = userRepository.findById(userID);
+
+            if (userOptional.isPresent()) {
+                User user = userOptional.get();
+                UserProfile userProfile = userProfileRepository.findByUserID(user.getId());
+                // Return a single user in a list
+                return new ResponseEntity<>(Collections.singletonList(userProfile), HttpStatus.OK);
+            } else {
+                // User not found
+                return new ResponseEntity<>(Collections.emptyList(), HttpStatus.NOT_FOUND);
+            }
+        }
+
+    @GetMapping("/getall")
         public List<User> getAllUsers (@RequestHeader("Authorization") String authorizationHeader){
             // Now, you can use the authorizationHeader variable to access the value of the "Authorization" header.
             // For example, you can print it:
@@ -129,6 +168,7 @@ public class UserController {
             }
 
         }
+
         @DeleteMapping("/delete/{id}")
         public ResponseEntity<String> deleteUser (@PathVariable String id){
 
