@@ -4,8 +4,48 @@ import { useAuthStore } from '@/stores/auth';
 import { onMounted, ref } from 'vue';
 
 const auth = useAuthStore();
+const userID = auth.userID;
 const token = auth.token;
-const data = ref<any>();
+const data = ref<UserProfile>();
+
+/*
+String userID, String username, String firstName, String lastName, String email, int gamesPlayed, String createdOn, int score
+
+*/
+interface UserProfile{
+  userID: string;
+  username: string;
+  firstName: string;
+  lastName: string;
+  email: string;
+  gamesPlayed: number;
+  createdOn: string;
+  score: number;
+}
+onMounted(async () => {
+  try {
+    
+    const response = await fetch(`http://localhost:8080/user/getUser/${userID}`, {
+    method: 'GET',
+    headers: {
+      'Content-Type': 'application/json',
+      Authorization: `Bearer ${token}`,
+    },
+  });
+  data.value = await response.json() as UserProfile;
+  if (response.ok) {
+    console.log(data.value);
+  } else {
+    console.log('Error');
+  }
+} catch (error) {
+  console.log(error);
+  
+}
+ 
+});
+  
+  
 
 </script>
 
@@ -17,7 +57,7 @@ const data = ref<any>();
       <div class="additional">
         <div class="user-card" v-if="data">
           <div class="level center">Level 13</div>
-          <div class="points center">Score: {{ data.value }}</div>
+          <div class="points center">Score: {{ data.score }}</div>
         </div>
         <div class="more-info">
           <h1>{{ data?.firstName }} {{ data?.lastName }}</h1>
