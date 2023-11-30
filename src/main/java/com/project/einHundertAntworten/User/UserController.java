@@ -39,22 +39,22 @@ public class UserController {
         if (userRepository.existsByUsername(user.getUsername())) {
             String message = "Username already exists";
             System.out.println(message);
-            return new ResponseEntity<>(Collections.singletonMap("message", message), HttpStatus.OK);
+            return new ResponseEntity<>(Collections.singletonMap("message", message), HttpStatus.BAD_REQUEST);
         }
 
         if (userRepository.existsByEmail(user.getEmail())) {
             String message = "Email already exists";
             System.out.println(message);
-            return new ResponseEntity<>(Collections.singletonMap("message", message), HttpStatus.OK);
+            return new ResponseEntity<>(Collections.singletonMap("message", message), HttpStatus.BAD_REQUEST);
         }
 
         if (Utility.pwMeetsRequirements(user.getPassword()) != Utility.statusOK) {
             System.out.println(Utility.pwMeetsRequirements(user.getPassword()));
-            return new ResponseEntity<>(Collections.singletonMap("message", Utility.pwMeetsRequirements(user.getPassword())), HttpStatus.OK);
+            return new ResponseEntity<>(Collections.singletonMap("message", Utility.pwMeetsRequirements(user.getPassword())), HttpStatus.BAD_REQUEST);
         }
         if (Utility.usernameMeetsRequirements(user.getUsername()) != Utility.statusOK) {
             System.out.println(Utility.usernameMeetsRequirements(user.getUsername()));
-            return new ResponseEntity<>(Collections.singletonMap("message", Utility.usernameMeetsRequirements(user.getUsername())), HttpStatus.OK);
+            return new ResponseEntity<>(Collections.singletonMap("message", Utility.usernameMeetsRequirements(user.getUsername())), HttpStatus.BAD_REQUEST);
         }
 
         //encrypt password
@@ -118,17 +118,17 @@ public class UserController {
 
         }
         @GetMapping("/getUser/{userID}")
-        public ResponseEntity<List<UserProfile>> getUserProfile(@PathVariable String userID) {
+        public ResponseEntity<UserProfile> getUserProfile(@PathVariable String userID) {
             Optional<User> userOptional = userRepository.findById(userID);
 
             if (userOptional.isPresent()) {
                 User user = userOptional.get();
                 UserProfile userProfile = userProfileRepository.findByUserID(user.getId());
                 // Return a single user in a list
-                return new ResponseEntity<>(Collections.singletonList(userProfile), HttpStatus.OK);
+                return new ResponseEntity<>(userProfile, HttpStatus.OK);
             } else {
                 // User not found
-                return new ResponseEntity<>(Collections.emptyList(), HttpStatus.NOT_FOUND);
+                return new ResponseEntity<>(null, HttpStatus.NOT_FOUND);
             }
         }
 

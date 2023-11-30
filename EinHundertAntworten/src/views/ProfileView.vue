@@ -3,15 +3,6 @@ import NavbarForm from '../components/NavbarForm.vue';
 import { useAuthStore } from '@/stores/auth';
 import { onMounted, ref } from 'vue';
 
-const auth = useAuthStore();
-const userID = auth.userID;
-const token = auth.token;
-const data = ref<UserProfile>();
-
-/*
-String userID, String username, String firstName, String lastName, String email, int gamesPlayed, String createdOn, int score
-
-*/
 interface UserProfile{
   userID: string;
   username: string;
@@ -22,6 +13,31 @@ interface UserProfile{
   createdOn: string;
   score: number;
 }
+
+const auth = useAuthStore();
+const userID = auth.userID;
+const token = auth.token;
+const storedData = localStorage.getItem('userProfile');
+
+let data = ref<UserProfile>();
+let obj: UserProfile;
+
+
+if (storedData){
+  obj = JSON.parse(storedData);
+}else{
+  obj = {
+  userID: '',
+  username: '',
+  firstName: '',
+  lastName: '',
+  email: '',
+  gamesPlayed: 0,
+  createdOn: '',
+  score: 0,
+};
+}
+
 onMounted(async () => {
   try {
     
@@ -32,9 +48,24 @@ onMounted(async () => {
       Authorization: `Bearer ${token}`,
     },
   });
+
+  //data.value = await response.json() as UserProfile;
   data.value = await response.json() as UserProfile;
   if (response.ok) {
-    console.log(data.value);
+   // console.log(data.value);
+    console.log(data.value)
+
+    obj= {
+      userID: data.value.userID,
+      username: data.value.username,
+      firstName: data.value.firstName,
+      lastName: data.value.lastName,
+      email: data.value.email,
+      gamesPlayed: data.value.gamesPlayed,
+      createdOn: convertDateFormat(data.value.createdOn),
+      score: data.value.score,
+    };
+    localStorage.setItem('userProfile', JSON.stringify(obj));
   } else {
     console.log('Error');
   }
@@ -45,7 +76,20 @@ onMounted(async () => {
  
 });
   
+function convertDateFormat(inputDate: string): string {
+  const inputDateTime = new Date(inputDate);
   
+  // Ensure the date is valid
+  if (isNaN(inputDateTime.getTime())) {
+    throw new Error("Invalid date format");
+  }
+
+  const day = inputDateTime.getUTCDate().toString().padStart(2, "0");
+  const month = (inputDateTime.getUTCMonth() + 1).toString().padStart(2, "0");
+  const year = inputDateTime.getUTCFullYear();
+
+  return `${day}.${month}.${year}`;
+}
 
 </script>
 
@@ -54,23 +98,23 @@ onMounted(async () => {
 
   <div class="center">
 
-<div class="card">
+<div class="card" >
     <div class="additional">
         <div class="user-card">
             <div class="level center">
-                Level 13
+                {{ obj.gamesPlayed }} Spiele gespielt
             </div>
             <div class="points center">
-                5,312 Points
+                {{ obj.score }} Punkte
             </div>
             <svg width="110" height="110" viewBox="0 0 250 250" xmlns="http://www.w3.org/2000/svg" role="img" aria-labelledby="title desc" class="center">
                 <title id="title">Teacher</title>
             </svg>
         </div>
         <div class="more-info">
-            <h1>Jane Doe</h1>
+            <h1></h1>
             <div class="coords">
-                <span>Mitglied seit: November 2023</span>
+                <span>Mitglied seit: {{ obj.createdOn }}</span>
             </div>
             <div class="stats">
                 <div>
@@ -97,16 +141,12 @@ onMounted(async () => {
         </div>
     </div>
     <div class="general">
-        <h1>Jane Doe</h1>
+        <h1>{{ obj.firstName }} {{ obj.lastName}} </h1>
         <div class="coords">
-            <span>Email:</span>
-            <span>Jane.doe@justfun.de</span>
+            <span>Email: </span>
+            <span>{{ obj.email }}</span>
         </div>
-        <div class="coords">
-            <span>Passwort:</span>
-            <span>*********</span>
-        </div>
-        <span class="more">Maus swipe für mehr Info</span>
+        <span class="more">Swipe für mehr Info</span>
     </div>
 </div>
 </div>

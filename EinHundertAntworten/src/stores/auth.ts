@@ -38,7 +38,7 @@ export const useAuthStore = defineStore({
         this.token = token;
         router.push(this.returnUrl || '/');
       } else {
-        throw new Error(data.message);
+        return data.message.toString();
       }
     },
     async register(username: string, email: string, password: string) {
@@ -61,7 +61,8 @@ export const useAuthStore = defineStore({
         this.token = token;
         router.push(this.returnUrl || '/');
       } else {
-        throw new Error(data.message);
+        console.log(data.message)
+        return data.message.toString();
       }
     },
     async getUserID(username: string, bearer: string) {
@@ -94,6 +95,7 @@ export const useAuthStore = defineStore({
       localStorage.removeItem('user');
       localStorage.removeItem('token');
       localStorage.removeItem('userID');
+      localStorage.removeItem('userProfile')
       router.push('/login');
     },
   },
