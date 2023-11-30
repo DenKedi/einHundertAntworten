@@ -39,11 +39,10 @@ public class CustomUserDetailsService implements UserDetailsService {
         UserDetails userDetails = org.springframework.security.core.userdetails.User
                 .withUsername(user.getUsername())
                 .password(user.getPassword())
-                .roles("USER") // Add roles or authorities as needed
+                .roles("USER", "ADMIN") // Add roles or authorities as needed
                 .build();
         // Manually create Authentication object
-        Authentication authentication = createAuthentication(user.getUsername(), user.getPassword(), "USER");
-
+        Authentication authentication = createAuthentication(user.getUsername(), user.getPassword(), user.getRole());
         // Set the Authentication object in the security context
         SecurityContextHolder.getContext().setAuthentication(authentication);
         lastAuthentication = authentication;

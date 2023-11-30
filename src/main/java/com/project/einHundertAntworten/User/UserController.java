@@ -60,7 +60,7 @@ public class UserController {
         //encrypt password
         user.setPassword(passwordEncoder.encode(user.getPassword()));
         // set User role
-        //user.setRole("USER");
+        user.setDefaultRole();
         // Save the user to the database
         userRepository.save(user);
         System.out.println("User registered successfully");
@@ -169,24 +169,66 @@ public class UserController {
 
         }
 
+        @PutMapping("/setAdmin/{id}")
+        public ResponseEntity<String> setAdmin (@PathVariable String id){
+        User requestingUser = checkForAdmin();
+        if (requestingUser == null){
+            return new ResponseEntity<String>("User not authorized.", HttpStatus.BAD_REQUEST);
+        }
+        Optional<User> userOptional = userRepository.findById(id);
+        if (!userOptional.isPresent()) {
+            return new ResponseEntity<String>("User not found.", HttpStatus.BAD_REQUEST);
+        }
+        User user = userOptional.get();
+        if (user.getRole().equals("ADMIN")){
+            return new ResponseEntity<String>("User is already admin.", HttpStatus.BAD_REQUEST);
+        }
+        user.setRole("ADMIN");
+        userRepository.save(user);
+        return new ResponseEntity<String>("User set to admin.", HttpStatus.OK);
+        }
+
         @DeleteMapping("/delete/{id}")
         public ResponseEntity<String> deleteUser (@PathVariable String id){
-
+            User requestingUser = checkForAdmin();
+            if (requestingUser == null){
+                return new ResponseEntity<String>("User not authorized.", HttpStatus.BAD_REQUEST);
+            }
             if (!userRepository.existsById(id)) {
                 return new ResponseEntity<String>("User not found.", HttpStatus.BAD_REQUEST);
             }
-        /*
-        if (userRepository.findById(id).get().getRole().equals("ADMIN")){
+            if (userRepository.findById(id).get().getRole().equals("ADMIN")){
             return new ResponseEntity<String>("Admins cannot be deleted.", HttpStatus.BAD_REQUEST);
-        }
-        */
-
+            }
             userRepository.deleteById(id);
-
             return new ResponseEntity<String>("User deleted.", HttpStatus.OK);
         }
 
-        @PostMapping("/logout")
+        @DeleteMapping("/deleteAll")
+        public ResponseEntity<String> deleteAllUsers (){
+            User requestingUser = checkForAdmin();
+            if (requestingUser == null){
+                return new ResponseEntity<String>("User not authorized.", HttpStatus.BAD_REQUEST);
+            }
+            //Delete all except admins
+            for (User user : userRepository.findAll()) {
+                if (!user.getRole().equals("ADMIN")){
+                    userRepository.deleteById(user.getId());
+                }
+            }
+            return new ResponseEntity<String>("All users deleted.", HttpStatus.OK);
+        }
+
+    private User checkForAdmin() {
+        User requestingUser;
+        try {requestingUser = userRepository.findByUsername(customUserDetailsService.getLastAuthentication().getName());
+        }catch (Exception e){
+            return null;
+        }
+        return requestingUser;
+    }
+
+    @PostMapping("/logout")
         public ResponseEntity<String> logoutUser (@RequestHeader("Authorization") String authorizationHeader){
             // Now, you can use the authorizationHeader variable to access the value of the "Authorization" header.
             // For example, you can print it:
@@ -194,6 +236,9 @@ public class UserController {
             // Your existing logic to fetch and return users
             return new ResponseEntity<String>("User logged out.", HttpStatus.OK);
         }
+
+
+
     private String loadUserAndToken(String principal, Boolean isEmail){
     if(isEmail) {
         principal = principal.concat("@");
