@@ -122,7 +122,6 @@ nav div {
     align-items: center;
     min-height: 100vh;
     font-family: Arial, sans-serif;
-
 }
 
 .mainlogin {
@@ -233,14 +232,12 @@ button2:hover{
 /* Profil Seite*/
 
 .center {
-    position: absolute;
-    top: 50%;
-    left: 50%;
+    position: relative;
 }
 
 .card {
-    width: 450px;
-    height: 250px;
+    width: 550px;
+    height: 350px;
     background-color: #fff;
     background: linear-gradient(#f8f8f8, #fff);
     border-radius: 10px;
@@ -248,6 +245,8 @@ button2:hover{
     position: relative;
     margin: 1.5rem;
     box-shadow: 5px 20px 50px #000;
+    justify-content: center;
+
 }
 
 .card h1 {
@@ -258,7 +257,7 @@ button2:hover{
     position: absolute;
     width: 150px;
     height: 100%;
-    background: linear-gradient(#508d28, #7cc93f);
+    background: linear-gradient(#4f4e4e, #a6a6a6);
     transition: width 0.4s;
     overflow: hidden;
     z-index: 2;
