@@ -33,7 +33,7 @@ function loginOnSubmit(){
             <input type="text" name="user" placeholder="Username" v-model="user.username">
             <input type="email" name="email" placeholder="Email" v-model="user.email">
             <input type="password" name="pswd" placeholder="Password" v-model="user.password">
-            <button  class="buttonSubmit" type="submit">Registrieren</button>
+            <button  class="buttonBig" type="submit">Registrieren</button>
         </form>
     </div>
     <div class="login">
@@ -41,8 +41,7 @@ function loginOnSubmit(){
             <label for="go" aria-hidden="true">Anmelden</label>
             <input type="text" name="usermail" placeholder="Username/Email" v-model="user.username">
             <input type="password" name="pswd" placeholder="Password" v-model="user.password">
-            <button class="buttonSubmit" type="submit">Anmelden</button>
-            <button class="buttonSmall" type="submit">Passwort vergessen</button>
+            <button class="buttonBig" type="submit">Anmelden</button>
         </form>
 
     </div>
