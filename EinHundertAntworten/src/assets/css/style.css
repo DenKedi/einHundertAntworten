@@ -153,8 +153,16 @@ small {
   display: flex;
   margin: 0px 60px 0px 60px;
   font-weight: lighter;
-    
+
 }
+#registerUsernameInput,
+    #registerEmailInput,
+    #registerPasswordInput,
+    #loginUsermailInput,
+    #loginPasswordInput {
+        transition: background-color 0.5s ease; /* Smoother transition */
+    }
+
 input {
   width: 60%;
   height: 20px;

@@ -1,7 +1,6 @@
 <script lang="ts" setup>
 import NavbarForm from '../components/NavbarForm.vue';
 import { useAuthStore } from '@/stores/auth';
-import { onMounted, ref } from 'vue';
 
 interface UserProfile{
   userID: string;
@@ -19,7 +18,6 @@ const userID = auth.userID;
 const token = auth.token;
 const storedData = localStorage.getItem('userProfile');
 
-let data = ref<UserProfile>();
 let obj: UserProfile;
 
 
@@ -37,44 +35,7 @@ if (storedData){
   score: 0,
 };
 }
-
-onMounted(async () => {
-  try {
-    
-    const response = await fetch(`http://localhost:8080/user/getUser/${userID}`, {
-    method: 'GET',
-    headers: {
-      'Content-Type': 'application/json',
-      Authorization: `Bearer ${token}`,
-    },
-  });
-
-  //data.value = await response.json() as UserProfile;
-  data.value = await response.json() as UserProfile;
-  if (response.ok) {
-   // console.log(data.value);
-    console.log(data.value)
-
-    obj= {
-      userID: data.value.userID,
-      username: data.value.username,
-      firstName: data.value.firstName,
-      lastName: data.value.lastName,
-      email: data.value.email,
-      gamesPlayed: data.value.gamesPlayed,
-      createdOn: convertDateFormat(data.value.createdOn),
-      score: data.value.score,
-    };
-    localStorage.setItem('userProfile', JSON.stringify(obj));
-  } else {
-    console.log('Error');
-  }
-} catch (error) {
-  console.log(error);
-  
-}
- 
-});
+obj.createdOn = convertDateFormat(obj.createdOn);
   
 function convertDateFormat(inputDate: string): string {
   const inputDateTime = new Date(inputDate);

@@ -44,7 +44,22 @@ async function registerOnSubmit(){
         } else if(message == 'Forbidden Username') {
             usernameMessage = message;
         }
-        if(emailMessage){
+        
+    } else{
+        emailMessage = 'Email is not valid';
+    }
+}else{
+    if(user.username == ''){
+        highlightInput('registerUsernameInput')
+    } if(user.email == ''){
+        highlightInput('registerEmailInput')
+    } if(user.password == ''){
+        highlightInput('registerPasswordInput')
+    }
+
+}
+
+    if(emailMessage){
             document.getElementById('emailSmall').innerText = emailMessage;
         }
         if(usernameMessage){
@@ -53,8 +68,6 @@ async function registerOnSubmit(){
         if(passwordMessage){
             document.getElementById('passwordSmall').innerText = passwordMessage;
         }
-    }
-}
 }
 
 
@@ -66,7 +79,26 @@ async function loginOnSubmit(){
         if(message == 'Username or Password wrong'){
            document.getElementById('loginSmall').innerText = message;
         }
-}};
+} else{
+    if(user.username == ''){
+        highlightInput('loginUsermailInput')
+    } if(user.password == ''){
+        highlightInput('loginPasswordInput')
+    }
+}
+};
+
+function highlightInput(id: string) {
+        var inputField = document.getElementById(id);
+        
+        // Ändere die Hintergrundfarbe auf Rot
+        inputField.style.backgroundColor = 'rgba(255, 182, 193, 0.9)'; // pastel red
+
+        // Setze die Hintergrundfarbe nach 500 Millisekunden zurück (0,5 Sekunden)
+        setTimeout(function() {
+            inputField.style.backgroundColor = '';
+        }, 500);
+    }
 
 </script>
 
@@ -76,14 +108,13 @@ async function loginOnSubmit(){
         <form id="registerForm" @submit.prevent="registerOnSubmit">
             <div class="formFrame">
             <label for="go" aria-hidden="true">Registrieren</label>
-            <div id="notification" style="display: none;"></div>
             <small id="usernameSmall"></small>
-            <input type="text" name="user" placeholder="Username" v-model="user.username">
+            <input id="registerUsernameInput" type="text" name="user" placeholder="Username" v-model="user.username">
             <small id="emailSmall"></small>
-            <input type="text" name="email" placeholder="Email" v-model="user.email">
+            <input id="registerEmailInput" type="text" name="email" placeholder="Email" v-model="user.email">
             <small id="passwordSmall"></small>
-            <input type="password" name="pswd" placeholder="Password" v-model="user.password">
-            <button  class="buttonBig" type="submit">Registrieren</button>
+            <input id="registerPasswordInput" type="password" name="pswd" placeholder="Password" v-model="user.password">
+            <button class="buttonBig" type="submit">Registrieren</button>
             </div>
             
         </form>
@@ -92,8 +123,8 @@ async function loginOnSubmit(){
         <form id="loginForm" @submit.prevent="loginOnSubmit">
             <label for="go" aria-hidden="true">Anmelden</label>
             <small id="loginSmall"></small>
-            <input type="text" name="usermail" placeholder="Username/Email" v-model="user.username">
-            <input type="password" name="pswd" placeholder="Password" v-model="user.password">
+            <input id="loginUsermailInput" type="text" name="usermail" placeholder="Username/Email" v-model="user.username">
+            <input id="loginPasswordInput" type="password" name="pswd" placeholder="Password" v-model="user.password">
             <button class="buttonBig" type="submit">Anmelden</button>
         </form>
 
