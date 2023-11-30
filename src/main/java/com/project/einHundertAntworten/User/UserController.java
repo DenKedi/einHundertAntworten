@@ -111,7 +111,10 @@ public class UserController {
             System.out.println(username);
             User userDB = userRepository.findByUsername(username);
             if (userDB == null) {
-                return new ResponseEntity<>(Collections.singletonMap("message", "User not found"), HttpStatus.BAD_REQUEST);
+                userDB = userRepository.findByEmail(username);
+                if (userDB == null) {
+                    return new ResponseEntity<>(Collections.singletonMap("message", "User not found"), HttpStatus.BAD_REQUEST);
+                }
             }
             String userID = userDB.getId();
             return new ResponseEntity<>(Collections.singletonMap("userID", userID), HttpStatus.CREATED);
