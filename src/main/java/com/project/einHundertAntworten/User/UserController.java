@@ -203,6 +203,7 @@ public class UserController {
             if (userRepository.findById(id).get().getRole().equals("ADMIN")){
             return new ResponseEntity<String>("Admins cannot be deleted.", HttpStatus.BAD_REQUEST);
             }
+            userProfileRepository.deleteById(userRepository.findById(id).get().getProfileID());
             userRepository.deleteById(id);
             return new ResponseEntity<String>("User deleted.", HttpStatus.OK);
         }
@@ -216,6 +217,7 @@ public class UserController {
             //Delete all except admins
             for (User user : userRepository.findAll()) {
                 if (!user.getRole().equals("ADMIN")){
+                    userProfileRepository.deleteById(user.getProfileID());
                     userRepository.deleteById(user.getId());
                 }
             }
