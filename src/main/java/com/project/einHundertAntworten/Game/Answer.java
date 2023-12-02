@@ -34,4 +34,12 @@ public class Answer {
     public void setMatches(List<String> matches) {
         this.matches = matches;
     }
+
+    public void addMatch(String match) {
+        this.matches.add(match);
+    }
+
+    public void addFiller(String filler) {
+        this.filler.add(filler);
+    }
 }
