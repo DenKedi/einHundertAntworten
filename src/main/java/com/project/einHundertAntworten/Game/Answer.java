@@ -1,10 +1,12 @@
 package com.project.einHundertAntworten.Game;
 
 import org.springframework.data.annotation.Id;
+import org.springframework.data.mongodb.core.mapping.Document;
 
 import java.util.ArrayList;
 import java.util.List;
 
+@Document(collection = "answers")
 public class Answer {
     @Id
     private String id;
@@ -14,6 +16,21 @@ public class Answer {
     private List<String> matches = new ArrayList<>();
     // List of ids of possible answers
     private List<String> filler = new ArrayList<>();
+
+    public Answer(String text, List<String> matches, List<String> filler) {
+        this.text = text;
+        this.matches = matches;
+        this.filler = filler;
+    }
+    public Answer(List<String> matches, List<String> filler) {
+        this.matches = matches;
+        this.filler = filler;
+    }
+    public Answer(String text) {
+        this.text = text;
+    }
+    public Answer() {
+    }
 
     public String getId() {
         return id;
@@ -41,5 +58,13 @@ public class Answer {
 
     public void addFiller(String filler) {
         this.filler.add(filler);
+    }
+
+    public List<String> getFiller() {
+        return filler;
+    }
+
+    public void setFiller(List<String> filler) {
+        this.filler = filler;
     }
 }

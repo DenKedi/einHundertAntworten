@@ -2,7 +2,6 @@ package com.project.einHundertAntworten.Misc;
 
 import com.mongodb.*;
 import com.mongodb.client.*;
-import com.project.einHundertAntworten.Game.GameObject;
 import org.bson.Document;
 import org.bson.types.ObjectId;
 
@@ -12,7 +11,7 @@ import java.util.List;
 public class Boilerplate {
     static MongoDatabase database;
 
-    List<GameObject> gameObjects = new ArrayList<>();
+
 
     public Boilerplate(){
         String connectionString = "mongodb+srv://kediprg:Kuriboh@webcluster.fy8tk7i.mongodb.net/?retryWrites=true&w=majority";

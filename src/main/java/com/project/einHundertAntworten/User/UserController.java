@@ -39,13 +39,13 @@ public class UserController {
         if (userRepository.existsByUsername(user.getUsername())) {
             String message = "Username already exists";
             System.out.println(message);
-            return new ResponseEntity<>(Collections.singletonMap("message", message), HttpStatus.BAD_REQUEST);
+            return new ResponseEntity<>(Collections.singletonMap("message", message), HttpStatus.CONFLICT);
         }
 
         if (userRepository.existsByEmail(user.getEmail())) {
             String message = "Email already exists";
             System.out.println(message);
-            return new ResponseEntity<>(Collections.singletonMap("message", message), HttpStatus.BAD_REQUEST);
+            return new ResponseEntity<>(Collections.singletonMap("message", message), HttpStatus.CONFLICT);
         }
 
         if (Utility.pwMeetsRequirements(user.getPassword()) != Utility.statusOK) {
