@@ -104,7 +104,10 @@ public class UserController {
         }else{
             return new ResponseEntity<>(Collections.singletonMap("message", "Username or Password wrong"), HttpStatus.BAD_REQUEST);
         }
-        return new ResponseEntity<>(Collections.singletonMap("token", token), HttpStatus.OK);
+        Map<String, String> responseMap = new HashMap<>();
+        responseMap.put("token", token);
+        responseMap.put("role", userDB.getRole());
+        return new ResponseEntity<>(responseMap, HttpStatus.OK);
     }
         @GetMapping("/userID")
         public ResponseEntity<Map<String, String>> getUserID (@RequestParam String username){

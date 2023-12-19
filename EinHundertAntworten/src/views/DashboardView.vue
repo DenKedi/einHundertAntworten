@@ -24,6 +24,7 @@ onMounted(async () => {
     <div class="home-button-container">
         <a href="/overview" class="home-button">Quiz Overview</a>
         <a href="/login" class="home-button">Registrieren/Anmelden</a>
+        <a v-if="auth.role === 'ADMIN'" href="/gameManager" class="home-button">Admin Panel</a>
         </div>
 </div>
 </template>

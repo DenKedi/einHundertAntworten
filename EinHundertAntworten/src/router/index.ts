@@ -3,6 +3,7 @@ import DashboardView from '@/views/DashboardView.vue'
 import LoginView from '@/views/LoginView.vue'
 import ProfileView from '@/views/ProfileView.vue'
 import OverviewView from '@/views/OverviewView.vue'
+import GameManagerView from '@/views/GameManagerView.vue'
 import { createRouter, createWebHistory } from 'vue-router'
 
 const router = createRouter({
@@ -27,6 +28,11 @@ const router = createRouter({
       path: '/overview',
       name: 'Overview',
       component: OverviewView
+    },
+    {
+      path: '/gameManager',
+      name: 'GameManager',
+      component: GameManagerView
     }
 
   ]

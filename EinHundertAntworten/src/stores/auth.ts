@@ -25,6 +25,9 @@ export const useAuthStore = defineStore({
       userID: localStorage.getItem('userID')
         ? JSON.parse(localStorage.getItem('userID')!)
         : '',
+      role: localStorage.getItem('role')
+        ? JSON.parse(localStorage.getItem('role')!)
+        : '',
       userProfile: localStorage.getItem('userProfile') ? JSON.parse(localStorage.getItem('userProfile')!) : '',
       returnUrl: '/home',
     };
@@ -43,10 +46,13 @@ export const useAuthStore = defineStore({
       console.log(data);
       if (response.ok) {
         const token = await data.token;
+        const role = await data.role;
         localStorage.setItem('user', JSON.stringify(emailOrUsername));
         localStorage.setItem('token', JSON.stringify(token));
+        localStorage.setItem('role', JSON.stringify(role));
         this.user = emailOrUsername;
         this.token = token;
+        this.role = role;
         this.userID = await this.getUserID(emailOrUsername, token);
         await this.getUserProfile(token, this.userID);
         router.push(this.returnUrl || '/');
@@ -69,8 +75,10 @@ export const useAuthStore = defineStore({
         const token = await data.token;
         localStorage.setItem('user', JSON.stringify(username));
         localStorage.setItem('token', JSON.stringify(token));
+        localStorage.setItem('role', JSON.stringify('USER'));
         this.user = username;
         this.token = token;
+        this.role = 'USER';
         this.userID = await this.getUserID(username, token);
 
         await this.getUserProfile(token, this.userID);
@@ -123,9 +131,12 @@ export const useAuthStore = defineStore({
       this.user = null;
       this.token = '';
       this.userID = '';
+      this.role = '';
+      this.userProfile = '';
       localStorage.removeItem('user');
       localStorage.removeItem('token');
       localStorage.removeItem('userID');
+      localStorage.removeItem('role');
       localStorage.removeItem('userProfile')
       router.push('/login');
     },
