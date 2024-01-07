@@ -7,13 +7,14 @@ interface Answer {
   text: String;
   matches: [string];
   filler: [string];
-  //,category: string
+  category: string
 }
 
 export interface Question {
   id: string;
   text: string;
-  match: string; //category: string
+  match: string; 
+  category: string
 }
 
 const game = useGameStore();
@@ -41,6 +42,7 @@ function printa() {
   console.log(answers);
 }
 function reload() {
+  game.clear();
   
   if (storedQuestions) {
   questions = JSON.parse(storedQuestions);
@@ -53,7 +55,7 @@ if (storedAnswers) {
   answers = [];
 }
 printa();
-//window.location.reload();
+
 }
 </script>
 
@@ -73,11 +75,6 @@ printa();
       </ul>
      
       
-      <input type="text" placeholder="Neue Antwort">
-      <div>
-        
-      </div>
-      <button>Save</button>
     </div>
   </div>
 </template>

@@ -4,7 +4,8 @@ import { defineStore } from 'pinia';
 export interface Question {
   id: string;
   text: string;
-  match: string; //category: string
+  match: string;
+  category: string
 }
 
 export interface Answer {
@@ -12,7 +13,7 @@ export interface Answer {
   text: String;
   matches: [string];
   filler: [string];
-  //,category: string
+  category: string
 }
 
 export const useGameStore = defineStore({
@@ -76,5 +77,11 @@ export const useGameStore = defineStore({
     getA() {
       console.log(this.answers);
     },
+    clear() {
+      this.questions = [];
+      this.answers = [];
+      localStorage.removeItem('questions');
+      localStorage.removeItem('answers');
+    }
   },
 });
