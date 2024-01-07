@@ -17,26 +17,52 @@ export interface Question {
   match: string; //category: string
 }
 
-const auth = useAuthStore();
 const game = useGameStore();
-let answers: Answer[] = [];
-let questions: Question[] = [];
+const storedQuestions = localStorage.getItem('questions');
+const storedAnswers = localStorage.getItem('answers');
 
-game.getAnswers();
-game.getQuestions();
+let questions: Question[];
+let answers: Answer[];
 
-async function printa(){
-  questions = await game.getQuestions() as Question[];
+if (storedQuestions) {
+  questions = JSON.parse(storedQuestions);
+} else {
+  questions = [];
+}
+if (storedAnswers) {
+  answers = JSON.parse(storedAnswers);
+} else {
+  answers = [];
 }
 
-
+function printa() {
+  game.getAnswers();
+  game.getQuestions();
+  console.log(questions);
+  console.log(answers);
+}
+function reload() {
+  
+  if (storedQuestions) {
+  questions = JSON.parse(storedQuestions);
+} else {
+  questions = [];
+}
+if (storedAnswers) {
+  answers = JSON.parse(storedAnswers);
+} else {
+  answers = [];
+}
+printa();
+window.location.reload();
+}
 </script>
 
 <template>
   <div>
     <NavbarForm />
     <div class="main">
-      <button @click="printa">RELOAD</button>
+      <button @click="reload">RELOAD</button>
       <h1>Questions</h1>
       <ul>
         <li v-for="question in questions" :key="question.id">{{ question.text }}</li>

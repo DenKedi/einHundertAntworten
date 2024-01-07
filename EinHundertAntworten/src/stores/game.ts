@@ -27,7 +27,7 @@ export const useGameStore = defineStore({
     };
   },
   actions: {
-    async getQuestions(): Promise<Question[]> {
+    async getQuestions(): Promise<String> {
       const response = await fetch(
         'http://localhost:8080/game/getAllQuestions',
         {
@@ -43,12 +43,14 @@ export const useGameStore = defineStore({
       console.log(data);
       if (response.ok) {
         this.questions = data;
-        console.log(this.questions);
+        localStorage.removeItem('questions');
+        localStorage.setItem('questions', JSON.stringify(this.questions));
+        console.log(JSON.parse(JSON.stringify(this.questions)));
       } else {
-        return data as Question[];
+        return data.message.toString();
       }
     },
-    async getAnswers() {
+    async getAnswers(): Promise<String> {
       const response = await fetch('http://localhost:8080/game/getAllAnswers', {
         method: 'GET',
         headers: {
@@ -61,7 +63,9 @@ export const useGameStore = defineStore({
       console.log(data);
       if (response.ok) {
         this.answers = data;
-        console.log(this.answers);
+        localStorage.removeItem('answers');
+        //localStorage.setItem('answers', JSON.stringify(this.answers));
+        console.log(JSON.parse(JSON.stringify(this.answers)));
       } else {
         return data.message.toString();
       }
