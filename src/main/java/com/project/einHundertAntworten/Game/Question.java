@@ -11,7 +11,7 @@ public class Question {
     private String text;
     // The id of the matching answer
     private String match;
-
+    private String category;
     public Question(String text, String match) {
         this.text = text;
         this.match = match;
@@ -41,5 +41,11 @@ public class Question {
 
     public void setMatch(String match) {
         this.match = match;
+    }
+    public String getCategory() {
+        return category;
+    }
+    public void setCategory(String category) {
+        this.category = category;
     }
 }

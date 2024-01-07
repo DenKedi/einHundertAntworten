@@ -7,10 +7,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import javax.swing.text.html.Option;
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 @RestController
 @RequestMapping("/game")
@@ -53,7 +50,37 @@ public class GameController {
         List<Question> questions = questionRepository.findAll();
         return new ResponseEntity<>(questions, HttpStatus.OK);
     }
+    @GetMapping("/getQuestions") //Request param category
+    public ResponseEntity<List<Question>> getQuestionByCategory(@RequestParam String category) {
+        List<Question> questions = questionRepository.findAll();
+        List<Question> questionsByCategory = new ArrayList<>();
+        for (Question question : questions) {
+                if (question.getCategory().contains(category)){
+                    questionsByCategory.add(question);
+                }
+        }
+        if (questionsByCategory.isEmpty()){
+            questionsByCategory.add(new Question("", category));
+            return new ResponseEntity<>(questionsByCategory, HttpStatus.NOT_FOUND);
+        }
+        return new ResponseEntity<>(questionsByCategory, HttpStatus.OK);
+    }
+    @GetMapping("/getAnswers") //Request param category
+    public ResponseEntity<List<Answer>> getAnswerByCategory(@RequestParam String category) {
+        List<Answer> answers = answerRepository.findAll();
+        List<Answer> answersByCategory = new ArrayList<>();
+        for (Answer answer : answers) {
+            if (answer.getCategory().contains(category)){
+                answersByCategory.add(answer);
+            }
+        }
+        if (answersByCategory.isEmpty()){
+            answersByCategory.add(new Answer("", category));
+            return new ResponseEntity<>(answersByCategory, HttpStatus.NOT_FOUND);
+        }
 
+        return new ResponseEntity<>(answersByCategory, HttpStatus.OK);
+    }
     @PostMapping("/createAnswer")
     public ResponseEntity<Answer> createAnswer(@RequestBody Answer answer) {
         if (answerRepository.existsByText(answer.getText())){
@@ -71,7 +98,7 @@ public class GameController {
         return new ResponseEntity<>(question, HttpStatus.CREATED);
     }
 
-    @PutMapping("/answer/{id}")
+    @PutMapping("/answer/{id}") //add filler and matches for answer
         public ResponseEntity<Answer> updateAnswer(@PathVariable String id, @RequestBody Answer answerRequest) {
        Optional<Answer> answerOptional = answerRepository.findById(id);
        if (answerOptional.isPresent()){
@@ -92,7 +119,8 @@ public class GameController {
 
                return new ResponseEntity<>(HttpStatus.NOT_FOUND);
     }
-    @PutMapping("/question/{id}") //Anmerkung: Änderung möglich machen, auch wenn match schon gesetzt ist?
+    @PutMapping("/question/{id}") //Add match for question
+    //Anmerkung: Änderung möglich machen, auch wenn match schon gesetzt ist?
     public ResponseEntity<Question> updateQuestion(@PathVariable String id, @RequestBody QuestionRequest request) {
         System.out.println(request.match);
         Optional<Question> questionOptional = questionRepository.findById(id);

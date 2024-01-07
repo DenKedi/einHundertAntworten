@@ -16,11 +16,13 @@ public class Answer {
     private List<String> matches = new ArrayList<>();
     // List of ids of possible answers
     private List<String> filler = new ArrayList<>();
+    private String category;
 
-    public Answer(String text, List<String> matches, List<String> filler) {
+    public Answer(String text, List<String> matches, List<String> filler, String category) {
         this.text = text;
         this.matches = matches;
         this.filler = filler;
+        this.category = category;
     }
     public Answer(List<String> matches, List<String> filler) {
         this.matches = matches;
@@ -30,6 +32,10 @@ public class Answer {
         this.text = text;
     }
     public Answer() {
+    }
+    public Answer(String text, String category) {
+        this.text = text;
+        this.category = category;
     }
 
     public String getId() {
@@ -66,5 +72,11 @@ public class Answer {
 
     public void setFiller(List<String> filler) {
         this.filler = filler;
+    }
+    public String getCategory() {
+        return category;
+    }
+    public void setCategory(String category) {
+        this.category = category;
     }
 }
