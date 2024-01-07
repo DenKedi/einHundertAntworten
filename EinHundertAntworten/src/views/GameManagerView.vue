@@ -1,5 +1,4 @@
 <script setup lang="ts">
-import { useAuthStore } from '@/stores/auth';
 import { useGameStore } from '@/stores/game';
 import NavbarForm from '../components/NavbarForm.vue';
 
@@ -54,7 +53,7 @@ if (storedAnswers) {
   answers = [];
 }
 printa();
-window.location.reload();
+//window.location.reload();
 }
 </script>
 
@@ -73,7 +72,12 @@ window.location.reload();
         <li v-for="answer in answers" :key="answer.id">{{ answer.text }}</li>
       </ul>
      
-
+      
+      <input type="text" placeholder="Neue Antwort">
+      <div>
+        
+      </div>
+      <button>Save</button>
     </div>
   </div>
 </template>

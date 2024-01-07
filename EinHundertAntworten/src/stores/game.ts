@@ -22,8 +22,8 @@ export const useGameStore = defineStore({
       questions: [] as Question[],
       answers: [] as Answer[],
       token: localStorage.getItem('token')
-      ? JSON.parse(localStorage.getItem('token')!)
-      : '',
+        ? JSON.parse(localStorage.getItem('token')!)
+        : '',
     };
   },
   actions: {
@@ -34,7 +34,7 @@ export const useGameStore = defineStore({
           method: 'GET',
           headers: {
             'Content-Type': 'application/json',
-            'Authorization': 'Bearer ' + this.token,
+            Authorization: 'Bearer ' + this.token,
           },
         }
       );
@@ -55,7 +55,7 @@ export const useGameStore = defineStore({
         method: 'GET',
         headers: {
           'Content-Type': 'application/json',
-          'Authorization': 'Bearer ' + this.token,
+          Authorization: 'Bearer ' + this.token,
         },
       });
       const data = await response.json();
@@ -64,17 +64,17 @@ export const useGameStore = defineStore({
       if (response.ok) {
         this.answers = data;
         localStorage.removeItem('answers');
-        //localStorage.setItem('answers', JSON.stringify(this.answers));
+        localStorage.setItem('answers', JSON.stringify(this.answers));
         console.log(JSON.parse(JSON.stringify(this.answers)));
       } else {
         return data.message.toString();
       }
     },
-    getQ(){
-        console.log(this.questions);
+    getQ() {
+      console.log(this.questions);
     },
-    getA(){
-        console.log(this.answers);
-    }
+    getA() {
+      console.log(this.answers);
+    },
   },
 });
