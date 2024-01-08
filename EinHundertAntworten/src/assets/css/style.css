@@ -40,7 +40,7 @@ nav div {
   text-decoration: none;
   margin-top: auto;
   margin-bottom: auto;
-
+  
   :hover {
     color: #3787ee;
   }

@@ -41,12 +41,10 @@ export const useGameStore = defineStore({
       );
       const data = await response.json();
       console.log(response.status);
-      console.log(data);
       if (response.ok) {
         this.questions = data;
         localStorage.removeItem('questions');
         localStorage.setItem('questions', JSON.stringify(this.questions));
-        console.log(JSON.parse(JSON.stringify(this.questions)));
       } else {
         return data.message.toString();
       }
@@ -61,12 +59,49 @@ export const useGameStore = defineStore({
       });
       const data = await response.json();
       console.log(response.status);
-      console.log(data);
       if (response.ok) {
         this.answers = data;
         localStorage.removeItem('answers');
         localStorage.setItem('answers', JSON.stringify(this.answers));
-        console.log(JSON.parse(JSON.stringify(this.answers)));
+      } else {
+        return data.message.toString();
+      }
+    },
+    async getQuestionById(id: string): Promise<Question> {
+      const response = await fetch(
+        'http://localhost:8080/game/getQuestion/' + id,
+        {
+          method: 'GET',
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: 'Bearer ' + this.token,
+          },
+        }
+      );
+      const data = await response.json();
+      console.log(response.status);
+      
+      if (response.ok) {
+        return data;
+      } else {
+        return data.message.toString();
+      }
+    },
+    async getAnswerById(id: string): Promise<Answer> {
+      const response = await fetch(
+        'http://localhost:8080/game/getAnswer/' + id,
+        {
+          method: 'GET',
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: 'Bearer ' + this.token,
+          },
+        }
+      );
+      const data = await response.json();
+      console.log(response.status);
+      if (response.ok) {
+        return data;
       } else {
         return data.message.toString();
       }

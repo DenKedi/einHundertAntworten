@@ -14,6 +14,11 @@ script.src = 'https://kit.fontawesome.com/dd8ea2651b.js';
 script.crossOrigin = 'anonymous';
 document.head.appendChild(script);
 
+//JQuery CDN
+const scriptJQuery = document.createElement('script');
+scriptJQuery.src = 'https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js';
+document.head.appendChild(scriptJQuery);
+
 // Import Style
 const style = document.createElement('link');
 style.rel = 'stylesheet';
