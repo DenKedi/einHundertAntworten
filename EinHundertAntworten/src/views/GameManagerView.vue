@@ -43,7 +43,7 @@ function fillAnswers() {
     const $answerDiv:HTMLElement = $(`<div class="answer" id="${answers.value[i].id}"><p>${answers.value[i].text}</p></div>`).appendTo('#answers');
 
     // Create the a tag and append it to the div element
-    $(`<a @click="expand()" href="#"><i class="fa-solid fa-square-plus"></i></a>`).appendTo($answerDiv);
+    $(`<a @click="expand"><i class="fa-solid fa-square-plus"></i></a>`).appendTo($answerDiv);
     
   }
   
