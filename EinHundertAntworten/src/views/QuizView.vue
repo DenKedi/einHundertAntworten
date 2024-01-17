@@ -3,6 +3,7 @@
 
 <template>
   <main>
-    <TheWelcome />
+    <NavbarForm />
+    
   </main>
 </template>

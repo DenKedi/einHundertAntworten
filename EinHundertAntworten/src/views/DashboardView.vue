@@ -6,6 +6,7 @@ const auth = useAuthStore();
 const token = auth.token;
 const data = ref('');
 
+
 onMounted(async () => {
     const response = await fetch('http://localhost:8080/', {
         headers: {
@@ -17,6 +18,7 @@ onMounted(async () => {
         auth.logout();
     }
 });
+
 
 </script>
 <template>

@@ -43,9 +43,11 @@ router.beforeEach(async (to) => {
   const authRequired = !publicPages.includes(to.path)
   const auth = useAuthStore();
   // if auth is required and user is not logged in ->
+  
   if(authRequired && !auth.user) {
     return '/login'
   }
+  
 })
 
 
