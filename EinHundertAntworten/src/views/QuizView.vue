@@ -4,10 +4,11 @@ import $ from 'jquery';
 import { ref, onMounted } from 'vue';
 import { useAuthStore } from '@/stores/auth';
 import { useGameStore } from '@/stores/game';
-
+import type { UserProfile } from '@/stores/auth';
 //Setup on mounted
 onMounted(async () => {
-  console.log(getRandomAnswer());
+    try{
+        console.log(getRandomAnswer());
   const response = await fetch('http://localhost:8080/', {
     headers: {
       Authorization: `Bearer ${token}`,
@@ -19,8 +20,14 @@ onMounted(async () => {
   if (response.status === 200) {
     game.getAnswers();
     game.getQuestions();
+    startNewGame();
   }
+}catch(error){
+    console.log(error);
+}
 });
+
+  
 
 // Constants and Variables
 const auth = useAuthStore();
@@ -43,8 +50,8 @@ var playerGrade = 0;
 interface Answer {
   id: string;
   text: String;
-  matches: [string];
-  filler: [string];
+  matches: string[];
+  filler: string[];
   category: string;
 }
 
@@ -68,48 +75,50 @@ type GameObject = {
 currentGameObject = {
   answer: {
     id: '1',
-    text: '42',
+    text: 'Wie viele Menschen leben in Deutschland?',
     matches: ['1'],
-    filler: ['1'],
-    category: 'test',
+    filler: ['2', '3', '4'],
+    category: 'Bevölkerung',
   },
   optionA: {
-    id: '1',
-    text: 'Was ist die Antwort auf alles',
+    id: '10',
+    text: '80 Millionen',
     match: '1',
-    category: 'test',
+    category: 'Bevölkerung',
   },
   optionB: {
-    id: '1',
-    text: 'Was ist nicht die Antwort auf alles',
-    match: '1',
-    category: 'test',
+    id: '11',
+    text: '90 Millionen',
+    match: '5645',
+    category: 'Bevölkerung',
   },
   optionC: {
-    id: '1',
-    text: 'Hallooooooo',
-    match: '1',
-    category: 'test',
+    id: '12',
+    text: '70 Millionen',
+    match: '245645',
+    category: 'Bevölkerung',
   },
   optionD: {
-    id: '1',
-    text: 'test',
-    match: '1',
-    category: 'test',
+    id: '13',
+    text: '60 Millionen',
+    match: '136767',
+    category: 'Bevölkerung',
   },
   correctOption: {
-    id: '1',
-    text: 'test',
+    id: '10',
+    text: '80 Millionen',
     match: '1',
-    category: 'test',
+    category: 'Bevölkerung',
   },
 };
 
 
-let shuffledGameObjects: GameObject[] = []; //leeres Array - hält die ausgewählten Fragen
-
 function getRandomAnswer(): Answer {
-  return answers.value[Math.floor(Math.random() * answers.value.length)];
+    var answer:Answer = answers.value[Math.floor(Math.random() * answers.value.length)];
+    if (answer.matches.length <= 1 && answer.filler.length <= 3) {
+        return answer;
+    }
+  return null;
 }
 
 function getRandomFiller(answer: Answer): Question[] {
@@ -123,8 +132,8 @@ function getRandomFiller(answer: Answer): Question[] {
   }
 
   try {
-    fillerIDs.forEach(fillerID => async () => {
-      var filler = await game.getQuestionById(fillerID);
+    fillerIDs.forEach(fillerID => {
+      var filler = questions.value.find(question => question.id === fillerID);
       fillerQuestions.push(filler);
       return fillerQuestions;
     });
@@ -135,21 +144,22 @@ function getRandomFiller(answer: Answer): Question[] {
 function getRandomMatch(answer: Answer): Question {
   var matchID: string =
     answer.matches[Math.floor(Math.random() * answer.matches.length)];
-  var matchIDs: string[] = [];
-  matchIDs.push(matchID);
   try {
-    matchIDs.forEach(async matchID => {
-      return await game.getQuestionById(matchID);
-    });
+    var question:Question = questions.value.find(question => question.id === matchID);
   } catch (error) {
     return { id: '', text: '', match: '', category: '' }; //Some other way of handling errors
   }
 }
 
 function packRandomGameObject(): GameObject {
-  var answer = getRandomAnswer();
-  var filler = getRandomFiller(answer);
-  var match = getRandomMatch(answer);
+    
+  var answer:Answer = getRandomAnswer();
+  if(!answer){
+    return null;
+  }
+  console.log(answer);
+  var filler:Question[] = getRandomFiller(answer);
+  var match:Question = getRandomMatch(answer);
   var options = [match, filler[0], filler[1], filler[2]].sort(
     () => Math.random() - 0.5
   );
@@ -161,6 +171,12 @@ function packRandomGameObject(): GameObject {
     optionD: options[3],
     correctOption: match,
   };
+
+  document.getElementById('OptionA').id = go.optionA.id;
+  document.getElementById('OptionB').id = go.optionB.id;
+  document.getElementById('OptionC').id = go.optionC.id;
+  document.getElementById('OptionD').id = go.optionD.id;
+
   return go;
 }
 
@@ -250,6 +266,13 @@ function handleEndGame() {
   //für die Anzeige des score boards
   document.getElementById('remarks').style.color = remarkColor;
   document.getElementById('score-modal').style.display = 'flex';
+
+  //Saving Data for User
+    var user = auth.user;
+    var userProfile:UserProfile = auth.userProfile;
+    userProfile.gamesPlayed++;
+    userProfile.score += playerScore;
+    auth.updateUserProfile(token, userProfile, user.id);    
 }
 
 //resettet das Spiel, mischt wieder die Fragen und schließt natürlich das Score board
@@ -272,6 +295,7 @@ function closeOptionModal() {
 function startNewGame() {
     resetScoreModal();
     closeOptionModal();
+    //resetOptionBackground();
     nextTurn();
 }
 

@@ -80,7 +80,7 @@ export const useGameStore = defineStore({
       );
       const data = await response.json();
       console.log(response.status);
-      
+      console.log("test");
       if (response.ok) {
         return data;
       } else {
