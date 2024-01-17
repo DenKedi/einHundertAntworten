@@ -3,9 +3,21 @@ import { useGameStore } from '@/stores/game';
 import NavbarForm from '../components/NavbarForm.vue';
 import $ from 'jquery';
 import { ref, onMounted } from 'vue';
+import { useAuthStore } from '@/stores/auth';
 
-
+onMounted(async () => {
+    const response = await fetch('http://localhost:8080/', {
+        headers: {
+            'Authorization': `Bearer ${token}`
+        },
+    });
+    if (response.status === 401) {
+        auth.logout();
+    }
+});
+const auth = useAuthStore();
 const game = useGameStore();
+const token = auth.token;
 const storedQuestions = localStorage.getItem('questions');
 const storedAnswers = localStorage.getItem('answers');
 const questions = ref<Question[]>(storedQuestions ? JSON.parse(storedQuestions) : []);
@@ -41,6 +53,7 @@ function fillAnswers() {
   for (let i = 0; i < answers.value.length; i++) {
     // Create the div element and append it to #answers
     const $answerDiv:HTMLElement = $(`<div class="answer" id="${answers.value[i].id}"><p>${answers.value[i].text}</p></div>`).appendTo('#answers');
+    
 
     // Create the a tag and append it to the div element
     $(`<a @click="expand"><i class="fa-solid fa-square-plus"></i></a>`).appendTo($answerDiv);
@@ -107,6 +120,7 @@ onMounted(() => {
       <div class="answers-container">
       <h1 class="heading">Answers</h1>
       <div id="answers">
+        
         </div>
       </div>
       <table>
@@ -158,8 +172,7 @@ onMounted(() => {
   }
   .fa-square-plus{
     color: #272727;
-
-    
+    cursor: pointer;
   }
 
   .answer {

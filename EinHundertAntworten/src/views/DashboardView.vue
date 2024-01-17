@@ -13,6 +13,9 @@ onMounted(async () => {
         },
     });
     data.value = await response.text();
+    if (response.status === 401) {
+        auth.logout();
+    }
 });
 
 </script>

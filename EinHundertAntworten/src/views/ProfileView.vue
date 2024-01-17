@@ -1,6 +1,18 @@
 <script lang="ts" setup>
 import NavbarForm from '../components/NavbarForm.vue';
 import { useAuthStore } from '@/stores/auth';
+import { onMounted, ref } from 'vue';
+
+onMounted(async () => {
+    const response = await fetch('http://localhost:8080/', {
+        headers: {
+            'Authorization': `Bearer ${token}`
+        },
+    });
+    if (response.status === 401) {
+        auth.logout();
+    }
+});
 
 interface UserProfile{
   userID: string;
