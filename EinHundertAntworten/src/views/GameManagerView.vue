@@ -7,14 +7,14 @@ import { useAuthStore } from '@/stores/auth';
 
 
 onMounted(async () => {
-    const response = await fetch('http://localhost:8080/', {
-        headers: {
-            'Authorization': `Bearer ${token}`
-        },
-    });
-    if (response.status === 401) {
-        auth.logout();
-    }
+  const response = await fetch('http://localhost:8080/', {
+    headers: {
+      'Authorization': `Bearer ${token}`
+    },
+  });
+  if (response.status === 401) {
+    auth.logout();
+  }
 });
 
 const auth = useAuthStore();
@@ -72,6 +72,13 @@ function addListeners() {
   }
 }
 
+function addOpenInputListener() {
+  let element = document.getElementsByClassName('add-question')[0];
+  element.addEventListener('click', function () {
+    console.log('open input mask');
+  });
+}
+
 async function fillTable(id: string) {
   /*
   var domElem = $(elem).get(0);
@@ -122,6 +129,7 @@ onMounted(() => {
   printa();
   fillAnswers();
   addListeners();
+  addOpenInputListener();
 });
 
 </script>
@@ -147,6 +155,12 @@ onMounted(() => {
           </tr>
         </tbody>
       </table>
+
+      <div>
+        <button class="add-question">
+          Add Question
+        </button>
+      </div>
     </div>
   </div>
 </template>
