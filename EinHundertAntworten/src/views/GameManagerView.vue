@@ -15,15 +15,19 @@ onMounted(async () => {
     if (response.status === 401) {
         auth.logout();
     }
+    if (response.status === 200) {
+       game.getQuestions();
+       game.getAnswers();
+    }
 });
 
 const auth = useAuthStore();
 const game = useGameStore();
 const token = auth.token;
-const storedQuestions = localStorage.getItem('questions');
-const storedAnswers = localStorage.getItem('answers');
-const questions = ref<Question[]>(storedQuestions ? JSON.parse(storedQuestions) : []);
-const answers = ref<Answer[]>(storedAnswers ? JSON.parse(storedAnswers) : []);
+var storedQuestions = localStorage.getItem('questions');
+var storedAnswers = localStorage.getItem('answers');
+var questions = ref<Question[]>(storedQuestions ? JSON.parse(storedQuestions) : []);
+var answers = ref<Answer[]>(storedAnswers ? JSON.parse(storedAnswers) : []);
 
 
 interface Answer {

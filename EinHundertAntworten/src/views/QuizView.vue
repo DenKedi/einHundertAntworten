@@ -1,399 +1,280 @@
 <script setup lang="ts">
-//Erstmal Fragen-Datenbank einfügen!!
-type Question = {
-    question: string;
-    optionA: string;
-    optionB: string;
-    optionC: string;
-    optionD: string;
-    correctOption: string;
+import NavbarForm from '../components/NavbarForm.vue';
+import $ from 'jquery';
+import { ref, onMounted } from 'vue';
+import { useAuthStore } from '@/stores/auth';
+import { useGameStore } from '@/stores/game';
+
+//Setup on mounted
+onMounted(async () => {
+  console.log(getRandomAnswer());
+  const response = await fetch('http://localhost:8080/', {
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  });
+  if (response.status === 401) {
+    auth.logout();
+  }
+  if (response.status === 200) {
+    game.getAnswers();
+    game.getQuestions();
+  }
+});
+
+// Constants and Variables
+const auth = useAuthStore();
+const game = useGameStore();
+const token = auth.token;
+var storedQuestions = localStorage.getItem('questions');
+var storedAnswers = localStorage.getItem('answers');
+var questions = ref<Question[]>(storedQuestions ? JSON.parse(storedQuestions) : []);
+var answers = ref<Answer[]>(storedAnswers ? JSON.parse(storedAnswers) : []);
+var currentGameObject: GameObject;
+var currentTurn = 1;
+const maxTurn = 10;
+var playerScore = 0;
+var wrongAttempt = 0;
+var remark = '';
+var remarkColor = '';
+var playerGrade = 0;
+
+//Types und Interfaces
+interface Answer {
+  id: string;
+  text: String;
+  matches: [string];
+  filler: [string];
+  category: string;
+}
+
+interface Question {
+  id: string;
+  text: string;
+  match: string;
+  category: string;
+}
+
+type GameObject = {
+  answer: Answer;
+  optionA: Question;
+  optionB: Question;
+  optionC: Question;
+  optionD: Question;
+  correctOption: Question;
 };
 
-const questions:Question[] = [
-    {
-        question: "How many days makes a week ?",
-        optionA: "10 days",
-        optionB: "14 days",
-        optionC: "5 days",
-        optionD: "7 days",
-        correctOption: "optionD"
-    },
-{
-    question: "How many players are allowed on a soccer pitch ?",
-        optionA: "10 players",
-    optionB: "11 players",
-    optionC: "9 players",
-    optionD: "12 players",
-    correctOption: "optionB"
-},
-
-{
-    question: "Who was the first President of USA ?",
-        optionA: "Donald Trump",
-    optionB: "Barack Obama",
-    optionC: "Abraham Lincoln",
-    optionD: "George Washington",
-    correctOption: "optionD"
-},
-
-{
-    question: "30 days has ______ ?",
-        optionA: "January",
-    optionB: "December",
-    optionC: "June",
-    optionD: "August",
-    correctOption: "optionC"
-},
-
-{
-    question: "How many hours can be found in a day ?",
-        optionA: "30 hours",
-    optionB: "38 hours",
-    optionC: "48 hours",
-    optionD: "24 hours",
-    correctOption: "optionD"
-},
-
-{
-    question: "Which is the longest river in the world ?",
-        optionA: "River Nile",
-    optionB: "Long River",
-    optionC: "River Niger",
-    optionD: "Lake Chad",
-    correctOption: "optionA"
-},
-
-{
-    question: "_____ is the hottest Continent on Earth ?",
-        optionA: "Oceania",
-    optionB: "Antarctica",
-    optionC: "Africa",
-    optionD: "North America",
-    correctOption: "optionC"
-},
-
-{
-    question: "Which country is the largest in the world ?",
-        optionA: "Russia",
-    optionB: "Canada",
-    optionC: "Africa",
-    optionD: "Egypt",
-    correctOption: "optionA"
-},
-
-{
-    question: "Which of these numbers is an odd number ?",
-        optionA: "Ten",
-    optionB: "Twelve",
-    optionC: "Eight",
-    optionD: "Eleven",
-    correctOption: "optionD"
-},
-
-{
-    question: `"You Can't see me" is a popular saying by`,
-        optionA: "Eminem",
-    optionB: "Bill Gates",
-    optionC: "Chris Brown",
-    optionD: "John Cena",
-    correctOption: "optionD"
-},
-
-{
-    question: "Where is the world tallest building located ?",
-        optionA: "Africa",
-    optionB: "California",
-    optionC: "Dubai",
-    optionD: "Italy",
-    correctOption: "optionC"
-},
-
-{
-    question: "The longest river in the United Kingdom is ?",
-        optionA: "River Severn",
-    optionB: "River Mersey",
-    optionC: "River Trent",
-    optionD: "River Tweed",
-    correctOption: "optionA"
-},
+//Sample Objects
+currentGameObject = {
+  answer: {
+    id: '1',
+    text: '42',
+    matches: ['1'],
+    filler: ['1'],
+    category: 'test',
+  },
+  optionA: {
+    id: '1',
+    text: 'Was ist die Antwort auf alles',
+    match: '1',
+    category: 'test',
+  },
+  optionB: {
+    id: '1',
+    text: 'Was ist nicht die Antwort auf alles',
+    match: '1',
+    category: 'test',
+  },
+  optionC: {
+    id: '1',
+    text: 'Hallooooooo',
+    match: '1',
+    category: 'test',
+  },
+  optionD: {
+    id: '1',
+    text: 'test',
+    match: '1',
+    category: 'test',
+  },
+  correctOption: {
+    id: '1',
+    text: 'test',
+    match: '1',
+    category: 'test',
+  },
+};
 
 
-{
-    question: "How many permanent teeth does a dog have ?",
-        optionA: "38",
-    optionB: "42",
-    optionC: "40",
-    optionD: "36",
-    correctOption: "optionB"
-},
+let shuffledGameObjects: GameObject[] = []; //leeres Array - hält die ausgewählten Fragen
 
-{
-    question: "Which national team won the football World cup in 2018 ?",
-        optionA: "England",
-    optionB: "Brazil",
-    optionC: "Germany",
-    optionD: "France",
-    correctOption: "optionD"
-},
-
-{
-    question: "Which US state was Donald Trump Born ?",
-        optionA: "New York",
-    optionB: "California",
-    optionC: "New Jersey",
-    optionD: "Los Angeles",
-    correctOption: "optionA"
-},
-
-{
-    question: "How man states does Nigeria have ?",
-        optionA: "24",
-    optionB: "30",
-    optionC: "36",
-    optionD: "37",
-    correctOption: "optionC"
-},
-
-{
-    question: "____ is the capital of Nigeria ?",
-        optionA: "Abuja",
-    optionB: "Lagos",
-    optionC: "Calabar",
-    optionD: "Kano",
-    correctOption: "optionA"
-},
-
-{
-    question: "Los Angeles is also known as ?",
-        optionA: "Angels City",
-    optionB: "Shining city",
-    optionC: "City of Angels",
-    optionD: "Lost Angels",
-    correctOption: "optionC"
-},
-
-{
-    question: "What is the capital of Germany ?",
-        optionA: "Georgia",
-    optionB: "Missouri",
-    optionC: "Oklahoma",
-    optionD: "Berlin",
-    correctOption: "optionD"
-},
-
-{
-    question: "How many sides does an hexagon have ?",
-        optionA: "Six",
-    optionB: "Seven",
-    optionC: "Four",
-    optionD: "Five",
-    correctOption: "optionA"
-},
-
-{
-    question: "How many planets are currently in the solar system ?",
-        optionA: "Eleven",
-    optionB: "Seven",
-    optionC: "Nine",
-    optionD: "Eight",
-    correctOption: "optionD"
-},
-
-{
-    question: "Which Planet is the hottest ?",
-        optionA: "Jupitar",
-    optionB: "Mercury",
-    optionC: "Earth",
-    optionD: "Venus",
-    correctOption: "optionB"
-},
-
-{
-    question: "where is the smallest bone in human body located?",
-        optionA: "Toes",
-    optionB: "Ears",
-    optionC: "Fingers",
-    optionD: "Nose",
-    correctOption: "optionB"
-},
-
-{
-    question: "How many hearts does an Octopus have ?",
-        optionA: "One",
-    optionB: "Two",
-    optionC: "Three",
-    optionD: "Four",
-    correctOption: "optionC"
-},
-
-{
-    question: "How many teeth does an adult human have ?",
-        optionA: "28",
-    optionB: "30",
-    optionC: "32",
-    optionD: "36",
-    correctOption: "optionC"
+function getRandomAnswer(): Answer {
+  return answers.value[Math.floor(Math.random() * answers.value.length)];
 }
 
-]
+function getRandomFiller(answer: Answer): Question[] {
+  var fillerIDs = [];
+  var fillerQuestions: Question[] = [];
+  //Get 3 random filler Questions from answer.filler
+  for (let i = 0; i < 3; i++) {
+    fillerIDs.push(
+      answer.filler[Math.floor(Math.random() * answer.filler.length)]
+    );
+  }
 
+  try {
+    fillerIDs.forEach(fillerID => async () => {
+      var filler = await game.getQuestionById(fillerID);
+      fillerQuestions.push(filler);
+      return fillerQuestions;
+    });
+  } catch (error) {
+    return [];
+  }
+}
+function getRandomMatch(answer: Answer): Question {
+  var matchID: string =
+    answer.matches[Math.floor(Math.random() * answer.matches.length)];
+  var matchIDs: string[] = [];
+  matchIDs.push(matchID);
+  try {
+    matchIDs.forEach(async matchID => {
+      return await game.getQuestionById(matchID);
+    });
+  } catch (error) {
+    return { id: '', text: '', match: '', category: '' }; //Some other way of handling errors
+  }
+}
 
-let shuffledQuestions:Question[] = [] //leeres Array - hält die ausgewählten Fragen
-
-function handleQuestions() {
-    //Fragen durchmischen und 10 in den Array packen
-    while (shuffledQuestions.length <= 9) {
-        const random = questions[Math.floor(Math.random() * questions.length)]
-        if (!shuffledQuestions.includes(random)) {
-            shuffledQuestions.push(random)
-        }
-    }
+function packRandomGameObject(): GameObject {
+  var answer = getRandomAnswer();
+  var filler = getRandomFiller(answer);
+  var match = getRandomMatch(answer);
+  var options = [match, filler[0], filler[1], filler[2]].sort(
+    () => Math.random() - 0.5
+  );
+  var go = {
+    answer: answer,
+    optionA: options[0],
+    optionB: options[1],
+    optionC: options[2],
+    optionD: options[3],
+    correctOption: match,
+  };
+  return go;
 }
 
 
-let questionNumber = 1
-let playerScore = 0
-let wrongAttempt = 0
-let indexNumber = 0 //nächste Frage
 
-// nächste Frage im array
-function NextQuestion(index:number) {
-    handleQuestions()
-    const currentQuestion = shuffledQuestions[index]
-    document.getElementById("question-number").innerHTML = questionNumber.toString()
-    document.getElementById("player-score").innerHTML = playerScore.toString()
-    document.getElementById("display-question").innerHTML = currentQuestion.question;
-    document.getElementById("option-one-label").innerHTML = currentQuestion.optionA;
-    document.getElementById("option-two-label").innerHTML = currentQuestion.optionB;
-    document.getElementById("option-three-label").innerHTML = currentQuestion.optionC;
-    document.getElementById("option-four-label").innerHTML = currentQuestion.optionD;
-
+/*To Delete?
+function getRandomQuestion():Question{
+    return questions.value[Math.floor(Math.random() * questions.value.length)];
 }
+*/
 
 function checkForAnswer() {
-    const currentQuestion = shuffledQuestions[indexNumber] //bekommt aktuelle Frage
-    const currentQuestionAnswer = currentQuestion.correctOption //bekommt eingegebene Antwort
-    const options = document.getElementsByName("option"); //bekommt alle 'option' Elemente (radio inputs)
-    let correctOption:string = '';
-
-    options.forEach((option) => {
-        if (option.value === currentQuestionAnswer) {
-            //bekommt den radio input mit richtiger Antwort
-            correctOption = option.labels[0].id
-        }
-    })
-
-    //checkt, ob eine Antwort ausgewählt ist
-    if (options[0].checked === false && options[1].checked === false && options[2].checked === false && options[3].checked == false) {
-        document.getElementById('option-modal').style.display = "flex"
-    }
-
-    //checkt, ob die ausgweählte Antwort richtig ist
-    options.forEach((option) => {
-        if (option.checked === true && option.value === currentQuestionAnswer) {
-            document.getElementById(correctOption).style.backgroundColor = "#6fff18"
-            playerScore++
-            indexNumber++
-            //verzögert die anzahl der Fragen, bis auch die nächste geladen hat
-            setTimeout(() => {
-                questionNumber++
-            }, 1000)
-        }
-        //Antwort ist falsch:
-        else if (option.checked && option.value !== currentQuestionAnswer) {
-            const wrongLabelId = option.labels[0].id
-            document.getElementById(wrongLabelId).style.backgroundColor = "#f12727"
-            document.getElementById(correctOption).style.backgroundColor = "#6fff18"
-            wrongAttempt++
-            indexNumber++
-            //verzögert die anzahl der Fragen, bis auch die nächste geladen hat
-            setTimeout(() => {
-                questionNumber++
-            }, 1000)
-        }
-    })
+  var matchingQuestionID = currentGameObject.correctOption.id; //bekommt die ID der richtigen Antwort
+  var userSelection:HTMLInputElement = document.querySelector('input[type=radio]:checked'); //bekommt die ausgewählte Antwort
+  if(!userSelection){
+    document.getElementById('option-modal').style.display = "flex";
+    return false;
+  };
+  var selectionID = userSelection.nextElementSibling.id; //bekommt die ID der ausgewählten Antwort
+  
+  if(selectionID === matchingQuestionID){
+    document.getElementById(selectionID).style.backgroundColor = '#6fff18';  
+    playerScore++;
+    return true;
+  } else{
+    document.getElementById(selectionID).style.backgroundColor = '#f12727';
+    document.getElementById(matchingQuestionID).style.backgroundColor = '#6fff18';
+    wrongAttempt++;
+    return true;
+  }
 }
-
-
-
+function nextTurn() {
+  currentGameObject = packRandomGameObject();
+    currentTurn++;
+}
 //nächste Frage button:
 function handleNextQuestion() {
-    checkForAnswer() //checkt, ob die Antwort richtig oder falsch
-    unCheckRadioButtons()
-    //verzögert die Frage um eine Sekunde, um es smoother zu gestalten
-    setTimeout(() => {
-        if (indexNumber <= 9) {
-//erzeugt die nächste Frage, wenn der Index nicht höher als neun ist - 10 Fragen insgesamt
-            NextQuestion(indexNumber)
-        }
-        else {
-            handleEndGame()//beendet das Spiel nach der 10. frage
-        }
-        resetOptionBackground()
-    }, 1000);
+  if (!checkForAnswer()) {
+    return;
+  } //checkt, ob die Antwort richtig oder falsch
+  unCheckRadioButtons();
+  //verzögert die Frage um eine Sekunde, um es smoother zu gestalten
+  setTimeout(() => {
+    if (currentTurn != 11) {
+      //erzeugt die nächste Frage, wenn der Index nicht höher als neun ist - 10 Fragen insgesamt
+      nextTurn();
+    } else {
+      handleEndGame(); //beendet das Spiel nach der 10. frage
+    }
+    resetOptionBackground();
+  }, 1000);
 }
 
 //resettet alle hintergrund optionen zu null
 function resetOptionBackground() {
-    const options = document.getElementsByName("option");
-    options.forEach((option) => {
-        document.getElementById(option.labels[0].id).style.backgroundColor = ""
-    })
+    document.getElementById(currentGameObject.optionA.id).style.backgroundColor = '';
+    document.getElementById(currentGameObject.optionB.id).style.backgroundColor = '';
+    document.getElementById(currentGameObject.optionC.id).style.backgroundColor = '';
+    document.getElementById(currentGameObject.optionD.id).style.backgroundColor = '';
 }
 
 // resettet alle radio buttons für die nächste frage
 function unCheckRadioButtons() {
-    const options = document.getElementsByName("option");
-    for (let i = 0; i < options.length; i++) {
-        options[i].checked = false;
-    }
+const optionsNodeList: NodeListOf<HTMLElement> = document.getElementsByName('option');
+const options: HTMLInputElement[] = Array.from(optionsNodeList) as HTMLInputElement[];
+  for (let i = 0; i < options.length; i++) {
+    options[i].checked = false;
+  }
 }
 
 //wenn alle Fragen fertig beantwortet sind:
 function handleEndGame() {
-    let remark = null
-    let remarkColor = null
+  
+  // checkt die Antworten und gibt farbiges Feedback :)
+  if (playerScore <= 3) {
+    remark = 'ähm ja das war schlecht...';
+    remarkColor = '#f12727';
+  } else if (playerScore >= 4 && playerScore < 8) {
+    remark = 'ach komm das kannst du besser!';
+    remarkColor = '#ff7520';
+  } else if (playerScore >= 8) {
+    remark = 'Supi gemacht!';
+    remarkColor = '#6fff18';
+  }
+  playerGrade = (playerScore / 10) * 100;
 
-    // checkt die Antworten und gibt farbiges Feedback :)
-    if (playerScore <= 3) {
-        remark = "ähm ja das war schlecht..."
-        remarkColor = "#f12727"
-    }
-    else if (playerScore >= 4 && playerScore < 8) {
-        remark = "ach komm das kannst du besser!"
-        remarkColor = "#ff7520"
-    }
-    else if (playerScore >= 8) {
-        remark = "Supi gemacht!"
-        remarkColor = "#6fff18"
-    }
-    const playerGrade = (playerScore / 10) * 100
-
-    //für die Anzeige des score boards
-    document.getElementById('remarks').innerHTML = remark
-    document.getElementById('remarks').style.color = remarkColor
-    document.getElementById('grade-percentage').innerHTML = playerGrade
-    document.getElementById('wrong-answers').innerHTML = wrongAttempt
-    document.getElementById('right-answers').innerHTML = playerScore
-    document.getElementById('score-modal').style.display = "flex"
-
+  //für die Anzeige des score boards
+  document.getElementById('remarks').style.color = remarkColor;
+  document.getElementById('score-modal').style.display = 'flex';
 }
 
 //resettet das Spiel, mischt wieder die Fragen und schließt natürlich das Score board
-function closeScoreModal() {
-    questionNumber = 1
-    playerScore = 0
-    wrongAttempt = 0
-    indexNumber = 0
-    shuffledQuestions = []
-    NextQuestion(indexNumber)
-    document.getElementById('score-modal').style.display = "none"
+function resetScoreModal() {
+  currentTurn = 1;
+  playerScore = 0;
+  wrongAttempt = 0;
+  remark = '';
+  remarkColor = '';
+  playerGrade = 0;
+  currentGameObject = null;
+  document.getElementById('score-modal').style.display = 'none';
 }
 
 //Funktion um die Close warnung zu schließen
 function closeOptionModal() {
-    document.getElementById('option-modal').style.display = "none"
+  document.getElementById('option-modal').style.display = 'none';
 }
+
+function startNewGame() {
+    resetScoreModal();
+    closeOptionModal();
+    nextTurn();
+}
+
 </script>
 
 <template>
@@ -402,89 +283,99 @@ function closeOptionModal() {
 
     <!-- Ende des Spiels -->
     <div class="modal-container" id="score-modal">
-
       <div class="modal-content-container">
-
         <h1>ENDEEEE.</h1>
 
         <div class="grade-details">
-          <p>Anzahl der Fragen : 10</p>
-          <p>Falsche Antworten : <span id="wrong-answers"></span></p>
-          <p>Richtige Antworten : <span id="right-answers"></span></p>
-          <p>Prozent : <span id="grade-percentage"></span>%</p>
-          <p><span id="remarks"></span></p>
+          <p>Anzahl der Fragen : {{ maxTurn }}</p>
+          <p>Falsche Antworten : {{ wrongAttempt }}<span id="wrong-answers"></span></p>
+          <p>Richtige Antworten : {{ playerScore }}<span id="right-answers"></span></p>
+          <p>Prozent : {{ playerGrade }}%<span id="grade-percentage"></span>%</p>
+          <p><span id="remarks">{{ remark }}</span></p>
         </div>
         <div class="modal-button-container">
-          <button onclick="closeScoreModal()">ich will noch einmal</button>
+          <button @click="startNewGame">ich will noch einmal</button>
         </div>
         <!--Button mit hauptmenü verbinden!!!!1-->
         <div class="modal-button-container">
-          <button onclick="closeScoreModal()">Haumptmenü</button>
+          <button @click="resetScoreModal">Haumptmenü</button>
         </div>
-
       </div>
     </div>
 
     <!--Spieloberfläche-->
     <div class="game-quiz-container">
-
       <div class="game-details-container">
-        <h1>Score : <span id="player-score"></span> / 10</h1>
-        <h1>Frage : <span id="question-number"></span> / 10</h1>
+        <h1>Score : {{ playerScore }}<span id="player-score"></span> / {{maxTurn}}</h1>
+        <h1>Frage : {{ currentTurn }}<span id="question-number"></span> / {{maxTurn}}</h1>
       </div>
 
       <div class="game-question-container">
-        <h1 id="display-question"></h1>
+        <h1 id="display-question">{{ currentGameObject.answer.text }}</h1>
       </div>
 
       <!--wenn man auf weiter geht ohne eine Antwort auszuwählen-->
       <div class="game-options-container">
-
         <div class="modal-container" id="option-modal">
-
           <div class="modal-content-container">
             <h1>Bitte such dir doch noch eine Antwort aus!</h1>
             <h2>Ich meine, es ist ein Quiz, entscheide dich!</h2>
 
             <div class="modal-button-container">
-              <button onclick="closeOptionModal()">Okay,okay...</button>
+              <button @click="closeOptionModal">Okay,okay...</button>
             </div>
-
           </div>
-
         </div>
 
         <!--Antwortoptionen:-->
         <span>
-          <input type="radio" id="option-one" name="option" class="radio" value="optionA">
-          <label for="option-one" class="option" id="option-one-label"></label>
+          <input
+            type="radio"
+            id="optionA"
+            name="option"
+            class="radio"
+            value="optionA"
+          />
+          <label for="optionA" class="option optionA-label" :id="currentGameObject.optionA.id">{{ currentGameObject.optionA.text }}</label>
         </span>
-
 
         <span>
-          <input type="radio" id="option-two" name="option" class="radio" value="optionB" />
-          <label for="option-two" class="option" id="option-two-label"></label>
+          <input
+            type="radio"
+            id="optionB"
+            name="option"
+            class="radio"
+            value="optionB"
+          />
+          <label for="optionB" class="option optionB-label" :id="currentGameObject.optionB.id">{{ currentGameObject.optionB.text }}</label>
         </span>
-
 
         <span>
-          <input type="radio" id="option-three" name="option" class="radio" value="optionC" />
-          <label for="option-three" class="option" id="option-three-label"></label>
+          <input
+            type="radio"
+            id="optionC"
+            name="option"
+            class="radio"
+            value="optionC"
+          />
+          <label for="optionC" class="option optionC-label" :id="currentGameObject.optionC.id">{{ currentGameObject.optionC.text }}</label>
         </span>
-
 
         <span>
-          <input type="radio" id="option-four" name="option" class="radio" value="optionD" />
-          <label for="option-four" class="option" id="option-four-label"></label>
+          <input
+            type="radio"
+            id="optionD"
+            name="option"
+            class="radio"
+            value="optionD"
+          />
+          <label for="optionD" class="option optionD-label" :id="currentGameObject.optionD.id">{{ currentGameObject.optionD.text }}</label>
         </span>
-
-
       </div>
 
       <div class="next-button-container">
-        <button onclick="handleNextQuestion()">Weiter hihi</button>
+        <button @click="handleNextQuestion">Weiter hihi</button>
       </div>
-
     </div>
   </main>
 </template>
