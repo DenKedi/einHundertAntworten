@@ -79,7 +79,7 @@ function addListeners() {
 function addOpenInputListener() {
   let element = document.getElementsByClassName('add-question')[0];
   element.addEventListener('click', function () {
-    console.log('open input mask');
+    document.getElementsByClassName('add-form')[0].classList.toggle('hide');
   });
 }
 
@@ -160,10 +160,38 @@ onMounted(() => {
         </tbody>
       </table>
 
-      <div>
-        <button class="add-question">
-          Add Question
-        </button>
+      <div class="add-gameobjects">
+        <div class="add-button">
+          <button class="add-question">
+            Add Question
+          </button>
+        </div>
+
+        <form class="add-form">
+          <div class="form-container">
+            <label class="heading" for="answer">Neue Antwort</label>
+            <label class="category-label" for="answer-category">Kategorie</label>
+            <select name="answer-category" id="answer-category">
+              <option value="person">Personen</option>
+              <option value="number">Zahlen</option>
+              <option value="place">Orte</option>
+            </select>
+
+            <input type="text" id="answer" name="" answer>
+            <button>hinzufügen</button>
+          </div>
+          <div class="form-container">
+            <label class="heading" for="question">Neue Frage</label>
+            <label class="category-label" for="question-category">Kategorie</label>
+            <select name="question-category" id="question-category">
+              <option value="person">Personen</option>
+              <option value="number">Zahlen</option>
+              <option value="place">Orte</option>
+            </select>
+            <input type="text" id="question" name="question">
+            <button>hinzufügen</button>
+          </div>
+        </form>
       </div>
     </div>
   </div>
@@ -173,10 +201,50 @@ onMounted(() => {
 /* Your styles go here */
 .main {
   display: flex;
-  flex-direction: row;
+  flex-direction: column;
   justify-content: space-between;
   align-items: center;
   margin: 0 10%;
+}
+
+.add-gameobjects {
+  width: 100%;
+  margin-top: 10%;
+  margin-bottom: 20%;
+}
+
+.form-container {
+  .heading {
+    margin: 10% 0 0;
+  }
+
+  .category-label {
+    margin: 3% 0;
+  }
+
+  input {
+    margin-top: 5%;
+    width: 80%;
+  }
+
+  width: 50%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.add-button {
+  text-align: center;
+}
+
+.hide {
+  display: none !important;
+}
+
+.add-form {
+  display: flex;
+  font-size: .5rem;
+  justify-content: space-between;
 }
 
 .answers-container {
@@ -186,7 +254,6 @@ onMounted(() => {
   align-items: left;
   margin: 0 10%;
 }
-
 
 .heading {
   font-size: 30px;
