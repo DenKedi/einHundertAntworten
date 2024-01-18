@@ -7,25 +7,26 @@ import { useGameStore } from '@/stores/game';
 import type { UserProfile } from '@/stores/auth';
 //Setup on mounted
 onMounted(async () => {
-    try{
-        console.log(getRandomAnswer());
-  const response = await fetch('http://localhost:8080/', {
-    headers: {
-      Authorization: `Bearer ${token}`,
-    },
-  });
-  if (response.status === 401) {
-    auth.logout();
-  }
-  if (response.status === 200) {
-    game.getAnswers();
-    game.getQuestions();
-    startNewGame();
-  }
-}catch(error){
+  try {
+    console.log(getRandomAnswer());
+    const response = await fetch('http://localhost:8080/', {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
+    if (response.status === 401) {
+      auth.logout();
+    }
+    if (response.status === 200) {
+      game.getAnswers();
+      game.getQuestions();
+      startNewGame();
+    }
+  } catch (error) {
     console.log(error);
-}
+  }
 });
+
 
   
 
@@ -37,7 +38,7 @@ var storedQuestions = localStorage.getItem('questions');
 var storedAnswers = localStorage.getItem('answers');
 var questions = ref<Question[]>(storedQuestions ? JSON.parse(storedQuestions) : []);
 var answers = ref<Answer[]>(storedAnswers ? JSON.parse(storedAnswers) : []);
-var currentGameObject: GameObject;
+var currentGameObject = ref<GameObject>(packRandomGameObject());
 var currentTurn = 1;
 const maxTurn = 10;
 var playerScore = 0;
@@ -72,6 +73,7 @@ type GameObject = {
 };
 
 //Sample Objects
+/*
 currentGameObject = {
   answer: {
     id: '1',
@@ -111,6 +113,7 @@ currentGameObject = {
     category: 'Bevölkerung',
   },
 };
+*/
 
 
 function getRandomAnswer(): Answer {
@@ -135,8 +138,8 @@ function getRandomFiller(answer: Answer): Question[] {
     fillerIDs.forEach(fillerID => {
       var filler = questions.value.find(question => question.id === fillerID);
       fillerQuestions.push(filler);
-      return fillerQuestions;
     });
+    return fillerQuestions;
   } catch (error) {
     return [];
   }
@@ -146,24 +149,24 @@ function getRandomMatch(answer: Answer): Question {
     answer.matches[Math.floor(Math.random() * answer.matches.length)];
   try {
     var question:Question = questions.value.find(question => question.id === matchID);
+    return question;
   } catch (error) {
     return { id: '', text: '', match: '', category: '' }; //Some other way of handling errors
   }
 }
 
-function packRandomGameObject(): GameObject {
-    
-  var answer:Answer = getRandomAnswer();
-  if(!answer){
+function packRandomGameObject(): GameObject | null {
+  var answer: Answer = getRandomAnswer();
+  if (!answer) {
     return null;
   }
   console.log(answer);
-  var filler:Question[] = getRandomFiller(answer);
-  var match:Question = getRandomMatch(answer);
+  var filler: Question[] = getRandomFiller(answer);
+  var match: Question = getRandomMatch(answer);
   var options = [match, filler[0], filler[1], filler[2]].sort(
     () => Math.random() - 0.5
   );
-  var go = {
+  var go: GameObject = {
     answer: answer,
     optionA: options[0],
     optionB: options[1],
@@ -172,37 +175,27 @@ function packRandomGameObject(): GameObject {
     correctOption: match,
   };
 
-  document.getElementById('OptionA').id = go.optionA.id;
-  document.getElementById('OptionB').id = go.optionB.id;
-  document.getElementById('OptionC').id = go.optionC.id;
-  document.getElementById('OptionD').id = go.optionD.id;
-
-  return go;
+   return go;
 }
 
+// ... rest of the code ...
 
-
-/*To Delete?
-function getRandomQuestion():Question{
-    return questions.value[Math.floor(Math.random() * questions.value.length)];
-}
-*/
 
 function startNewGame() {
     resetScoreModal();
     closeOptionModal();
-    //resetOptionBackground();
     nextTurn();
 }
 
 function nextTurn() {
-  currentGameObject = packRandomGameObject();
-    currentTurn++;
+  currentGameObject.value = packRandomGameObject();
+  console.log(currentGameObject);
+  currentTurn++;
 }
 
 
 function checkForAnswer() {
-  var matchingQuestionID = currentGameObject.correctOption.id; //bekommt die ID der richtigen Antwort
+  var matchingQuestionID = currentGameObject.value.correctOption.id; //bekommt die ID der richtigen Antwort
   var userSelection:HTMLInputElement = document.querySelector('input[type=radio]:checked'); //bekommt die ausgewählte Antwort
   if(!userSelection){
     document.getElementById('option-modal').style.display = "flex";
@@ -242,11 +235,28 @@ function handleNextQuestion() {
 
 //resettet alle hintergrund optionen zu null
 function resetOptionBackground() {
-    document.getElementById(currentGameObject.optionA.id).style.backgroundColor = '';
-    document.getElementById(currentGameObject.optionB.id).style.backgroundColor = '';
-    document.getElementById(currentGameObject.optionC.id).style.backgroundColor = '';
-    document.getElementById(currentGameObject.optionD.id).style.backgroundColor = '';
+  var maxAttempts = 100;
+  var delay = 200; // 200 milliseconds delay between attempts
+
+  function tryReset() {
+    try {
+      document.getElementById(currentGameObject.value.optionA.id).style.backgroundColor = '';
+      document.getElementById(currentGameObject.value.optionB.id).style.backgroundColor = '';
+      document.getElementById(currentGameObject.value.optionC.id).style.backgroundColor = '';
+      document.getElementById(currentGameObject.value.optionD.id).style.backgroundColor = '';
+    } catch (error) {
+      // If an error occurs, retry until maxAttempts is reached
+      if (maxAttempts > 0) {
+        setTimeout(tryReset, delay);
+        maxAttempts--;
+      }
+    }
+  }
+
+  // Start the first attempt
+  tryReset();
 }
+
 
 // resettet alle radio buttons für die nächste frage
 function unCheckRadioButtons() {
@@ -293,7 +303,6 @@ function resetScoreModal() {
   remark = '';
   remarkColor = '';
   playerGrade = 0;
-  currentGameObject = null;
   document.getElementById('score-modal').style.display = 'none';
 }
 
@@ -302,7 +311,18 @@ function closeOptionModal() {
   document.getElementById('option-modal').style.display = 'none';
 }
 
+function getCurrentGameObject() {
+  return currentGameObject;
+}
 
+// Expose the function globally for testing purposes
+declare global {
+  interface Window {
+    getCurrentGameObject: () => ReturnType<typeof getCurrentGameObject>;
+  }
+}
+
+window.getCurrentGameObject = getCurrentGameObject;
 </script>
 
 <template>
@@ -339,7 +359,7 @@ function closeOptionModal() {
       </div>
 
       <div class="game-question-container">
-        <h1 id="display-question">{{ currentGameObject.answer.text }}</h1>
+        <h1 id="display-question">{{ currentGameObject ? currentGameObject.answer.text : 'Loading...' }}</h1>
       </div>
 
       <!--wenn man auf weiter geht ohne eine Antwort auszuwählen-->
@@ -364,8 +384,10 @@ function closeOptionModal() {
             class="radio"
             value="optionA"
           />
-          <label for="optionA" class="option optionA-label" :id="currentGameObject.optionA.id">{{ currentGameObject.optionA.text }}</label>
-        </span>
+          <label for="optionA" class="option optionA-label" :id="currentGameObject ? currentGameObject.optionA.id : ''">
+    {{ currentGameObject ? currentGameObject.optionA.text : 'Loading...' }}
+</label>
+ </span>
 
         <span>
           <input
@@ -375,8 +397,10 @@ function closeOptionModal() {
             class="radio"
             value="optionB"
           />
-          <label for="optionB" class="option optionB-label" :id="currentGameObject.optionB.id">{{ currentGameObject.optionB.text }}</label>
-        </span>
+          <label for="optionB" class="option optionB-label" :id="currentGameObject ? currentGameObject.optionB.id : ''">
+    {{ currentGameObject ? currentGameObject.optionB.text : 'Loading...' }}
+</label>
+  </span>
 
         <span>
           <input
@@ -386,8 +410,10 @@ function closeOptionModal() {
             class="radio"
             value="optionC"
           />
-          <label for="optionC" class="option optionC-label" :id="currentGameObject.optionC.id">{{ currentGameObject.optionC.text }}</label>
-        </span>
+          <label for="optionC" class="option optionC-label" :id="currentGameObject ? currentGameObject.optionC.id : ''">
+    {{ currentGameObject ? currentGameObject.optionC.text : 'Loading...' }}
+</label>
+  </span>
 
         <span>
           <input
@@ -397,8 +423,10 @@ function closeOptionModal() {
             class="radio"
             value="optionD"
           />
-          <label for="optionD" class="option optionD-label" :id="currentGameObject.optionD.id">{{ currentGameObject.optionD.text }}</label>
-        </span>
+          <label for="optionD" class="option optionD-label" :id="currentGameObject ? currentGameObject.optionD.id : ''">
+    {{ currentGameObject ? currentGameObject.optionD.text : 'Loading...' }}
+</label>
+   </span>
       </div>
 
       <div class="next-button-container">
