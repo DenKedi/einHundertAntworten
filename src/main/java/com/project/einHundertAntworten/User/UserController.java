@@ -137,6 +137,24 @@ public class UserController {
                 return new ResponseEntity<>(null, HttpStatus.NOT_FOUND);
             }
         }
+        @PutMapping("/updateUser/{userID}")
+        public ResponseEntity<UserProfile> updateUserProfile(@PathVariable String userID, @RequestBody UserProfile userProfile) {
+            Optional<UserProfile> userProfileDB = userProfileRepository.findById(userID);
+
+            if (userProfileDB.isPresent()) {
+                UserProfile profile = userProfileDB.get();
+                profile.setScore(userProfile.getScore());
+                profile.setGamesPlayed(userProfile.getGamesPlayed());
+                userProfileRepository.save(profile);
+                // Return a single user in a list
+                return new ResponseEntity<>(profile, HttpStatus.OK);
+            } else {
+                // User not found
+                return new ResponseEntity<>(null, HttpStatus.NOT_FOUND);
+            }
+
+        }
+
 
     @GetMapping("/getall")
         public List<User> getAllUsers (@RequestHeader("Authorization") String authorizationHeader){
