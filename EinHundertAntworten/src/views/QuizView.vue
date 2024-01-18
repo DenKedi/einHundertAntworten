@@ -7,27 +7,25 @@ import { useGameStore } from '@/stores/game';
 import type { UserProfile } from '@/stores/auth';
 //Setup on mounted
 onMounted(async () => {
-    try{
-        console.log(getRandomAnswer());
-  const response = await fetch('http://localhost:8080/', {
-    headers: {
-      Authorization: `Bearer ${token}`,
-    },
-  });
-  if (response.status === 401) {
-    auth.logout();
-  }
-  if (response.status === 200) {
-    game.getAnswers();
-    game.getQuestions();
-    startNewGame();
-  }
-}catch(error){
+  try {
+    console.log(getRandomAnswer());
+    const response = await fetch('http://localhost:8080/', {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
+    if (response.status === 401) {
+      auth.logout();
+    }
+    if (response.status === 200) {
+      game.getAnswers();
+      game.getQuestions();
+      startNewGame();
+    }
+  } catch (error) {
     console.log(error);
-}
+  }
 });
-
-  
 
 // Constants and Variables
 const auth = useAuthStore();
@@ -35,16 +33,18 @@ const game = useGameStore();
 const token = auth.token;
 var storedQuestions = localStorage.getItem('questions');
 var storedAnswers = localStorage.getItem('answers');
-var questions = ref<Question[]>(storedQuestions ? JSON.parse(storedQuestions) : []);
+var questions = ref<Question[]>(
+  storedQuestions ? JSON.parse(storedQuestions) : []
+);
 var answers = ref<Answer[]>(storedAnswers ? JSON.parse(storedAnswers) : []);
-var currentGameObject: GameObject;
-var currentTurn = 1;
+var currentGameObject = ref<GameObject>(packRandomGameObject());
+var currentTurn = ref(0);
 const maxTurn = 10;
-var playerScore = 0;
-var wrongAttempt = 0;
+var playerScore = ref(0);
+var wrongAttempt = ref(0);
 var remark = '';
 var remarkColor = '';
-var playerGrade = 0;
+var playerGrade = ref(0);
 
 //Types und Interfaces
 interface Answer {
@@ -72,6 +72,7 @@ type GameObject = {
 };
 
 //Sample Objects
+/*
 currentGameObject = {
   answer: {
     id: '1',
@@ -111,13 +112,14 @@ currentGameObject = {
     category: 'Bevölkerung',
   },
 };
-
+*/
 
 function getRandomAnswer(): Answer {
-    var answer:Answer = answers.value[Math.floor(Math.random() * answers.value.length)];
-    if (answer.matches.length <= 1 && answer.filler.length <= 3) {
-        return answer;
-    }
+  var answer: Answer =
+    answers.value[Math.floor(Math.random() * answers.value.length)];
+  if (answer.matches.length <= 1 && answer.filler.length <= 3) {
+    return answer;
+  }
   return null;
 }
 
@@ -135,8 +137,8 @@ function getRandomFiller(answer: Answer): Question[] {
     fillerIDs.forEach(fillerID => {
       var filler = questions.value.find(question => question.id === fillerID);
       fillerQuestions.push(filler);
-      return fillerQuestions;
     });
+    return fillerQuestions;
   } catch (error) {
     return [];
   }
@@ -145,25 +147,27 @@ function getRandomMatch(answer: Answer): Question {
   var matchID: string =
     answer.matches[Math.floor(Math.random() * answer.matches.length)];
   try {
-    var question:Question = questions.value.find(question => question.id === matchID);
+    var question: Question = questions.value.find(
+      question => question.id === matchID
+    );
+    return question;
   } catch (error) {
     return { id: '', text: '', match: '', category: '' }; //Some other way of handling errors
   }
 }
 
-function packRandomGameObject(): GameObject {
-    
-  var answer:Answer = getRandomAnswer();
-  if(!answer){
+function packRandomGameObject(): GameObject | null {
+  var answer: Answer = getRandomAnswer();
+  if (!answer) {
     return null;
   }
   console.log(answer);
-  var filler:Question[] = getRandomFiller(answer);
-  var match:Question = getRandomMatch(answer);
+  var filler: Question[] = getRandomFiller(answer);
+  var match: Question = getRandomMatch(answer);
   var options = [match, filler[0], filler[1], filler[2]].sort(
     () => Math.random() - 0.5
   );
-  var go = {
+  var go: GameObject = {
     answer: answer,
     optionA: options[0],
     optionB: options[1],
@@ -172,52 +176,46 @@ function packRandomGameObject(): GameObject {
     correctOption: match,
   };
 
-  document.getElementById('OptionA').id = go.optionA.id;
-  document.getElementById('OptionB').id = go.optionB.id;
-  document.getElementById('OptionC').id = go.optionC.id;
-  document.getElementById('OptionD').id = go.optionD.id;
-
   return go;
 }
 
-
-
-/*To Delete?
-function getRandomQuestion():Question{
-    return questions.value[Math.floor(Math.random() * questions.value.length)];
-}
-*/
+// ... rest of the code ...
 
 function startNewGame() {
-    resetScoreModal();
-    closeOptionModal();
-    //resetOptionBackground();
-    nextTurn();
+  resetScoreModal();
+  closeOptionModal();
+  nextTurn();
 }
 
 function nextTurn() {
-  currentGameObject = packRandomGameObject();
-    currentTurn++;
+  currentGameObject.value = packRandomGameObject();
+  if (currentGameObject.value == null) {
+    return nextTurn();
+  }
+  console.log(currentGameObject);
+  currentTurn.value++;
 }
 
-
 function checkForAnswer() {
-  var matchingQuestionID = currentGameObject.correctOption.id; //bekommt die ID der richtigen Antwort
-  var userSelection:HTMLInputElement = document.querySelector('input[type=radio]:checked'); //bekommt die ausgewählte Antwort
-  if(!userSelection){
-    document.getElementById('option-modal').style.display = "flex";
+  var matchingQuestionID = currentGameObject.value.correctOption.id; //bekommt die ID der richtigen Antwort
+  var userSelection: HTMLInputElement = document.querySelector(
+    'input[type=radio]:checked'
+  ); //bekommt die ausgewählte Antwort
+  if (!userSelection) {
+    document.getElementById('option-modal').style.display = 'flex';
     return false;
-  };
+  }
   var selectionID = userSelection.nextElementSibling.id; //bekommt die ID der ausgewählten Antwort
-  
-  if(selectionID === matchingQuestionID){
-    document.getElementById(selectionID).style.backgroundColor = '#6fff18';  
-    playerScore++;
+
+  if (selectionID === matchingQuestionID) {
+    document.getElementById(selectionID).style.backgroundColor = '#6fff18';
+    playerScore.value++;
     return true;
-  } else{
+  } else {
     document.getElementById(selectionID).style.backgroundColor = '#f12727';
-    document.getElementById(matchingQuestionID).style.backgroundColor = '#6fff18';
-    wrongAttempt++;
+    document.getElementById(matchingQuestionID).style.backgroundColor =
+      '#6fff18';
+    wrongAttempt.value++;
     return true;
   }
 }
@@ -230,7 +228,7 @@ function handleNextQuestion() {
   unCheckRadioButtons();
   //verzögert die Frage um eine Sekunde, um es smoother zu gestalten
   setTimeout(() => {
-    if (currentTurn != 11) {
+    if (currentTurn.value < 10) {
       //erzeugt die nächste Frage, wenn der Index nicht höher als neun ist - 10 Fragen insgesamt
       nextTurn();
     } else {
@@ -242,16 +240,43 @@ function handleNextQuestion() {
 
 //resettet alle hintergrund optionen zu null
 function resetOptionBackground() {
-    document.getElementById(currentGameObject.optionA.id).style.backgroundColor = '';
-    document.getElementById(currentGameObject.optionB.id).style.backgroundColor = '';
-    document.getElementById(currentGameObject.optionC.id).style.backgroundColor = '';
-    document.getElementById(currentGameObject.optionD.id).style.backgroundColor = '';
+  var maxAttempts = 100;
+  var delay = 200; // 200 milliseconds delay between attempts
+
+  function tryReset() {
+    try {
+      document.getElementById(
+        currentGameObject.value.optionA.id
+      ).style.backgroundColor = '';
+      document.getElementById(
+        currentGameObject.value.optionB.id
+      ).style.backgroundColor = '';
+      document.getElementById(
+        currentGameObject.value.optionC.id
+      ).style.backgroundColor = '';
+      document.getElementById(
+        currentGameObject.value.optionD.id
+      ).style.backgroundColor = '';
+    } catch (error) {
+      // If an error occurs, retry until maxAttempts is reached
+      if (maxAttempts > 0) {
+        setTimeout(tryReset, delay);
+        maxAttempts--;
+      }
+    }
+  }
+
+  // Start the first attempt
+  tryReset();
 }
 
 // resettet alle radio buttons für die nächste frage
 function unCheckRadioButtons() {
-const optionsNodeList: NodeListOf<HTMLElement> = document.getElementsByName('option');
-const options: HTMLInputElement[] = Array.from(optionsNodeList) as HTMLInputElement[];
+  const optionsNodeList: NodeListOf<HTMLElement> =
+    document.getElementsByName('option');
+  const options: HTMLInputElement[] = Array.from(
+    optionsNodeList
+  ) as HTMLInputElement[];
   for (let i = 0; i < options.length; i++) {
     options[i].checked = false;
   }
@@ -259,41 +284,42 @@ const options: HTMLInputElement[] = Array.from(optionsNodeList) as HTMLInputElem
 
 //wenn alle Fragen fertig beantwortet sind:
 function handleEndGame() {
-  
   // checkt die Antworten und gibt farbiges Feedback :)
-  if (playerScore <= 3) {
+  if (playerScore.value <= 3) {
     remark = 'ähm ja das war schlecht...';
     remarkColor = '#f12727';
-  } else if (playerScore >= 4 && playerScore < 8) {
+  } else if (playerScore.value >= 4 && playerScore.value < 8) {
     remark = 'ach komm das kannst du besser!';
     remarkColor = '#ff7520';
-  } else if (playerScore >= 8) {
+  } else if (playerScore.value >= 8) {
     remark = 'Supi gemacht!';
     remarkColor = '#6fff18';
   }
-  playerGrade = (playerScore / 10) * 100;
+  console.log("Player Score:", playerScore);
+  playerGrade.value = (playerScore.value / 10) * 100;
+  console.log("Player Grade:", playerGrade);
+
 
   //für die Anzeige des score boards
   document.getElementById('remarks').style.color = remarkColor;
   document.getElementById('score-modal').style.display = 'flex';
 
   //Saving Data for User
-    var user = auth.user;
-    var userProfile:UserProfile = auth.userProfile;
-    userProfile.gamesPlayed++;
-    userProfile.score += playerScore;
-    auth.updateUserProfile(token, userProfile, user.id);    
+  var user = auth.user;
+  var userProfile: UserProfile = auth.userProfile;
+  userProfile.gamesPlayed++;
+  userProfile.score += playerScore.value;
+  auth.updateUserProfile(token, userProfile, user.id);
 }
 
 //resettet das Spiel, mischt wieder die Fragen und schließt natürlich das Score board
 function resetScoreModal() {
-  currentTurn = 1;
-  playerScore = 0;
-  wrongAttempt = 0;
+  currentTurn.value = 0;
+  playerScore.value = 0;
+  wrongAttempt.value = 0;
   remark = '';
   remarkColor = '';
-  playerGrade = 0;
-  currentGameObject = null;
+  playerGrade.value = 0;
   document.getElementById('score-modal').style.display = 'none';
 }
 
@@ -302,7 +328,18 @@ function closeOptionModal() {
   document.getElementById('option-modal').style.display = 'none';
 }
 
+function getCurrentGameObject() {
+  return currentGameObject;
+}
 
+// Expose the function globally for testing purposes
+declare global {
+  interface Window {
+    getCurrentGameObject: () => ReturnType<typeof getCurrentGameObject>;
+  }
+}
+
+window.getCurrentGameObject = getCurrentGameObject;
 </script>
 
 <template>
@@ -316,10 +353,20 @@ function closeOptionModal() {
 
         <div class="grade-details">
           <p>Anzahl der Fragen : {{ maxTurn }}</p>
-          <p>Falsche Antworten : {{ wrongAttempt }}<span id="wrong-answers"></span></p>
-          <p>Richtige Antworten : {{ playerScore }}<span id="right-answers"></span></p>
-          <p>Prozent : {{ playerGrade }}%<span id="grade-percentage"></span>%</p>
-          <p><span id="remarks">{{ remark }}</span></p>
+          <p>
+            Falsche Antworten : {{ wrongAttempt
+            }}<span id="wrong-answers"></span>
+          </p>
+          <p>
+            Richtige Antworten : {{ playerScore
+            }}<span id="right-answers"></span>
+          </p>
+          <p>
+            Prozent : {{ playerGrade }}%<span id="grade-percentage"></span>
+          </p>
+          <p>
+            <span id="remarks">{{ remark }}</span>
+          </p>
         </div>
         <div class="modal-button-container">
           <button @click="startNewGame">ich will noch einmal</button>
@@ -334,12 +381,20 @@ function closeOptionModal() {
     <!--Spieloberfläche-->
     <div class="game-quiz-container">
       <div class="game-details-container">
-        <h1>Score : {{ playerScore }}<span id="player-score"></span> / {{maxTurn}}</h1>
-        <h1>Frage : {{ currentTurn }}<span id="question-number"></span> / {{maxTurn}}</h1>
+        <h1>
+          Score : {{ playerScore }}<span id="player-score"></span> /
+          {{ maxTurn }}
+        </h1>
+        <h1>
+          Frage : {{ currentTurn }}<span id="question-number"></span> /
+          {{ maxTurn }}
+        </h1>
       </div>
 
       <div class="game-question-container">
-        <h1 id="display-question">{{ currentGameObject.answer.text }}</h1>
+        <h1 id="display-question">
+          {{ currentGameObject ? currentGameObject.answer.text : 'Loading...' }}
+        </h1>
       </div>
 
       <!--wenn man auf weiter geht ohne eine Antwort auszuwählen-->
@@ -364,7 +419,15 @@ function closeOptionModal() {
             class="radio"
             value="optionA"
           />
-          <label for="optionA" class="option optionA-label" :id="currentGameObject.optionA.id">{{ currentGameObject.optionA.text }}</label>
+          <label
+            for="optionA"
+            class="option optionA-label"
+            :id="currentGameObject ? currentGameObject.optionA.id : ''"
+          >
+            {{
+              currentGameObject ? currentGameObject.optionA.text : 'Loading...'
+            }}
+          </label>
         </span>
 
         <span>
@@ -375,7 +438,15 @@ function closeOptionModal() {
             class="radio"
             value="optionB"
           />
-          <label for="optionB" class="option optionB-label" :id="currentGameObject.optionB.id">{{ currentGameObject.optionB.text }}</label>
+          <label
+            for="optionB"
+            class="option optionB-label"
+            :id="currentGameObject ? currentGameObject.optionB.id : ''"
+          >
+            {{
+              currentGameObject ? currentGameObject.optionB.text : 'Loading...'
+            }}
+          </label>
         </span>
 
         <span>
@@ -386,7 +457,15 @@ function closeOptionModal() {
             class="radio"
             value="optionC"
           />
-          <label for="optionC" class="option optionC-label" :id="currentGameObject.optionC.id">{{ currentGameObject.optionC.text }}</label>
+          <label
+            for="optionC"
+            class="option optionC-label"
+            :id="currentGameObject ? currentGameObject.optionC.id : ''"
+          >
+            {{
+              currentGameObject ? currentGameObject.optionC.text : 'Loading...'
+            }}
+          </label>
         </span>
 
         <span>
@@ -397,7 +476,15 @@ function closeOptionModal() {
             class="radio"
             value="optionD"
           />
-          <label for="optionD" class="option optionD-label" :id="currentGameObject.optionD.id">{{ currentGameObject.optionD.text }}</label>
+          <label
+            for="optionD"
+            class="option optionD-label"
+            :id="currentGameObject ? currentGameObject.optionD.id : ''"
+          >
+            {{
+              currentGameObject ? currentGameObject.optionD.text : 'Loading...'
+            }}
+          </label>
         </span>
       </div>
 
