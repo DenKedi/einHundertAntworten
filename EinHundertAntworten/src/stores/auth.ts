@@ -30,6 +30,7 @@ export const useAuthStore = defineStore({
         : '',
       userProfile: localStorage.getItem('userProfile') ? JSON.parse(localStorage.getItem('userProfile')!) : '',
       returnUrl: '/home',
+      logoutMessage: '',
     };
   },
   actions: {
@@ -110,6 +111,7 @@ export const useAuthStore = defineStore({
         'Content-Type': 'application/json',
         Authorization: 'Bearer ' + bearer,
       },
+      body: JSON.stringify(userProfile)
     });
     const data = await response.json() as UserProfile;
     if (response.ok) {
@@ -149,6 +151,7 @@ export const useAuthStore = defineStore({
       this.userID = '';
       this.role = '';
       this.userProfile = '';
+      this.logoutMessage = 'Sie wurden erfolgreich abgemeldet.'; // Setzen Sie die Logout-Nachricht
       localStorage.removeItem('user');
       localStorage.removeItem('token');
       localStorage.removeItem('userID');
