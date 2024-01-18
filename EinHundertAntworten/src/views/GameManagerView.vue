@@ -90,6 +90,7 @@ async function fillTable(id: string) {
   */
   console.log("entered");
   var table = $('#tableBody').get(0);
+  table.innerHTML = '<tr></tr>';
   var answer = answers.value.find(answer => answer.id === id);
   var fillerIDs = [];
   var matchesIDs = [];
@@ -120,11 +121,18 @@ async function fillTable(id: string) {
     length = matches.length;
   }
   for (let i = 0; i < length; i++) {
+    console.log(matches);
     var row = table.insertRow();
     var cell1 = row.insertCell();
     var cell2 = row.insertCell();
-    cell1.innerHTML = matches[i].text;
-    cell2.innerHTML = filler[i].text;
+    if(matches[i] != undefined){
+      cell1.innerHTML = matches[i].text;
+    }
+    if (filler[i] != undefined){
+      cell2.innerHTML = filler[i].text;
+    }
+    
+    
   }
 
 
@@ -148,14 +156,13 @@ onMounted(() => {
       <table>
         <thead>
           <tr>
-            <th>Filler</th>
             <th>Matches</th>
+            <th>Filler</th>
           </tr>
         </thead>
         <tbody id="tableBody">
           <tr>
-            <td class="fillerRow">Question 1</td>
-            <td class="matchesRow">Answer 1</td>
+            
           </tr>
         </tbody>
       </table>
@@ -251,7 +258,7 @@ onMounted(() => {
   display: flex;
   flex-direction: column;
   justify-content: space-between;
-  align-items: left;
+  align-items: flex-start;
   margin: 0 10%;
 }
 

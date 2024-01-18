@@ -188,6 +188,19 @@ function getRandomQuestion():Question{
 }
 */
 
+function startNewGame() {
+    resetScoreModal();
+    closeOptionModal();
+    //resetOptionBackground();
+    nextTurn();
+}
+
+function nextTurn() {
+  currentGameObject = packRandomGameObject();
+    currentTurn++;
+}
+
+
 function checkForAnswer() {
   var matchingQuestionID = currentGameObject.correctOption.id; //bekommt die ID der richtigen Antwort
   var userSelection:HTMLInputElement = document.querySelector('input[type=radio]:checked'); //bekommt die ausgewählte Antwort
@@ -208,10 +221,7 @@ function checkForAnswer() {
     return true;
   }
 }
-function nextTurn() {
-  currentGameObject = packRandomGameObject();
-    currentTurn++;
-}
+
 //nächste Frage button:
 function handleNextQuestion() {
   if (!checkForAnswer()) {
@@ -292,12 +302,6 @@ function closeOptionModal() {
   document.getElementById('option-modal').style.display = 'none';
 }
 
-function startNewGame() {
-    resetScoreModal();
-    closeOptionModal();
-    //resetOptionBackground();
-    nextTurn();
-}
 
 </script>
 
