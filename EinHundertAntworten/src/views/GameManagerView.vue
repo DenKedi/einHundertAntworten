@@ -82,6 +82,7 @@ async function addQuestion() {
 
   if (question != "") {
     await game.addQuestion(question, category);
+    game.getQuestions();
   }
 }
 
@@ -91,6 +92,7 @@ async function addAnswer() {
 
   if (answer != "") {
     await game.addAnswer(answer, category);
+    game.getAnswers();
   }
 }
 

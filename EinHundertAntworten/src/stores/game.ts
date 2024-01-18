@@ -70,7 +70,7 @@ export const useGameStore = defineStore({
     async addAnswer(answer: string, category: string): Promise<void> {
       const data = JSON.parse(`{"text":"${answer}", "category":"${category}"}`);
       console.log(data);
-      const response = await fetch('http://localhost:8080/game/createQuestion', {
+      const response = await fetch('http://localhost:8080/game/createAnswer', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -87,7 +87,7 @@ export const useGameStore = defineStore({
     async addQuestion(question: string, category: string): Promise<void> {
       const data = JSON.parse(`{"text":"${question}", "category":"${category}"}`);
       console.log(data)
-      const response = await fetch('http://localhost:8080/game/createAnswer', {
+      const response = await fetch('http://localhost:8080/game/createQuestion', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
