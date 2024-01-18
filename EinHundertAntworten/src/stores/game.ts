@@ -67,6 +67,41 @@ export const useGameStore = defineStore({
         return data.message.toString();
       }
     },
+    async addAnswer(answer: string, category: string): Promise<void> {
+      const data = JSON.parse(`{"text":"${answer}", "category":"${category}"}`);
+      console.log(data);
+      const response = await fetch('http://localhost:8080/game/createQuestion', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: 'Bearer ' + this.token,
+        },
+        body: data,
+      });
+      if (response.ok) {
+        // Update LocalStorage
+        // localStorage.removeItem('answers');
+        // localStorage.setItem('answers', JSON.stringify(this.answers));
+      }
+    },
+    async addQuestion(question: string, category: string): Promise<void> {
+      const data = JSON.parse(`{"text":"${question}", "category":"${category}"}`);
+      console.log(data)
+      const response = await fetch('http://localhost:8080/game/createAnswer', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: 'Bearer ' + this.token,
+        },
+        body: data,
+      });
+
+      if (response.ok) {
+        // Update localStorage
+        // localStorage.removeItem('answers');
+        // localStorage.setItem('answers', JSON.stringify(this.answers));
+      }
+    },
     async getQuestionById(id: string): Promise<Question> {
       const response = await fetch(
         'http://localhost:8080/game/getQuestion/' + id,

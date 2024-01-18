@@ -76,10 +76,38 @@ function addListeners() {
   }
 }
 
+async function addQuestion() {
+  let question = (document.getElementById('question-input') as HTMLInputElement).value;
+  let category = (document.getElementById('question-category') as HTMLSelectElement).value;
+
+  if (question != "") {
+    await game.addQuestion(question, category);
+  }
+}
+
+async function addAnswer() {
+  let answer = (document.getElementById('answer-input') as HTMLInputElement).value;
+  let category = (document.getElementById('answer-category') as HTMLSelectElement).value;
+
+  if (answer != "") {
+    await game.addAnswer(answer, category);
+  }
+}
+
 function addOpenInputListener() {
   let element = document.getElementsByClassName('add-question')[0];
   element.addEventListener('click', function () {
     document.getElementsByClassName('add-form')[0].classList.toggle('hide');
+  });
+
+  let questionButton = document.getElementsByClassName('add-question-button')[0];
+  questionButton.addEventListener('click', function () {
+    addQuestion();
+  });
+
+  let answerButton = document.getElementsByClassName('add-answer-button')[0];
+  answerButton.addEventListener('click', function () {
+    addAnswer();
   });
 }
 
@@ -125,18 +153,15 @@ async function fillTable(id: string) {
     var row = table.insertRow();
     var cell1 = row.insertCell();
     var cell2 = row.insertCell();
-    if(matches[i] != undefined){
+    if (matches[i] != undefined) {
       cell1.innerHTML = matches[i].text;
     }
-    if (filler[i] != undefined){
+    if (filler[i] != undefined) {
       cell2.innerHTML = filler[i].text;
     }
-    
-    
   }
-
-
 }
+
 onMounted(() => {
   printa();
   fillAnswers();
@@ -162,7 +187,7 @@ onMounted(() => {
         </thead>
         <tbody id="tableBody">
           <tr>
-            
+
           </tr>
         </tbody>
       </table>
@@ -170,13 +195,13 @@ onMounted(() => {
       <div class="add-gameobjects">
         <div class="add-button">
           <button class="add-question">
-            Add Question
+            Fragenset hinzufügen
           </button>
         </div>
 
-        <form class="add-form">
+        <form class="add-form hide">
           <div class="form-container">
-            <label class="heading" for="answer">Neue Antwort</label>
+            <label class="heading" for="answer-input">Neue Antwort</label>
             <label class="category-label" for="answer-category">Kategorie</label>
             <select name="answer-category" id="answer-category">
               <option value="person">Personen</option>
@@ -184,19 +209,19 @@ onMounted(() => {
               <option value="place">Orte</option>
             </select>
 
-            <input type="text" id="answer" name="" answer>
-            <button>hinzufügen</button>
+            <input type="text" id="answer-input" name="answer-input" required>
+            <button type='button' class="add-answer-button">hinzufügen</button>
           </div>
           <div class="form-container">
-            <label class="heading" for="question">Neue Frage</label>
+            <label class="heading" for="question-inut">Neue Frage</label>
             <label class="category-label" for="question-category">Kategorie</label>
             <select name="question-category" id="question-category">
               <option value="person">Personen</option>
               <option value="number">Zahlen</option>
               <option value="place">Orte</option>
             </select>
-            <input type="text" id="question" name="question">
-            <button>hinzufügen</button>
+            <input type="text" id="question-input" name="question-input">
+            <button type='button' class="add-question-button">hinzufügen</button>
           </div>
         </form>
       </div>
@@ -205,7 +230,6 @@ onMounted(() => {
 </template>
 
 <style>
-/* Your styles go here */
 .main {
   display: flex;
   flex-direction: column;
