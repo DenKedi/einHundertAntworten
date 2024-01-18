@@ -2,7 +2,7 @@
 import { useAuthStore } from '@/stores/auth';
 import { reactive } from 'vue';
 
-
+const auth = useAuthStore();
 const user = reactive({
     username: '',
     email: '',
@@ -100,6 +100,7 @@ function highlightInput(id: string) {
         }, 500);
     }
 
+
 </script>
 
 <template>
@@ -107,7 +108,9 @@ function highlightInput(id: string) {
     <div class="signup">
         <form id="registerForm" @submit.prevent="registerOnSubmit">
             <div class="formFrame">
+                
             <label for="go" aria-hidden="true">Registrieren</label>
+            
             <small id="usernameSmall"></small>
             <input id="registerUsernameInput" type="text" name="user" placeholder="Username" v-model="user.username">
             <small id="emailSmall"></small>
@@ -115,6 +118,7 @@ function highlightInput(id: string) {
             <small id="passwordSmall"></small>
             <input id="registerPasswordInput" type="password" name="pswd" placeholder="Password" v-model="user.password">
             <button class="buttonBig" type="submit">Registrieren</button>
+            <small v-if="auth.logoutMessage" class="logout-message">{{ auth.logoutMessage }}</small>
             </div>
             
         </form>
@@ -122,10 +126,12 @@ function highlightInput(id: string) {
     <div class="login">
         <form id="loginForm" @submit.prevent="loginOnSubmit">
             <label for="go" aria-hidden="true">Anmelden</label>
+            
             <small id="loginSmall"></small>
             <input id="loginUsermailInput" type="text" name="usermail" placeholder="Username/Email" v-model="user.username">
             <input id="loginPasswordInput" type="password" name="pswd" placeholder="Password" v-model="user.password">
             <button class="buttonBig" type="submit">Anmelden</button>
+            
         </form>
 
     </div>
