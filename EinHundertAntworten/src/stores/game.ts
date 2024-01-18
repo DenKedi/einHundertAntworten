@@ -78,10 +78,11 @@ export const useGameStore = defineStore({
         },
         body: data,
       });
+
       if (response.ok) {
-        // Update LocalStorage
-        // localStorage.removeItem('answers');
-        // localStorage.setItem('answers', JSON.stringify(this.answers));
+        console.log('Success');
+      } else {
+        console.log((await response.json()).message.toString());
       }
     },
     async addQuestion(question: string, category: string): Promise<void> {
@@ -97,9 +98,9 @@ export const useGameStore = defineStore({
       });
 
       if (response.ok) {
-        // Update localStorage
-        // localStorage.removeItem('answers');
-        // localStorage.setItem('answers', JSON.stringify(this.answers));
+        console.log('Success');
+      } else {
+        console.log((await response.json()).message.toString());
       }
     },
     async getQuestionById(id: string): Promise<Question> {
