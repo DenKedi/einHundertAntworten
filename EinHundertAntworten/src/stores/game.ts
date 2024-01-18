@@ -67,36 +67,30 @@ export const useGameStore = defineStore({
         return data.message.toString();
       }
     },
-    async addAnswer(answer: string, category: string): Promise<void> {
-      const data = JSON.parse(`{"text":"${answer}", "category":"${category}"}`);
-      console.log(data);
+    async addAnswer(text: string, category: string): Promise<void> {
       const response = await fetch('http://localhost:8080/game/createAnswer', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
           Authorization: 'Bearer ' + this.token,
         },
-        body: data,
+        body: JSON.stringify({ text, category }),
       });
-
       if (response.ok) {
         console.log('Success');
       } else {
         console.log((await response.json()).message.toString());
       }
     },
-    async addQuestion(question: string, category: string): Promise<void> {
-      const data = JSON.parse(`{"text":"${question}", "category":"${category}"}`);
-      console.log(data)
+    async addQuestion(text: string, category: string): Promise<void> {
       const response = await fetch('http://localhost:8080/game/createQuestion', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
           Authorization: 'Bearer ' + this.token,
         },
-        body: data,
+        body: JSON.stringify({ text, category }),
       });
-
       if (response.ok) {
         console.log('Success');
       } else {
