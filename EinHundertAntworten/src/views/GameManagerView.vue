@@ -71,25 +71,20 @@ function addListeners() {
   }
 }
 
-async function addQuestion() {
+async function addQuizSet() {
   let question = (document.getElementById('question-input') as HTMLInputElement).value;
-  let category = (document.getElementById('question-category') as HTMLSelectElement).value;
+  let answer = (document.getElementById('answer-input') as HTMLInputElement).value;
+  let category = (document.getElementById('category') as HTMLSelectElement).value;
 
-  if (question != "") {
-    await game.addQuestion(question, category);
-    game.getQuestions();
+  if (question != "" && answer != "") {
+    let questionId = await game.addQuestion(question, category);
+    let answerId = await game.addAnswer(answer, category);
   }
 }
 
-async function addAnswer() {
-  let answer = (document.getElementById('answer-input') as HTMLInputElement).value;
-  let category = (document.getElementById('answer-category') as HTMLSelectElement).value;
-
-  if (answer != "") {
-    await game.addAnswer(answer, category);
-    await game.getAnswers();
-    fillAnswers();
-  }
+async function clearAnswerContainer() {
+  let answerContainer = document.getElementById('answers');
+  answerContainer.innerHTML = '';
 }
 
 function addButtonListener() {
@@ -105,14 +100,9 @@ function addButtonListener() {
     }
   });
 
-  let questionButton = document.getElementsByClassName('add-question-button')[0];
-  questionButton.addEventListener('click', function () {
-    addQuestion();
-  });
-
-  let answerButton = document.getElementsByClassName('add-answer-button')[0];
-  answerButton.addEventListener('click', function () {
-    addAnswer();
+  let addQuizSetButton = document.getElementsByClassName('add-quizset-button')[0];
+  addQuizSetButton.addEventListener('click', function () {
+    addQuizSet();
   });
 }
 
@@ -204,27 +194,21 @@ onMounted(() => {
 
         <form class="add-form hide">
           <div class="form-container">
-            <label class="heading" for="answer-input">Neue Antwort</label>
-            <label class="category-label" for="answer-category">Kategorie</label>
-            <select name="answer-category" id="answer-category">
+            <h2 class="heading">Neues Quizpaar</h2>
+            <label class="category" for="category">Kategorie</label>
+            <select name="category" id="category">
               <option value="person">Personen</option>
               <option value="number">Zahlen</option>
               <option value="place">Orte</option>
             </select>
 
+            <label class="answer-label" for="answer-input">Antwort</label>
             <input type="text" id="answer-input" name="answer-input" required>
-            <button type='button' class="add-answer-button">hinzufügen</button>
-          </div>
-          <div class="form-container">
-            <label class="heading" for="question-inut">Neue Frage</label>
-            <label class="category-label" for="question-category">Kategorie</label>
-            <select name="question-category" id="question-category">
-              <option value="person">Personen</option>
-              <option value="number">Zahlen</option>
-              <option value="place">Orte</option>
-            </select>
-            <input type="text" id="question-input" name="question-input">
-            <button type='button' class="add-question-button">hinzufügen</button>
+
+            <label class="question-label" for="question-input">Frage</label>
+            <input type="text" id="question-input" name="question-input" required>
+
+            <button type='button' class="add-quizset-button">hinzufügen</button>
           </div>
         </form>
       </div>
@@ -262,18 +246,21 @@ onMounted(() => {
     .form-container {
       .heading {
         margin: 10% 0 0;
+        text-align: center;
       }
 
-      .category-label {
+      .answer-label,
+      .question-label,
+      .category {
         margin: 3% 0;
       }
 
       input {
-        margin-top: 5%;
+        margin-top: 0;
         width: 80%;
       }
 
-      width: 50%;
+      width: 100%;
       display: flex;
       flex-direction: column;
       align-items: center;

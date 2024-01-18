@@ -67,7 +67,7 @@ export const useGameStore = defineStore({
         return data.message.toString();
       }
     },
-    async addAnswer(text: string, category: string): Promise<void> {
+    async addAnswer(text: string, category: string): Promise<Answer> {
       const response = await fetch('http://localhost:8080/game/createAnswer', {
         method: 'POST',
         headers: {
@@ -76,13 +76,14 @@ export const useGameStore = defineStore({
         },
         body: JSON.stringify({ text, category }),
       });
+      const data = await response.json();
       if (response.ok) {
-        console.log('Success');
+        return data;
       } else {
-        console.log((await response.json()).message.toString());
+        return data.message.toString();
       }
     },
-    async addQuestion(text: string, category: string): Promise<void> {
+    async addQuestion(text: string, category: string): Promise<Question> {
       const response = await fetch('http://localhost:8080/game/createQuestion', {
         method: 'POST',
         headers: {
@@ -91,10 +92,11 @@ export const useGameStore = defineStore({
         },
         body: JSON.stringify({ text, category }),
       });
+      const data = await response.json();
       if (response.ok) {
-        console.log('Success');
+        return data;
       } else {
-        console.log((await response.json()).message.toString());
+        return data.message.toString();
       }
     },
     async getQuestionById(id: string): Promise<Question> {
