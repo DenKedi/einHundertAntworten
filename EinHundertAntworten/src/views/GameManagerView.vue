@@ -50,10 +50,6 @@ function printa() {
   game.getQuestions();
 }
 
-function expand(value: string) {
-  console.log(value);
-}
-
 function fillAnswers() {
   for (let i = 0; i < answers.value.length; i++) {
 
@@ -61,7 +57,6 @@ function fillAnswers() {
     const $answerDiv: HTMLElement = $(`<div class="answer" id="${answers.value[i].id}"><p>${answers.value[i].text}</p></div>`).appendTo('#answers');
 
     // Create the a tag and append it to the div element
-    // $(`<a @click="expand"><i class="fa-solid fa-square-plus"></i></a>`).appendTo($answerDiv);
     $(`<i class="fa-solid fa-square-plus answer-tag"></i>`).appendTo($answerDiv);
   }
 }
@@ -92,11 +87,12 @@ async function addAnswer() {
 
   if (answer != "") {
     await game.addAnswer(answer, category);
-    game.getAnswers();
+    await game.getAnswers();
+    fillAnswers();
   }
 }
 
-function addOpenInputListener() {
+function addButtonListener() {
   let element = document.getElementsByClassName('add-question')[0];
   element.addEventListener('click', function () {
     document.getElementsByClassName('add-form')[0].classList.toggle('hide');
@@ -168,7 +164,7 @@ onMounted(() => {
   printa();
   fillAnswers();
   addListeners();
-  addOpenInputListener();
+  addButtonListener();
 });
 
 </script>
@@ -188,9 +184,7 @@ onMounted(() => {
           </tr>
         </thead>
         <tbody id="tableBody">
-          <tr>
-
-          </tr>
+          <tr></tr>
         </tbody>
       </table>
 
@@ -244,40 +238,40 @@ onMounted(() => {
   width: 100%;
   margin-top: 10%;
   margin-bottom: 20%;
-}
 
-.form-container {
-  .heading {
-    margin: 10% 0 0;
+  .add-button {
+    text-align: center;
   }
 
-  .category-label {
-    margin: 3% 0;
+  .hide {
+    display: none !important;
   }
 
-  input {
-    margin-top: 5%;
-    width: 80%;
+  .add-form {
+    display: flex;
+    font-size: .5rem;
+    justify-content: space-between;
+
+    .form-container {
+      .heading {
+        margin: 10% 0 0;
+      }
+
+      .category-label {
+        margin: 3% 0;
+      }
+
+      input {
+        margin-top: 5%;
+        width: 80%;
+      }
+
+      width: 50%;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
   }
-
-  width: 50%;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-}
-
-.add-button {
-  text-align: center;
-}
-
-.hide {
-  display: none !important;
-}
-
-.add-form {
-  display: flex;
-  font-size: .5rem;
-  justify-content: space-between;
 }
 
 .answers-container {
@@ -319,7 +313,6 @@ onMounted(() => {
   /* Change this line */
   width: 100%;
 }
-
 
 table {
   width: 50%;
