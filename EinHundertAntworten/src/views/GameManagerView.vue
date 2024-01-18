@@ -93,9 +93,16 @@ async function addAnswer() {
 }
 
 function addButtonListener() {
-  let element = document.getElementsByClassName('add-question')[0];
+  let element = document.getElementsByClassName('add-question')[0] as HTMLButtonElement;
   element.addEventListener('click', function () {
-    document.getElementsByClassName('add-form')[0].classList.toggle('hide');
+    let form = document.getElementsByClassName('add-form')[0];
+    form.classList.toggle('hide');
+
+    if (form.classList.contains('hide')) {
+      element.innerText = "Fragenset hinzufügen";
+    } else {
+      element.innerText = "Formular verstecken";
+    }
   });
 
   let questionButton = document.getElementsByClassName('add-question-button')[0];
