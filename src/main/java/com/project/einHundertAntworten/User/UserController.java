@@ -15,8 +15,10 @@ import java.time.LocalDateTime;
 import java.util.*;
 
 @RestController
+@CrossOrigin(origins = "https://448adb6a.einhundertantworten.pages.dev")
 @RequestMapping("/user")
 public class UserController {
+
 
     @Autowired
     private UserRepository userRepository;

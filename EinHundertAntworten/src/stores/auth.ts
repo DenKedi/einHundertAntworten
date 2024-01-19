@@ -31,7 +31,7 @@ export const useAuthStore = defineStore({
       userProfile: localStorage.getItem('userProfile') ? JSON.parse(localStorage.getItem('userProfile')!) : '',
       returnUrl: '/home',
       logoutMessage: '',
-      SERVER_IP: '40.119.12.19',
+      SERVER_IP: '13.66.39.88',
     };
   },
   actions: {

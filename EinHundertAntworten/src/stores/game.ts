@@ -25,7 +25,7 @@ export const useGameStore = defineStore({
       token: localStorage.getItem('token')
         ? JSON.parse(localStorage.getItem('token')!)
         : '',
-        SERVER_IP: '40.119.12.19',
+        SERVER_IP: '13.66.39.88',
     };
   },
   actions: {
