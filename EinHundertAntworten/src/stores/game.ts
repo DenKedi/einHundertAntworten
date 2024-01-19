@@ -67,6 +67,38 @@ export const useGameStore = defineStore({
         return data.message.toString();
       }
     },
+    async addAnswer(text: string, category: string): Promise<Answer> {
+      const response = await fetch('http://localhost:8080/game/createAnswer', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: 'Bearer ' + this.token,
+        },
+        body: JSON.stringify({ text, category }),
+      });
+      const data = await response.json();
+      if (response.ok) {
+        return data;
+      } else {
+        return data.message.toString();
+      }
+    },
+    async addQuestion(text: string, category: string): Promise<Question> {
+      const response = await fetch('http://localhost:8080/game/createQuestion', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: 'Bearer ' + this.token,
+        },
+        body: JSON.stringify({ text, category }),
+      });
+      const data = await response.json();
+      if (response.ok) {
+        return data;
+      } else {
+        return data.message.toString();
+      }
+    },
     async getQuestionById(id: string): Promise<Question> {
       const response = await fetch(
         'http://localhost:8080/game/getQuestion/' + id,

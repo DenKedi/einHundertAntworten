@@ -7,18 +7,18 @@ import { useAuthStore } from '@/stores/auth';
 
 
 onMounted(async () => {
-    const response = await fetch('http://localhost:8080/', {
-        headers: {
-            'Authorization': `Bearer ${token}`
-        },
-    });
-    if (response.status === 401) {
-        auth.logout();
-    }
-    if (response.status === 200) {
-       game.getQuestions();
-       game.getAnswers();
-    }
+  const response = await fetch('http://localhost:8080/', {
+    headers: {
+      'Authorization': `Bearer ${token}`
+    },
+  });
+  if (response.status === 401) {
+    auth.logout();
+  }
+  if (response.status === 200) {
+    game.getQuestions();
+    game.getAnswers();
+  }
 });
 
 const auth = useAuthStore();
@@ -50,10 +50,6 @@ function printa() {
   game.getQuestions();
 }
 
-function expand(value: string) {
-  console.log(value);
-}
-
 function fillAnswers() {
   for (let i = 0; i < answers.value.length; i++) {
 
@@ -61,7 +57,6 @@ function fillAnswers() {
     const $answerDiv: HTMLElement = $(`<div class="answer" id="${answers.value[i].id}"><p>${answers.value[i].text}</p></div>`).appendTo('#answers');
 
     // Create the a tag and append it to the div element
-    // $(`<a @click="expand"><i class="fa-solid fa-square-plus"></i></a>`).appendTo($answerDiv);
     $(`<i class="fa-solid fa-square-plus answer-tag"></i>`).appendTo($answerDiv);
   }
 }
@@ -74,6 +69,41 @@ function addListeners() {
       fillTable(element.parentElement.id);
     });
   }
+}
+
+async function addQuizSet() {
+  let question = (document.getElementById('question-input') as HTMLInputElement).value;
+  let answer = (document.getElementById('answer-input') as HTMLInputElement).value;
+  let category = (document.getElementById('category') as HTMLSelectElement).value;
+
+  if (question != "" && answer != "") {
+    let questionId = await game.addQuestion(question, category);
+    let answerId = await game.addAnswer(answer, category);
+  }
+}
+
+async function clearAnswerContainer() {
+  let answerContainer = document.getElementById('answers');
+  answerContainer.innerHTML = '';
+}
+
+function addButtonListener() {
+  let element = document.getElementsByClassName('add-question')[0] as HTMLButtonElement;
+  element.addEventListener('click', function () {
+    let form = document.getElementsByClassName('add-form')[0];
+    form.classList.toggle('hide');
+
+    if (form.classList.contains('hide')) {
+      element.innerText = "Fragenset hinzufügen";
+    } else {
+      element.innerText = "Formular verstecken";
+    }
+  });
+
+  let addQuizSetButton = document.getElementsByClassName('add-quizset-button')[0];
+  addQuizSetButton.addEventListener('click', function () {
+    addQuizSet();
+  });
 }
 
 async function fillTable(id: string) {
@@ -118,22 +148,20 @@ async function fillTable(id: string) {
     var row = table.insertRow();
     var cell1 = row.insertCell();
     var cell2 = row.insertCell();
-    if(matches[i] != undefined){
+    if (matches[i] != undefined) {
       cell1.innerHTML = matches[i].text;
     }
-    if (filler[i] != undefined){
+    if (filler[i] != undefined) {
       cell2.innerHTML = filler[i].text;
     }
-    
-    
   }
-
-
 }
+
 onMounted(() => {
   printa();
   fillAnswers();
   addListeners();
+  addButtonListener();
 });
 
 </script>
@@ -153,23 +181,91 @@ onMounted(() => {
           </tr>
         </thead>
         <tbody id="tableBody">
-          <tr>
-            
-          </tr>
+          <tr></tr>
         </tbody>
       </table>
+
+      <div class="add-gameobjects">
+        <div class="add-button">
+          <button class="add-question">
+            Fragenset hinzufügen
+          </button>
+        </div>
+
+        <form class="add-form hide">
+          <div class="form-container">
+            <h2 class="heading">Neues Quizpaar</h2>
+            <label class="category" for="category">Kategorie</label>
+            <select name="category" id="category">
+              <option value="person">Personen</option>
+              <option value="number">Zahlen</option>
+              <option value="place">Orte</option>
+            </select>
+
+            <label class="answer-label" for="answer-input">Antwort</label>
+            <input type="text" id="answer-input" name="answer-input" required>
+
+            <label class="question-label" for="question-input">Frage</label>
+            <input type="text" id="question-input" name="question-input" required>
+
+            <button type='button' class="add-quizset-button">hinzufügen</button>
+          </div>
+        </form>
+      </div>
     </div>
   </div>
 </template>
 
 <style>
-/* Your styles go here */
 .main {
   display: flex;
-  flex-direction: row;
+  flex-direction: column;
   justify-content: space-between;
   align-items: center;
   margin: 0 10%;
+}
+
+.add-gameobjects {
+  width: 100%;
+  margin-top: 10%;
+  margin-bottom: 20%;
+
+  .add-button {
+    text-align: center;
+  }
+
+  .hide {
+    display: none !important;
+  }
+
+  .add-form {
+    display: flex;
+    font-size: .5rem;
+    justify-content: space-between;
+
+    .form-container {
+      .heading {
+        margin: 10% 0 0;
+        text-align: center;
+      }
+
+      .answer-label,
+      .question-label,
+      .category {
+        margin: 3% 0;
+      }
+
+      input {
+        margin-top: 0;
+        width: 80%;
+      }
+
+      width: 100%;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+  }
 }
 
 .answers-container {
@@ -179,7 +275,6 @@ onMounted(() => {
   align-items: flex-start;
   margin: 0 10%;
 }
-
 
 .heading {
   font-size: 30px;
@@ -212,7 +307,6 @@ onMounted(() => {
   /* Change this line */
   width: 100%;
 }
-
 
 table {
   width: 50%;
