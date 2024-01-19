@@ -31,7 +31,7 @@ export const useGameStore = defineStore({
   actions: {
     async getQuestions(): Promise<String> {
       const response = await fetch(
-        'http://localhost:8080/game/getAllQuestions',
+        'https://localhost:8080/game/getAllQuestions',
         {
           method: 'GET',
           headers: {
@@ -51,7 +51,7 @@ export const useGameStore = defineStore({
       }
     },
     async getAnswers(): Promise<String> {
-      const response = await fetch('http://localhost:8080/game/getAllAnswers', {
+      const response = await fetch('https://localhost:8080/game/getAllAnswers', {
         method: 'GET',
         headers: {
           'Content-Type': 'application/json',
@@ -69,7 +69,7 @@ export const useGameStore = defineStore({
       }
     },
     async addAnswer(text: string, category: string): Promise<Answer> {
-      const response = await fetch('http://localhost:8080/game/createAnswer', {
+      const response = await fetch('https://localhost:8080/game/createAnswer', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -85,7 +85,7 @@ export const useGameStore = defineStore({
       }
     },
     async addQuestion(text: string, category: string): Promise<Question> {
-      const response = await fetch('http://localhost:8080/game/createQuestion', {
+      const response = await fetch('https://localhost:8080/game/createQuestion', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

@@ -36,7 +36,7 @@ export const useAuthStore = defineStore({
   },
   actions: {
     async login(emailOrUsername: string, password: string) {
-      const response = await fetch(`http://${this.SERVER_IP}/user/login`, {
+      const response = await fetch(`https://${this.SERVER_IP}/user/login`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -63,7 +63,7 @@ export const useAuthStore = defineStore({
       }
     },
     async register(username: string, email: string, password: string) {
-      const response = await fetch(`http://${this.SERVER_IP}/user/register`, {
+      const response = await fetch(`https://${this.SERVER_IP}/user/register`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -90,7 +90,7 @@ export const useAuthStore = defineStore({
         return data.message.toString();
       }
     }, async getUserProfile(bearer: string, userID: string) {
-      const response = await fetch(`http://${this.SERVER_IP}/user/getUser/${userID}`, {
+      const response = await fetch(`https://${this.SERVER_IP}/user/getUser/${userID}`, {
         method: 'GET',
         headers: {
           'Content-Type': 'application/json',
@@ -106,7 +106,7 @@ export const useAuthStore = defineStore({
         console.log('error');
       }
     }, async updateUserProfile(bearer: string, userProfile: UserProfile, userID: string) {
-      const response = await fetch(`http://${this.SERVER_IP}/user/updateUser/${userID}`, {
+      const response = await fetch(`https://${this.SERVER_IP}/user/updateUser/${userID}`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
@@ -123,7 +123,7 @@ export const useAuthStore = defineStore({
       }
     },
     async getUserID(username: string, bearer: string) {
-      const url = new URL(`http://${this.SERVER_IP}/user/userID`);
+      const url = new URL(`https://${this.SERVER_IP}/user/userID`);
       url.searchParams.append('username', username);
 
       const response = await fetch(url.toString(), {
