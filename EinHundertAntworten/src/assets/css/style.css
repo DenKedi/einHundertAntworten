@@ -146,10 +146,9 @@ nav div {
 
 label {
   color: #000000;
-  font-size: 2.3em;
+  font-size: 1em;
   justify-content: center;
   display: flex;
-  margin: 60px;
   font-weight: bold;
   cursor: pointer;
   transition: 0.5s ease-in-out;
@@ -507,7 +506,7 @@ main {
 
 .game-question-container {
   width: 80%;
-  height: 13rem;
+  height: 17rem;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -516,14 +515,14 @@ main {
 }
 
 .game-question-container h1 {
-  font-size: 1.1rem;
+  font-size: 2rem;
   text-align: center;
   padding: 3px;
 }
 
 .game-options-container {
   width: 80%;
-  height: 12rem;
+  height: 15rem;
   display: flex;
   flex-wrap: wrap;
   align-items: center;
@@ -532,21 +531,24 @@ main {
 
 .game-options-container span {
   width: 45%;
-  height: 5rem;
+  height: 6rem;
   border: 2px solid darkgray;
   border-radius: 10px;
   overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 span label {
-  width: 100%;
+  width: 80%;
   height: 100%;
   display: flex;
   align-items: center;
   justify-content: center;
   cursor: pointer;
   transition: transform 0.3s;
-  font-weight: 600;
+  font-weight: 200;
   color: rgb(7, 7, 7);
   align-content: center;
 }
@@ -555,9 +557,10 @@ span label:hover {
 
   transform: scale(1.12);
   color: white;
+}
+span:hover {
   background: #7c7c7c;
 }
-
 input[type="radio"] {
   position: relative;
   display: none;
