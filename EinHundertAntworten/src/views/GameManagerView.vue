@@ -75,18 +75,15 @@ async function addQuizSet() {
 
   let hasAnswer = false;
   let hasQuestion = false;
+  var answerFound: Answer;
 
   answers.value.forEach(function (answer) {
     if (answerValue.value == answer.text) {
       hasAnswer = true;
+      answerFound = answer;
       return;
     }
   });
-
-  if (hasAnswer) {
-    messageElement.innerText = 'Die Antwort existiert bereits.';
-    return;
-  }
 
   questions.value.forEach(function (question) {
     if (questionValue.value == question.text) {
@@ -95,18 +92,20 @@ async function addQuizSet() {
     }
   });
 
+  if (hasAnswer){
+    messageElement.innerText = 'Eine Antwort kann viele Fragen haben ;)';
+  }
   if (hasQuestion) {
     messageElement.innerText = 'Die Frage existiert bereits.';
     return;
   }
 
   const question = await game.addQuestion(questionValue.value, category);
-  const answer = await game.addAnswer(answerValue.value, category);
 
   const matchesIds: string[] = [];
   matchesIds.push(question.id);
-  await game.addMatchToQuestion(question.id, answer.id);
-  await game.addMatchesToAnswer(answer.id, matchesIds, []);
+  await game.addMatchToQuestion(question.id, answerFound.id);
+  await game.addMatchesToAnswer(answerFound.id, matchesIds, []);
 
   if (!messageElement.classList.contains('success')) {
     messageElement.classList.add('success');
