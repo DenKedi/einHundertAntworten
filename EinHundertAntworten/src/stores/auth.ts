@@ -89,7 +89,6 @@ export const useAuthStore = defineStore({
         return data.message.toString();
       }
     }, async getUserProfile(bearer: string, userID: string) {
-<<<<<<< HEAD
       const response = await fetch(`http://localhost:8080/user/getUser/${userID}`, {
         method: 'GET',
         headers: {
@@ -112,6 +111,7 @@ export const useAuthStore = defineStore({
           'Content-Type': 'application/json',
           Authorization: 'Bearer ' + bearer,
         },
+        body: JSON.stringify(userProfile)
       });
       const data = await response.json() as UserProfile;
       if (response.ok) {
@@ -122,41 +122,6 @@ export const useAuthStore = defineStore({
         console.log('error');
       }
     },
-=======
-        const response = await fetch(`http://localhost:8080/user/getUser/${userID}`, {
-          method: 'GET',
-          headers: {
-            'Content-Type': 'application/json',
-            Authorization: 'Bearer ' + bearer,
-          },
-        });
-        const data = await response.json() as UserProfile;
-        if (response.ok) {
-          localStorage.setItem('userProfile', JSON.stringify(data));
-          this.userProfile = data;
-          return data;
-        } else {
-          console.log('error');
-    }
-  },async updateUserProfile(bearer: string, userProfile:UserProfile, userID: string) {
-    const response = await fetch(`http://localhost:8080/user/updateUser/${userID}`, {
-      method: 'PUT',
-      headers: {
-        'Content-Type': 'application/json',
-        Authorization: 'Bearer ' + bearer,
-      },
-      body: JSON.stringify(userProfile)
-    });
-    const data = await response.json() as UserProfile;
-    if (response.ok) {
-      localStorage.setItem('userProfile', JSON.stringify(data));
-      this.userProfile = data;
-      return response;
-    } else {
-      console.log('error');
-    }
-  },
->>>>>>> ed1c155e3ff0f74ba2078388a6eb27767ee5232e
     async getUserID(username: string, bearer: string) {
       const url = new URL('http://localhost:8080/user/userID');
       url.searchParams.append('username', username);

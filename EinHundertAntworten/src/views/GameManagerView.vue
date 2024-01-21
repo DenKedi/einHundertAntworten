@@ -72,13 +72,16 @@ function addListeners() {
 }
 
 async function addQuizSet() {
-  let question = (document.getElementById('question-input') as HTMLInputElement).value;
-  let answer = (document.getElementById('answer-input') as HTMLInputElement).value;
+  let questionValue = (document.getElementById('question-input') as HTMLInputElement).value;
+  let answerValue = (document.getElementById('answer-input') as HTMLInputElement).value;
   let category = (document.getElementById('category') as HTMLSelectElement).value;
 
-  if (question != "" && answer != "") {
-    let questionId = await game.addQuestion(question, category);
-    let answerId = await game.addAnswer(answer, category);
+  if (questionValue != "" && answerValue != "") {
+    let question = await game.addQuestion(questionValue, category);
+    let answer = await game.addAnswer(answerValue, category);
+
+    await game.addMatchToQuestion(question.id, answer.id);
+    // await game.addMatchesToAnswer(answer.id, question.id);
   }
 }
 
