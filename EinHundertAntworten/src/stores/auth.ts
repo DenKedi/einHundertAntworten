@@ -111,6 +111,7 @@ export const useAuthStore = defineStore({
           'Content-Type': 'application/json',
           Authorization: 'Bearer ' + bearer,
         },
+        body: JSON.stringify(userProfile)
       });
       const data = await response.json() as UserProfile;
       if (response.ok) {

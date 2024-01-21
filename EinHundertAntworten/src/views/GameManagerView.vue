@@ -5,7 +5,6 @@ import $ from 'jquery';
 import { ref, onMounted } from 'vue';
 import { useAuthStore } from '@/stores/auth';
 
-
 onMounted(async () => {
   const response = await fetch('http://localhost:8080/', {
     headers: {
@@ -24,11 +23,10 @@ onMounted(async () => {
 const auth = useAuthStore();
 const game = useGameStore();
 const token = auth.token;
-var storedQuestions = localStorage.getItem('questions');
-var storedAnswers = localStorage.getItem('answers');
-var questions = ref<Question[]>(storedQuestions ? JSON.parse(storedQuestions) : []);
-var answers = ref<Answer[]>(storedAnswers ? JSON.parse(storedAnswers) : []);
-
+let storedQuestions = localStorage.getItem('questions');
+let storedAnswers = localStorage.getItem('answers');
+let questions = ref<Question[]>(storedQuestions ? JSON.parse(storedQuestions) : []);
+let answers = ref<Answer[]>(storedAnswers ? JSON.parse(storedAnswers) : []);
 
 interface Answer {
   id: string;
@@ -45,11 +43,6 @@ interface Question {
   category: string
 }
 
-function printa() {
-  game.getAnswers();
-  game.getQuestions();
-}
-
 function fillAnswers() {
   for (let i = 0; i < answers.value.length; i++) {
 
@@ -59,11 +52,8 @@ function fillAnswers() {
     // Create the a tag and append it to the div element
     $(`<i class="fa-solid fa-square-plus answer-tag"></i>`).appendTo($answerDiv);
   }
-}
 
-function addListeners() {
   let elements = document.getElementsByClassName('answer-tag');
-
   for (let element of elements) {
     element.addEventListener('click', function () {
       fillTable(element.parentElement.id);
@@ -72,14 +62,62 @@ function addListeners() {
 }
 
 async function addQuizSet() {
-  let question = (document.getElementById('question-input') as HTMLInputElement).value;
-  let answer = (document.getElementById('answer-input') as HTMLInputElement).value;
-  let category = (document.getElementById('category') as HTMLSelectElement).value;
+  const questionValue = (document.getElementById('question-input') as HTMLInputElement);
+  const answerValue = (document.getElementById('answer-input') as HTMLInputElement);
+  const category = (document.getElementById('category') as HTMLSelectElement).value;
+  const messageElement = (document.getElementsByClassName('message'))[0] as HTMLParagraphElement;
+  messageElement.classList.remove('success');
 
-  if (question != "" && answer != "") {
-    let questionId = await game.addQuestion(question, category);
-    let answerId = await game.addAnswer(answer, category);
+  if (questionValue.value == '' || answerValue.value == '') {
+    messageElement.innerText = 'Bitte füllen Sie alle Felder aus.'
+    return;
   }
+
+  let hasAnswer = false;
+  let hasQuestion = false;
+  var answerFound: Answer;
+
+  answers.value.forEach(function (answer) {
+    if (answerValue.value == answer.text) {
+      hasAnswer = true;
+      answerFound = answer;
+      return;
+    }
+  });
+
+  questions.value.forEach(function (question) {
+    if (questionValue.value == question.text) {
+      hasAnswer = true;
+      return;
+    }
+  });
+
+  if (hasAnswer){
+    messageElement.innerText = 'Eine Antwort kann viele Fragen haben ;)';
+  }
+  if (hasQuestion) {
+    messageElement.innerText = 'Die Frage existiert bereits.';
+    return;
+  }
+
+  const question = await game.addQuestion(questionValue.value, category);
+
+  const matchesIds: string[] = [];
+  matchesIds.push(question.id);
+  await game.addMatchToQuestion(question.id, answerFound.id);
+  await game.addMatchesToAnswer(answerFound.id, matchesIds, []);
+
+  if (!messageElement.classList.contains('success')) {
+    messageElement.classList.add('success');
+  }
+
+  messageElement.innerText = 'Quizset erfolgreich angelegt.';
+  questionValue.value = '';
+  answerValue.value = '';
+
+  await clearAnswerContainer();
+  await getGameobjects();
+  fillAnswers();
 }
 
 async function clearAnswerContainer() {
@@ -106,17 +144,21 @@ function addButtonListener() {
   });
 }
 
+async function getGameobjects() {
+  await game.getQuestions();
+  await game.getAnswers();
+  storedQuestions = localStorage.getItem('questions');
+  storedAnswers = localStorage.getItem('answers');
+  questions = ref<Question[]>(storedQuestions ? JSON.parse(storedQuestions) : []);
+  answers = ref<Answer[]>(storedAnswers ? JSON.parse(storedAnswers) : []);
+}
+
 async function fillTable(id: string) {
-  /*
-  var domElem = $(elem).get(0);
-  var answerID:string = domElem.id;
-  */
-  console.log("entered");
-  var table = $('#tableBody').get(0);
+  let table = $('#tableBody').get(0);
   table.innerHTML = '<tr></tr>';
-  var answer = answers.value.find(answer => answer.id === id);
-  var fillerIDs = [];
-  var matchesIDs = [];
+  let answer = answers.value.find(answer => answer.id === id);
+  let fillerIDs = [];
+  let matchesIDs = [];
 
   for (let i = 0; i < answer.filler.length; i++) {
     fillerIDs.push(answer.filler[i]);
@@ -124,8 +166,8 @@ async function fillTable(id: string) {
   for (let i = 0; i < answer.matches.length; i++) {
     matchesIDs.push(answer.matches[i]);
   }
-  var filler: Question[] = [];
-  var matches: Question[] = [];
+  let filler: Question[] = [];
+  let matches: Question[] = [];
 
   for (let i = 0; i < fillerIDs.length; i++) {
     if (fillerIDs[i] != '') {
@@ -137,7 +179,7 @@ async function fillTable(id: string) {
       matches.push(await game.getQuestionById(matchesIDs[i]));
     }
   }
-  var length;
+  let length;
   if (filler.length > matches.length) {
     length = filler.length;
   } else {
@@ -145,9 +187,9 @@ async function fillTable(id: string) {
   }
   for (let i = 0; i < length; i++) {
     console.log(matches);
-    var row = table.insertRow();
-    var cell1 = row.insertCell();
-    var cell2 = row.insertCell();
+    let row = table.insertRow();
+    let cell1 = row.insertCell();
+    let cell2 = row.insertCell();
     if (matches[i] != undefined) {
       cell1.innerHTML = matches[i].text;
     }
@@ -158,9 +200,8 @@ async function fillTable(id: string) {
 }
 
 onMounted(() => {
-  printa();
+  getGameobjects();
   fillAnswers();
-  addListeners();
   addButtonListener();
 });
 
@@ -201,13 +242,18 @@ onMounted(() => {
               <option value="number">Zahlen</option>
               <option value="place">Orte</option>
             </select>
-
-            <label class="answer-label" for="answer-input">Antwort</label>
-            <input type="text" id="answer-input" name="answer-input" required>
-
-            <label class="question-label" for="question-input">Frage</label>
-            <input type="text" id="question-input" name="question-input" required>
-
+            <div class="form">
+              <div class="form-element">
+                <label class="answer-label" for="answer-input">Antwort</label>
+                <input type="text" id="answer-input" name="answer-input" placeholder="Hamburg">
+              </div>
+              <div class="form-element">
+                <label class="question-label" for="question-input">Frage</label>
+                <input type="text" id="question-input" name="question-input" required
+                  placeholder="Wo steht die Elbphilharmonie?">
+              </div>
+            </div>
+            <p class="message"></p>
             <button type='button' class="add-quizset-button">hinzufügen</button>
           </div>
         </form>
@@ -223,6 +269,10 @@ onMounted(() => {
   justify-content: space-between;
   align-items: center;
   margin: 0 10%;
+}
+
+.success {
+  color: green !important;
 }
 
 .add-gameobjects {
@@ -249,15 +299,34 @@ onMounted(() => {
         text-align: center;
       }
 
+      .message {
+        font-size: 1rem;
+        color: red;
+      }
+
       .answer-label,
       .question-label,
       .category {
         margin: 3% 0;
       }
 
-      input {
-        margin-top: 0;
-        width: 80%;
+      .form {
+        margin: 5% 0 5% 0;
+        width: 100%;
+        display: flex;
+        justify-content: space-between;
+
+        .form-element {
+          display: flex;
+          flex-direction: column;
+          align-items: center;
+          width: 50%;
+        }
+
+        input {
+          margin: 0;
+          width: 80%;
+        }
       }
 
       width: 100%;
