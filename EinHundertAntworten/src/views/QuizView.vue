@@ -304,12 +304,11 @@ function handleEndGame() {
   document.getElementById('remarks').style.color = remarkColor;
   document.getElementById('score-modal').style.display = 'flex';
 
-  //Saving Data for User
-  var user = auth.user;
+  //Saving Data for User  
   var userProfile: UserProfile = auth.userProfile;
   userProfile.gamesPlayed++;
   userProfile.score += playerScore.value;
-  auth.updateUserProfile(token, userProfile, user.id);
+  auth.updateUserProfile(token, userProfile, auth.userID);
 }
 
 //resettet das Spiel, mischt wieder die Fragen und schließt natürlich das Score board

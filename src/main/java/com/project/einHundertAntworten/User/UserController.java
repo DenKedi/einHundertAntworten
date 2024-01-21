@@ -139,7 +139,7 @@ public class UserController {
         }
         @PutMapping("/updateUser/{userID}")
         public ResponseEntity<UserProfile> updateUserProfile(@PathVariable String userID, @RequestBody UserProfile userProfile) {
-            Optional<UserProfile> userProfileDB = userProfileRepository.findById(userID);
+            Optional<UserProfile> userProfileDB = userProfileRepository.findOptionalByUserID(userID);
 
             if (userProfileDB.isPresent()) {
                 UserProfile profile = userProfileDB.get();
