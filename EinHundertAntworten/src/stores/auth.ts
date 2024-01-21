@@ -38,6 +38,7 @@ export const useAuthStore = defineStore({
     async login(emailOrUsername: string, password: string) {
       const response = await fetch(`https://${this.SERVER_IP}/user/login`, {
         method: 'POST',
+        mode: 'no-cors',
         headers: {
           'Content-Type': 'application/json',
         },
