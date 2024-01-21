@@ -76,22 +76,20 @@ export const useGameStore = defineStore({
         },
         body: JSON.stringify({ text, category }),
       });
-      const data = await response.json();
       if (response.ok) {
-        return data;
-      } else {
-        return data.message.toString();
+        return await response.json();
       }
     },
-    async addMatchesToAnswer(answerId: string, matches: string): Promise<Answer> {
-      const response = await fetch(`http://localhost:8080/answer/${answerId}`, {
+    async addMatchesToAnswer(answerId: string, matches: string[], filler: string[]): Promise<Answer> {
+      const response = await fetch(`http://localhost:8080/game/answer/${answerId}`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
           Authorization: 'Bearer ' + this.token,
         },
-        // body: JSON.stringify({ text, category }),
+        body: JSON.stringify({ filler, matches }),
       });
+
       const data = await response.json();
       if (response.ok) {
         return data;
@@ -108,11 +106,8 @@ export const useGameStore = defineStore({
         },
         body: JSON.stringify({ text, category }),
       });
-      const data = await response.json();
       if (response.ok) {
-        return data;
-      } else {
-        return data.message.toString();
+        return await response.json();
       }
     },
     async addMatchToQuestion(questionId: string, match: string): Promise<Question> {
