@@ -15,7 +15,7 @@ import java.time.LocalDateTime;
 import java.util.*;
 
 @RestController
-@CrossOrigin(origins = "https://78e499f0.einhundertantworten.pages.dev")
+@CrossOrigin(origins = "*")
 @RequestMapping("/user")
 public class UserController {
 

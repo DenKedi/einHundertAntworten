@@ -63,7 +63,7 @@ public class SecurityConfig  {
                 .cors(cors -> cors
                         .configurationSource(request -> {
                             CorsConfiguration configuration = new CorsConfiguration();
-                            configuration.setAllowedOrigins(List.of("https://78e499f0.einhundertantworten.pages.dev"));
+                            configuration.setAllowedOrigins(List.of("*"));  // This allows all origins
                             configuration.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));
                             configuration.setAllowedHeaders(List.of("Content-Type", "Authorization"));
                             configuration.setAllowCredentials(true);
@@ -103,9 +103,9 @@ public class SecurityConfig  {
     }
 
     @Bean
-    CorsConfigurationSource corsConfigurationSource() {
+    public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
-        configuration.setAllowedOrigins(List.of("https://78e499f0.einhundertantworten.pages.dev"));
+        configuration.setAllowedOrigins(List.of("*"));  // This allows all origins
         configuration.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));
         configuration.setAllowedHeaders(List.of("Content-Type", "Authorization"));
         configuration.setAllowCredentials(true);  // Include this line if your requests include credentials
@@ -113,5 +113,6 @@ public class SecurityConfig  {
         source.registerCorsConfiguration("/**", configuration);
         return source;
     }
+
 
 }
