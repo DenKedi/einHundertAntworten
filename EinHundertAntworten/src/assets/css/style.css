@@ -50,6 +50,8 @@ nav div {
   width: 50%;
   padding-top: 2%;
   margin: auto;
+  display: flex;
+  flex-direction:column;
 }
 
 .question-panel {
@@ -94,7 +96,7 @@ nav div {
   font-size: 1.5rem;
   margin: auto;
   cursor: pointer;
-  width: 60%;
+  width: 90%;
   height: 25px;
   justify-content: center;
   display: flex;
