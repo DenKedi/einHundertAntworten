@@ -115,22 +115,29 @@ currentGameObject = {
 */
 
 function getRandomAnswer(): Answer {
+
   var answer: Answer =
     answers.value[Math.floor(Math.random() * answers.value.length)];
   if (answer.matches.length <= 1 && answer.filler.length <= 3) {
     return answer;
   }
-  return null;
+  return getRandomAnswer();
 }
 
 function getRandomFiller(answer: Answer): Question[] {
-  var fillerIDs = [];
+  var fillerIDs:string[] = [];
   var fillerQuestions: Question[] = [];
   //Get 3 random filler Questions from answer.filler
   for (let i = 0; i < 3; i++) {
-    fillerIDs.push(
+    let question = answer.filler[Math.floor(Math.random() * answer.filler.length)]
+    if (fillerIDs.includes(question)) {
+      i--;
+      continue;
+    }else{
+      fillerIDs.push(
       answer.filler[Math.floor(Math.random() * answer.filler.length)]
     );
+    }
   }
 
   try {
