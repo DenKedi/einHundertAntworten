@@ -247,8 +247,8 @@ onMounted(() => {
             <h2 class="heading">Neues Quizpaar</h2>
             <label class="category" for="category">Kategorie</label>
             <select name="category" id="category">
-              <option value="person">Personen</option>
               <option value="number">Zahlen</option>
+              <option value="person">Personen</option>
               <option value="place">Orte</option>
             </select>
             <div class="form">
