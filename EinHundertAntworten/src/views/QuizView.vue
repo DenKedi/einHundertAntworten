@@ -8,7 +8,6 @@ import type { UserProfile } from '@/stores/auth';
 //Setup on mounted
 onMounted(async () => {
   try {
-    console.log(getRandomAnswer());
     const response = await fetch('http://localhost:8080/', {
       headers: {
         Authorization: `Bearer ${token}`,
@@ -117,10 +116,10 @@ currentGameObject = {
 function getRandomAnswer(): Answer {
   var answer: Answer =
     answers.value[Math.floor(Math.random() * answers.value.length)];
-  if (answer.matches.length <= 1 && answer.filler.length <= 3) {
+  if (answer.matches.length >= 1 && answer.filler.length >= 3) {
     return answer;
   }
-  return null;
+  return getRandomAnswer();
 }
 
 function getRandomFiller(answer: Answer): Question[] {
