@@ -203,12 +203,18 @@ function addButtonListener() {
 }
 
 async function addFillerToAnswer() {
-  await game.addMatchesToAnswer(currentSelectedAnswerId, [], fillerIds);
+  const res = await game.addMatchesToAnswer(currentSelectedAnswerId, [], fillerIds);
+  let saveFillerMessageElem = document.getElementsByClassName('save-filler-message')[0];
+  if (!res) {
+    saveFillerMessageElem.innerHTML = 'Etwas lief schief.'
+  }
   (document.getElementsByClassName('save-filler')[0] as HTMLButtonElement).disabled = true;
 
   await clearAnswerContainer();
   await getGameobjects();
   fillAnswers();
+  saveFillerMessageElem.innerHTML = 'Filler erfolgreich hinzugefügt.'
+  saveFillerMessageElem.classList.add('success');
 }
 
 async function getGameobjects() {
@@ -225,6 +231,9 @@ function addFillerTableRow(question: string) {
   let hasEmptyRow = false;
   for (let i = 0; i < table.children.length; i++) {
     for (let j = 0; j < table.children[i].children.length; j++) {
+      if (j == 0) {
+        continue;
+      }
       if ((table.children[i].children[j] as HTMLTableCellElement).innerText == '') {
         hasEmptyRow = true;
         (table.children[i].children[j] as HTMLTableCellElement).innerText = question;
@@ -241,6 +250,9 @@ function addFillerTableRow(question: string) {
 }
 
 async function fillTable(id: string) {
+  let saveFillerMessageElem = document.getElementsByClassName('save-filler-message')[0];
+  saveFillerMessageElem.innerHTML = ''
+  saveFillerMessageElem.classList.remove('success');
   let table = $('#tableBody').get(0);
   table.innerHTML = '<tr></tr>';
   let answer = answers.value.find(answer => answer.id === id);
@@ -326,6 +338,7 @@ onMounted(() => {
           <option value="" disabled selected>Wähle Filler für die Antwort aus.</option>
         </select>
         <button class="save-filler" disabled>Speichern</button>
+        <p class="save-filler-message"></p>
 
         <div class="add-gameobjects">
           <div class="add-button">
@@ -452,6 +465,10 @@ onMounted(() => {
 
       .save-filler {
         margin-top: 3%;
+      }
+
+      .save-filler-message {
+        color: red;
       }
 
       th,

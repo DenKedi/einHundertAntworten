@@ -93,8 +93,6 @@ export const useGameStore = defineStore({
       const data = await response.json();
       if (response.ok) {
         return data;
-      } else {
-        return data.message.toString();
       }
     },
     async addQuestion(text: string, category: string): Promise<Question> {
