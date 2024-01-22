@@ -375,7 +375,6 @@ window.getCurrentGameObject = getCurrentGameObject;
           <a href="/home">
             <button @click="resetScoreModal">Hauptmenü</button>
           </a>
-          
         </div>
       </div>
     </div>
