@@ -76,6 +76,7 @@ async function addQuizSet() {
   let hasAnswer = false;
   let hasQuestion = false;
   var answerFound: Answer;
+  var newAnswer: Answer;
 
   answers.value.forEach(function (answer) {
     if (answerValue.value == answer.text) {
@@ -99,14 +100,22 @@ async function addQuizSet() {
     messageElement.innerText = 'Die Frage existiert bereits.';
     return;
   }
-
+  if (!hasAnswer) {
+    newAnswer = await game.addAnswer(answerValue.value, category);
+  }
   const question = await game.addQuestion(questionValue.value, category);
-
+  
   const matchesIds: string[] = [];
   matchesIds.push(question.id);
-  await game.addMatchToQuestion(question.id, answerFound.id);
-  await game.addMatchesToAnswer(answerFound.id, matchesIds, []);
 
+  if (hasAnswer){
+    await game.addMatchToQuestion(question.id, answerFound.id);
+    await game.addMatchesToAnswer(answerFound.id, matchesIds, []);
+  }else{
+    await game.addMatchesToAnswer(newAnswer.id, matchesIds, []);
+    await game.addMatchToQuestion(question.id, newAnswer.id);
+  }
+  
   if (!messageElement.classList.contains('success')) {
     messageElement.classList.add('success');
   }
