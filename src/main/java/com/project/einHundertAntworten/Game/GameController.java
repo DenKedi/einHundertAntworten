@@ -177,6 +177,7 @@ public class GameController {
         }
         return new ResponseEntity<>(HttpStatus.NOT_FOUND);
     }
+
     @GetMapping("/getFullAnswer/{id}")//Test Request
     public ResponseEntity<List<String>[]> getFullAnswer(@PathVariable String id) {
         Optional<Answer> answerOptional = answerRepository.findById(id);

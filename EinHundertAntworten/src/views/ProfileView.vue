@@ -85,7 +85,7 @@ function convertDateFormat(inputDate: string): string {
         </div>
     </div>
     <div class="general">
-        <h1>{{ obj.firstName }} {{ obj.lastName}} </h1>
+        <h1>{{ obj.username }} </h1>
       <div class="container">
         <div class="avatar avatar--green">
           <div class="avatar-body body--green">
