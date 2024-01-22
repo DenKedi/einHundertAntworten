@@ -146,11 +146,13 @@ nav div {
 
 label {
   color: #000000;
-  font-size: 1em;
+  font-size: 2em;
   justify-content: center;
   display: flex;
   font-weight: bold;
   cursor: pointer;
+  margin-top: 40px;
+  margin-bottom: 30px;
   transition: 0.5s ease-in-out;
 }
 
@@ -184,8 +186,7 @@ input {
   background: #e0dede;
   justify-content: center;
   display: flex;
-  margin: 20px auto;
-  margin-top: 1px;
+  margin: 10px auto;
   padding: 10px;
   border: none;
   outline: none;
@@ -195,7 +196,9 @@ input {
 .buttonBig {
   width: 66%;
   height: 40px;
-  margin: auto;
+  margin-top: 30px;
+  margin-left: auto;
+  margin-right: auto;
   justify-content: center;
   display: block;
   color: #fff;
@@ -238,7 +241,7 @@ input {
 .login {
   height: 500px;
   background: #eee;
-  transform: translateY(-190px);
+  transform: translateY(-150px);
   transition: 0.7s ease-in-out;
 }
 
@@ -249,7 +252,7 @@ input {
 }
 
 #go:checked~.login {
-  transform: translateY(-510px);
+  transform: translateY(-490px);
 }
 
 #go:checked~.login label {

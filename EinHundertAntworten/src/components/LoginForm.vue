@@ -129,6 +129,7 @@ function highlightInput(id: string) {
             
             <small id="loginSmall"></small>
             <input id="loginUsermailInput" type="text" name="usermail" placeholder="Username/Email" v-model="user.username">
+            <small id="passwordSmall"></small>
             <input id="loginPasswordInput" type="password" name="pswd" placeholder="Password" v-model="user.password">
             <button class="buttonBig" type="submit">Anmelden</button>
             
