@@ -126,6 +126,25 @@ export const useGameStore = defineStore({
         return data.message.toString();
       }
     },
+    async getQuestionByCategory(category: string): Promise<Question[]> {
+      const response = await fetch(
+        'http://localhost:8080/game/getQuestions?category=' + category,
+        {
+          method: 'GET',
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: 'Bearer ' + this.token,
+          },
+        }
+      );
+      const data = await response.json();
+      console.log(response.status);
+      if (response.ok) {
+        return data;
+      } else {
+        return data.message.toString();
+      }
+    },
     async getQuestionById(id: string): Promise<Question> {
       const response = await fetch(
         'http://localhost:8080/game/getQuestion/' + id,
