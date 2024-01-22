@@ -352,9 +352,9 @@ onMounted(() => {
               <label class="category" for="category">Kategorie</label>
               <select name="category" id="category">
                 <option disabled selected value>Wähle eine Kategorie aus.</option>
-                <option value="Number">Zahlen</option>
-                <option value="Person">Personen</option>
-                <option value="Place">Orte</option>
+                <option value="number">Zahlen</option>
+                <option value="person">Personen</option>
+                <option value="place">Orte</option>
               </select>
               <div class="form">
                 <div class="form-element">
