@@ -24,7 +24,7 @@ onMounted(async () => {
 <template>
     <NavbarForm />
     <div class="main">
-    <h1>Willkommen {{ data }} bei 100 Antworten!</h1>
+    <h1>Moin {{ data }}! Willkommen bei 100 Antworten!</h1>
 
     <div class="home-button-container">
         <a href="/quiz" class="home-button">Quiz Mich!</a>
