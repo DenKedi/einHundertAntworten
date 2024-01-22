@@ -80,49 +80,44 @@ function convertDateFormat(inputDate: string): string {
             <div class="points center">
                 {{ obj.score }} Punkte
             </div>
-            <svg width="110" height="110" viewBox="0 0 250 250" xmlns="http://www.w3.org/2000/svg" role="img" aria-labelledby="title desc" class="center">
-                <title id="title">Teacher</title>
-            </svg>
         </div>
-        <div class="more-info">
-            <h1></h1>
-            <div class="coords">
-                <span>Mitglied seit: {{ obj.createdOn }}</span>
-            </div>
             <div class="stats">
-                <div>
-                    <div class="title">Siege</div>
-                    <i class="fa fa-trophy"></i>
-                    <div class="value">2</div>
-                </div>
-                <div>
-                    <div class="title">Spiele</div>
-                    <i class="fa fa-gamepad"></i>
-                    <div class="value">27</div>
-                </div>
-                <div>
-                    <div class="title">Freunde</div>
-                    <i class="fa fa-group"></i>
-                    <div class="value">123</div>
-                </div>
-                <div>
-                    <div class="title">Coffee</div>
-                    <i class="fa fa-coffee"></i>
-                    <div class="value infinity">∞</div>
-                </div>
-            </div>
         </div>
     </div>
     <div class="general">
         <h1>{{ obj.firstName }} {{ obj.lastName}} </h1>
-        <div class="coords">
+      <div class="container">
+        <div class="avatar avatar--green">
+          <div class="avatar-body body--green">
+            <div class="avatar-eye eye--left">
+              <div class="avatar-eye-pupil pupil--purple">
+          <span class="avatar-eye-pupil-blackThing">
+            <span class="avatar-eye-pupil-lightReflection"></span>
+          </span>
+              </div>
+            </div>
+            <div class="avatar-eye eye--right">
+              <div class="avatar-eye-pupil pupil--purple">
+          <span class="avatar-eye-pupil-blackThing">
+            <span class="avatar-eye-pupil-lightReflection"></span>
+          </span>
+              </div>
+            </div>
+            <div class="avatar-smile"></div>
+            <div class="avatar-tooth tooth--left"></div>
+            <div class="avatar-tooth tooth--right"></div>
+          </div>
+        </div>
+        </div>
+      <div class="coords">
             <span>Email: </span>
             <span>{{ obj.email }}</span>
         </div>
-        <span class="more">Swipe für mehr Info</span>
+      <div class="coords">
+        <span>Mitglied seit: {{ obj.createdOn }}</span>
+      </div>
+
     </div>
 </div>
 </div>
 </template>
-
-<style></style>
