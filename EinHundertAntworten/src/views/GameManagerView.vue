@@ -28,6 +28,9 @@ let storedAnswers = localStorage.getItem('answers');
 let questions = ref<Question[]>(storedQuestions ? JSON.parse(storedQuestions) : []);
 let answers = ref<Answer[]>(storedAnswers ? JSON.parse(storedAnswers) : []);
 
+let fillerIds: string[] = [];
+let currentSelectedAnswerId: string;
+
 interface Answer {
   id: string;
   text: String;
@@ -45,18 +48,20 @@ interface Question {
 
 function fillAnswers() {
   for (let i = 0; i < answers.value.length; i++) {
+    let answerId: string;
+    if (i % 2 == 0) {
+      answerId = 'answers-left';
+    } else {
+      answerId = 'answers-right';
+    }
 
-    // Create the div element and append it to #answers
-    const $answerDiv: HTMLElement = $(`<div class="answer" id="${answers.value[i].id}"><p>${answers.value[i].text}</p></div>`).appendTo('#answers');
-
-    // Create the a tag and append it to the div element
-    $(`<i class="fa-solid fa-square-plus answer-tag"></i>`).appendTo($answerDiv);
+    $(`<div class="answer " id="${answers.value[i].id}"><p>${answers.value[i].text}</p></div>`).appendTo(`#${answerId}`);
   }
 
-  let elements = document.getElementsByClassName('answer-tag');
+  let elements = document.getElementsByClassName('answer');
   for (let element of elements) {
     element.addEventListener('click', function () {
-      fillTable(element.parentElement.id);
+      fillTable(element.id);
     });
   }
 }
@@ -68,7 +73,7 @@ async function addQuizSet() {
   const messageElement = (document.getElementsByClassName('message'))[0] as HTMLParagraphElement;
   messageElement.classList.remove('success');
 
-  if (questionValue.value == '' || answerValue.value == '') {
+  if (questionValue.value == '' || answerValue.value == '' || category == '') {
     messageElement.innerText = 'Bitte füllen Sie alle Felder aus.'
     return;
   }
@@ -79,7 +84,7 @@ async function addQuizSet() {
   var newAnswer: Answer;
 
   answers.value.forEach(function (answer) {
-    if (answerValue.value == answer.text || answerValue.value.toLocaleLowerCase() == answer.text.toLocaleLowerCase()) {
+    if (answerValue.value.toLocaleLowerCase() == answer.text.toLocaleLowerCase()) {
       hasAnswer = true;
       answerFound = answer;
       return;
@@ -88,55 +93,94 @@ async function addQuizSet() {
 
   questions.value.forEach(function (question) {
     if (questionValue.value == question.text ||
-     questionValue.value == question.text + '?' ||
-     questionValue.value == question.text + ' ?' ||
-     questionValue.value.toLocaleLowerCase() == question.text.toLocaleLowerCase() ||
-     questionValue.value.toLocaleLowerCase() == question.text.toLocaleLowerCase() + '?' ||
-     questionValue.value.toLocaleLowerCase() == question.text.toLocaleLowerCase() + ' ?' || questionValue.value.toLocaleLowerCase() + '?' == question.text.toLocaleLowerCase()) {
+      questionValue.value == question.text + '?' ||
+      questionValue.value == question.text + ' ?' ||
+      questionValue.value.toLocaleLowerCase() == question.text.toLocaleLowerCase() ||
+      questionValue.value.toLocaleLowerCase() == question.text.toLocaleLowerCase() + '?' ||
+      questionValue.value.toLocaleLowerCase() == question.text.toLocaleLowerCase() + ' ?' || questionValue.value.toLocaleLowerCase() + '?' == question.text.toLocaleLowerCase()) {
       hasQuestion = true;
       return;
     }
   });
 
-  if (hasAnswer){
-    messageElement.innerText = 'Eine Antwort kann viele Fragen haben ;)';
-  }
   if (hasQuestion) {
     messageElement.innerText = 'Die Frage existiert bereits.';
     return;
   }
-  if (!hasAnswer) {
-    newAnswer = await game.addAnswer(answerValue.value, category);
-  }
+
   const question = await game.addQuestion(questionValue.value, category);
-  
   const matchesIds: string[] = [];
   matchesIds.push(question.id);
 
-  if (hasAnswer){
-    await game.addMatchToQuestion(question.id, answerFound.id);
+  if (hasAnswer) {
     await game.addMatchesToAnswer(answerFound.id, matchesIds, []);
-  }else{
+    await game.addMatchToQuestion(question.id, answerFound.id);
+  } else {
+    newAnswer = await game.addAnswer(answerValue.value, category);
     await game.addMatchesToAnswer(newAnswer.id, matchesIds, []);
     await game.addMatchToQuestion(question.id, newAnswer.id);
   }
-  
+
   if (!messageElement.classList.contains('success')) {
     messageElement.classList.add('success');
   }
 
   messageElement.innerText = 'Quizset erfolgreich angelegt.';
   questionValue.value = '';
-  answerValue.value = '';
 
   await clearAnswerContainer();
   await getGameobjects();
   fillAnswers();
 }
 
+async function addFillerOptions(answer: Answer) {
+  let select = document.getElementById('filler');
+  select.innerHTML = '';
+  let defaultValue = document.createElement('option') as HTMLOptionElement;
+  defaultValue.selected = true;
+  defaultValue.disabled = true;
+  defaultValue.innerHTML = 'Wähle Filler für die Antwort aus.';
+  select.appendChild(defaultValue);
+
+  const questions = await game.getQuestionByCategory(answer.category);
+
+  for (let i = 0; i < questions.length; i++) {
+    if (answer.filler.includes(questions[i].id) || answer.matches.includes(questions[i].id)) {
+      continue;
+    }
+
+    let opt = document.createElement('option') as HTMLOptionElement;
+    opt.value = questions[i].id;
+    let fillerAnswer = await game.getAnswerById(questions[i].match);
+    if (fillerAnswer) {
+      opt.innerHTML = '(' + fillerAnswer.text + ') ' + questions[i].text;
+    } else {
+      opt.innerHTML = questions[i].text;
+    }
+    select.appendChild(opt);
+  }
+}
+
 async function clearAnswerContainer() {
-  let answerContainer = document.getElementById('answers');
-  answerContainer.innerHTML = '';
+  let answersLeft = document.getElementById('answers-left');
+  let answersRight = document.getElementById('answers-right');
+
+  answersLeft.innerHTML = '';
+  answersRight.innerHTML = '';
+}
+
+function addSelectFillerListener() {
+  let select = document.getElementById('filler') as HTMLSelectElement;
+  select.addEventListener("change", function () {
+    addFillerTableRow(select.options[select.selectedIndex].text);
+    fillerIds.push(this.value);
+    for (let i = 0; i < select.length; i++) {
+      if (select.options[i].value == this.value)
+        select.remove(i);
+    }
+    select.selectedIndex = 0;
+    (document.getElementsByClassName('save-filler')[0] as HTMLButtonElement).disabled = false;
+  });
 }
 
 function addButtonListener() {
@@ -156,6 +200,26 @@ function addButtonListener() {
   addQuizSetButton.addEventListener('click', function () {
     addQuizSet();
   });
+
+  let saveFiller = document.getElementsByClassName('save-filler')[0];
+  saveFiller.addEventListener('click', function () {
+    addFillerToAnswer();
+  });
+}
+
+async function addFillerToAnswer() {
+  const res = await game.addMatchesToAnswer(currentSelectedAnswerId, [], fillerIds);
+  let saveFillerMessageElem = document.getElementsByClassName('save-filler-message')[0];
+  if (!res) {
+    saveFillerMessageElem.innerHTML = 'Etwas lief schief.'
+  }
+  (document.getElementsByClassName('save-filler')[0] as HTMLButtonElement).disabled = true;
+
+  await clearAnswerContainer();
+  await getGameobjects();
+  fillAnswers();
+  saveFillerMessageElem.innerHTML = 'Filler erfolgreich hinzugefügt.'
+  saveFillerMessageElem.classList.add('success');
 }
 
 async function getGameobjects() {
@@ -167,7 +231,33 @@ async function getGameobjects() {
   answers = ref<Answer[]>(storedAnswers ? JSON.parse(storedAnswers) : []);
 }
 
+function addFillerTableRow(question: string) {
+  let table = $('#tableBody').get(0);
+  let hasEmptyRow = false;
+  for (let i = 0; i < table.children.length; i++) {
+    for (let j = 0; j < table.children[i].children.length; j++) {
+      if (j == 0) {
+        continue;
+      }
+      if ((table.children[i].children[j] as HTMLTableCellElement).innerText == '') {
+        hasEmptyRow = true;
+        (table.children[i].children[j] as HTMLTableCellElement).innerText = question;
+        return;
+      };
+    }
+  }
+  if (!hasEmptyRow) {
+    let row = table.insertRow();
+    row.insertCell();
+    let cell2 = row.insertCell();
+    cell2.innerHTML = question;
+  }
+}
+
 async function fillTable(id: string) {
+  let saveFillerMessageElem = document.getElementsByClassName('save-filler-message')[0];
+  saveFillerMessageElem.innerHTML = ''
+  saveFillerMessageElem.classList.remove('success');
   let table = $('#tableBody').get(0);
   table.innerHTML = '<tr></tr>';
   let answer = answers.value.find(answer => answer.id === id);
@@ -200,7 +290,6 @@ async function fillTable(id: string) {
     length = matches.length;
   }
   for (let i = 0; i < length; i++) {
-    console.log(matches);
     let row = table.insertRow();
     let cell1 = row.insertCell();
     let cell2 = row.insertCell();
@@ -208,209 +297,278 @@ async function fillTable(id: string) {
       cell1.innerHTML = matches[i].text;
     }
     if (filler[i] != undefined) {
-      cell2.innerHTML = filler[i].text;
+      let fillerAnswer = await game.getAnswerById(filler[i].match);
+      if (fillerAnswer) {
+        cell2.innerHTML = '(' + fillerAnswer.text + ') ' + filler[i].text;
+      } else {
+        cell2.innerHTML = filler[i].text;
+      }
     }
   }
+
+  addFillerOptions(answer);
+  currentSelectedAnswerId = answer.id;
 }
 
 onMounted(() => {
   getGameobjects();
   fillAnswers();
   addButtonListener();
+  addSelectFillerListener();
 });
 
 </script>
 <template>
-  <div>
+  <div class="game-manager">
     <NavbarForm />
     <div class="main">
-      <div class="answers-container">
-        <h1 class="heading">Answers</h1>
-        <div id="answers"></div>
-      </div>
-      <table>
-        <thead>
-          <tr>
-            <th>Matches</th>
-            <th>Filler</th>
-          </tr>
-        </thead>
-        <tbody id="tableBody">
-          <tr></tr>
-        </tbody>
-      </table>
 
-      <div class="add-gameobjects">
-        <div class="add-button">
-          <button class="add-question">
-            Fragenset hinzufügen
-          </button>
-        </div>
-
-        <form class="add-form hide">
-          <div class="form-container">
-            <h2 class="heading">Neues Quizpaar</h2>
-            <label class="category" for="category">Kategorie</label>
-            <select name="category" id="category">
-              <option value="number">Zahlen</option>
-              <option value="person">Personen</option>
-              <option value="place">Orte</option>
-            </select>
-            <div class="form">
-              <div class="form-element">
-                <label class="answer-label" for="answer-input">Antwort</label>
-                <input type="text" id="answer-input" name="answer-input" placeholder="Hamburg">
-              </div>
-              <div class="form-element">
-                <label class="question-label" for="question-input">Frage</label>
-                <input type="text" id="question-input" name="question-input" required
-                  placeholder="Wo steht die Elbphilharmonie?">
-              </div>
-            </div>
-            <p class="message"></p>
-            <button type='button' class="add-quizset-button">hinzufügen</button>
+      <div class="left">
+        <div class="answers-container">
+          <h1 class="heading">Antworten</h1>
+          <div class="answers">
+            <div id="answers-left"></div>
+            <div id="answers-right"></div>
           </div>
-        </form>
+        </div>
+      </div>
+      <div class="right">
+        <table>
+          <thead>
+            <tr>
+              <th>Matches</th>
+              <th>Filler</th>
+            </tr>
+          </thead>
+          <tbody id="tableBody">
+            <tr></tr>
+          </tbody>
+        </table>
+        <select name="filler" id="filler">
+          <option value="" disabled selected>Wähle Filler für die Antwort aus.</option>
+        </select>
+        <button class="save-filler" disabled>Speichern</button>
+        <p class="save-filler-message"></p>
+
+        <div class="add-gameobjects">
+          <div class="add-button">
+            <button class="add-question">
+              Fragenset hinzufügen
+            </button>
+          </div>
+          <form class="add-form hide">
+            <div class="form-container">
+              <h2 class="heading">Neues Quizpaar</h2>
+              <label class="category" for="category">Kategorie</label>
+              <select name="category" id="category">
+                <option disabled selected value>Wähle eine Kategorie aus.</option>
+                <option value="number">Zahlen</option>
+                <option value="person">Personen</option>
+                <option value="place">Orte</option>
+              </select>
+              <div class="form">
+                <div class="form-element">
+                  <label class="answer-label" for="answer-input">Antwort</label>
+                  <input type="text" id="answer-input" name="answer-input" placeholder="Hamburg">
+                </div>
+                <div class="form-element">
+                  <label class="question-label" for="question-input">Frage</label>
+                  <input type="text" id="question-input" name="question-input" required
+                    placeholder="Wo steht die Elbphilharmonie?">
+                </div>
+              </div>
+              <p class="message"></p>
+              <button type='button' class="add-quizset-button">hinzufügen</button>
+            </div>
+          </form>
+        </div>
       </div>
     </div>
   </div>
 </template>
 
 <style>
-.main {
-  display: flex;
-  flex-direction: column;
-  justify-content: space-between;
-  align-items: center;
-  margin: 0 10%;
-}
-
-.success {
-  color: green !important;
-}
-
-.add-gameobjects {
-  width: 100%;
-  margin-top: 10%;
-  margin-bottom: 20%;
-
-  .add-button {
-    text-align: center;
-  }
-
-  .hide {
-    display: none !important;
-  }
-
-  .add-form {
+.game-manager {
+  .main {
+    width: 100%;
     display: flex;
-    font-size: .5rem;
-    justify-content: space-between;
+    flex-direction: row;
+    justify-content: center;
+    align-items: flex-start;
 
-    .form-container {
-      .heading {
-        margin: 10% 0 0;
-        text-align: center;
+    .left {
+      width: 60%;
+
+      .answers-container {
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+        margin: 0 10%;
+
+        .heading {
+          font-size: 30px;
+          font-weight: bold;
+          padding: 10px;
+          margin: 10px 0;
+          width: 100%;
+          border-radius: 5px;
+        }
+
+        .answers {
+          display: flex;
+          gap: 10px;
+
+          #answers-left,
+          #answers-right {
+            flex: 45%;
+          }
+
+          .answer {
+            flex: 50%;
+            grid-column: auto;
+            display: flex;
+            align-items: center;
+            background-color: #f1f1f1;
+            border: 2px solid #ddd;
+            border-radius: 5px;
+            padding: 10px;
+            margin: 10px 0;
+            font-size: 20px;
+            cursor: default;
+            max-width: 100%;
+            min-height: 20%;
+
+            p {
+              margin: 0;
+            }
+
+            &:hover {
+              cursor: pointer;
+              background-color: #bebcbc;
+            }
+          }
+        }
+      }
+    }
+
+    .right {
+      margin-top: 70px;
+      display: flex;
+      align-items: center;
+      flex-direction: column;
+      width: 40%;
+
+      table {
+        width: 80%;
+        border-collapse: collapse;
+        margin-top: 10px;
+        background-color: #fff;
+        border-radius: 10px;
+        overflow: hidden;
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
       }
 
-      .message {
-        font-size: 1rem;
+      #filler {
+        margin-top: 5%;
+        width: 80%;
+      }
+
+      .save-filler {
+        margin-top: 3%;
+      }
+
+      .save-filler-message {
         color: red;
       }
 
-      .answer-label,
-      .question-label,
-      .category {
-        margin: 3% 0;
+      th,
+      td {
+        border: 1px solid #ddd;
+        padding: 12px;
+        text-align: center;
+        font-size: 16px;
+        width: 50%;
       }
 
-      .form {
-        margin: 5% 0 5% 0;
-        width: 100%;
-        display: flex;
-        justify-content: space-between;
+      th {
+        background-color: #007bff;
+        color: #fff;
+      }
 
-        .form-element {
+      .success {
+        color: green !important;
+      }
+
+      .add-gameobjects {
+        width: 80%;
+        margin-top: 10%;
+        margin-bottom: 20%;
+
+        .add-button {
+          text-align: center;
+        }
+
+        .hide {
+          display: none !important;
+        }
+
+        .add-form {
           display: flex;
-          flex-direction: column;
-          align-items: center;
-          width: 50%;
-        }
+          font-size: .5rem;
+          justify-content: space-between;
 
-        input {
-          margin: 0;
-          width: 80%;
+          .form-container {
+            .heading {
+              margin: 10% 0 0;
+              text-align: center;
+              font-size: 2rem;
+            }
+
+            .message {
+              font-size: 1rem;
+              color: red;
+            }
+
+            .answer-label,
+            .question-label,
+            .category {
+              margin: 3% 0;
+              font-size: 1.25rem;
+            }
+
+            .form {
+              margin: 5% 0 5% 0;
+              width: 100%;
+              display: flex;
+              justify-content: space-between;
+
+              .form-element {
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+                width: 50%;
+              }
+
+              input {
+                margin: 0;
+                width: 80%;
+              }
+            }
+
+            width: 100%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+          }
         }
       }
+    }
 
+    .table-container {
+      display: block;
+      /* Change this line */
       width: 100%;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
     }
   }
-}
-
-.answers-container {
-  display: flex;
-  flex-direction: column;
-  justify-content: space-between;
-  align-items: flex-start;
-  margin: 0 10%;
-}
-
-.heading {
-  font-size: 30px;
-  font-weight: bold;
-  padding: 10px;
-  margin: 10px 0;
-  width: 100%;
-  border-radius: 5px;
-}
-
-.fa-square-plus {
-  color: #272727;
-  cursor: pointer;
-}
-
-.answer {
-  display: flex;
-  background-color: #f1f1f1;
-  border: 2px solid #ddd;
-  border-radius: 5px;
-  padding: 10px;
-  margin: 10px 0;
-  font-size: 20px;
-  cursor: default;
-  max-width: 100%;
-}
-
-.table-container {
-  display: block;
-  /* Change this line */
-  width: 100%;
-}
-
-table {
-  width: 50%;
-  border-collapse: collapse;
-  margin-top: 10px;
-  background-color: #fff;
-  border-radius: 10px;
-  overflow: hidden;
-  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-}
-
-th,
-td {
-  border: 1px solid #ddd;
-  padding: 12px;
-  text-align: center;
-  font-size: 16px;
-}
-
-th {
-  background-color: #007bff;
-  color: #fff;
 }
 </style>
