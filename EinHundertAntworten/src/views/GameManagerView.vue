@@ -151,7 +151,12 @@ async function addFillerOptions(answer: Answer) {
 
     let opt = document.createElement('option') as HTMLOptionElement;
     opt.value = questions[i].id;
-    opt.innerHTML = questions[i].text;
+    let fillerAnswer = await game.getAnswerById(questions[i].match);
+    if (fillerAnswer) {
+      opt.innerHTML = '(' + fillerAnswer.text + ') ' + questions[i].text;
+    } else {
+      opt.innerHTML = questions[i].text;
+    }
     select.appendChild(opt);
   }
 }
@@ -292,7 +297,12 @@ async function fillTable(id: string) {
       cell1.innerHTML = matches[i].text;
     }
     if (filler[i] != undefined) {
-      cell2.innerHTML = filler[i].text;
+      let fillerAnswer = await game.getAnswerById(filler[i].match);
+      if (fillerAnswer) {
+        cell2.innerHTML = '(' + fillerAnswer.text + ') ' + filler[i].text;
+      } else {
+        cell2.innerHTML = filler[i].text;
+      }
     }
   }
 
