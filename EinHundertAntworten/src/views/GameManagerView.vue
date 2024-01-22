@@ -79,7 +79,7 @@ async function addQuizSet() {
   var newAnswer: Answer;
 
   answers.value.forEach(function (answer) {
-    if (answerValue.value == answer.text) {
+    if (answerValue.value == answer.text || answerValue.value.toLocaleLowerCase() == answer.text.toLocaleLowerCase()) {
       hasAnswer = true;
       answerFound = answer;
       return;
@@ -87,8 +87,13 @@ async function addQuizSet() {
   });
 
   questions.value.forEach(function (question) {
-    if (questionValue.value == question.text) {
-      hasAnswer = true;
+    if (questionValue.value == question.text ||
+     questionValue.value == question.text + '?' ||
+     questionValue.value == question.text + ' ?' ||
+     questionValue.value.toLocaleLowerCase() == question.text.toLocaleLowerCase() ||
+     questionValue.value.toLocaleLowerCase() == question.text.toLocaleLowerCase() + '?' ||
+     questionValue.value.toLocaleLowerCase() == question.text.toLocaleLowerCase() + ' ?' || questionValue.value.toLocaleLowerCase() + '?' == question.text.toLocaleLowerCase()) {
+      hasQuestion = true;
       return;
     }
   });
