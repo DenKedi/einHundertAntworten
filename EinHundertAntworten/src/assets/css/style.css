@@ -1,7 +1,12 @@
+@font-face {
+  font-family: 'Exo';
+  src: url('../font/Exo2-Regular.ttf') format('truetype');
+}
+
 body {
   margin: 0;
   padding: 0;
-  font-family: Arial, sans-serif;
+  font-family: 'Exo', sans-serif;
 }
 
 nav {
@@ -93,7 +98,7 @@ nav div {
 }
 
 .home-button {
-  background-color: #1c87c9;
+  background-color: #87d2ff;
   color: white;
   text-align: center;
   text-decoration: none;
@@ -131,7 +136,7 @@ nav div {
   background: rgb(166, 166, 166);
   overflow: hidden;
   border-radius: 10px;
-  box-shadow: 5px 20px 50px #000;
+  box-shadow: 5px 20px 50px #777777;
 }
 
 #go {
@@ -203,7 +208,7 @@ input {
   justify-content: center;
   display: block;
   color: #fff;
-  background: #508d28;
+  background: #87d2ff;
   font-size: 1em;
   font-weight: bold;
   outline: none;
@@ -232,7 +237,7 @@ input {
 }
 
 .buttonBig:hover {
-  background: #7cc93f;
+  background: #87d2ff;
 }
 
 .buttonSmall:hover {
@@ -247,7 +252,7 @@ input {
 }
 
 .login label {
-  color: #508d28;
+  color: rgba(0, 130, 206, 0.89);
   transform: scale(0.5);
   padding-top: 15px;
 }
@@ -281,19 +286,20 @@ input {
   overflow: hidden;
   position: relative;
   margin: 5rem auto;
-  box-shadow: 5px 20px 50px #000;
+  box-shadow: 5px 20px 50px #777777;
   justify-content: center;
 }
 
 .card h1 {
   text-align: left;
+
 }
 
 .card .additional {
   position: absolute;
   width: 150px;
   height: 100%;
-  background: linear-gradient(#4f4e4e, #a6a6a6);
+  background: linear-gradient( #113850, #87d2ff);
   transition: width 0.4s;
   overflow: hidden;
   z-index: 2;
@@ -381,8 +387,8 @@ body {
 .avatar--green {
   background: linear-gradient(
           to right,
-          rgba(188, 200, 255, 1),
-          rgba(196, 102, 231, 1)
+          #87d2ff,
+          #113850
   );
 }
 .avatar-body {
@@ -595,7 +601,7 @@ main {
   display: flex;
   align-items: center;
   justify-content: center;
-  border: 2px solid #a6a6a6;
+  border: 2px solid #4f4e4e;
   border-radius: 10px;
 }
 
@@ -655,7 +661,8 @@ input[type="radio"] {
 }
 
 input[type=radio]:checked~.option {
-  background: #1c87c9;
+  background: #87d2ff;
+  color: #ffffff;
 }
 
 .next-button-container {
@@ -678,7 +685,8 @@ input[type=radio]:checked~.option {
 }
 
 .next-button-container button:hover {
-  background-color: #1c87c9;
+  background-color: #87d2ff;
+  color:#ffffff;
 }
 
 .modal-container {

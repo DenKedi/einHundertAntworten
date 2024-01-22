@@ -220,13 +220,13 @@ function checkForAnswer() {
   var selectionID = userSelection.nextElementSibling.id; //bekommt die ID der ausgewählten Antwort
 
   if (selectionID === matchingQuestionID) {
-    document.getElementById(selectionID).style.backgroundColor = '#6fff18';
+    document.getElementById(selectionID).style.backgroundColor = 'rgba(175,255,142,0.71)';
     playerScore.value++;
     return true;
   } else {
-    document.getElementById(selectionID).style.backgroundColor = '#f12727';
+    document.getElementById(selectionID).style.backgroundColor = 'rgba(252,125,125,0.81)';
     document.getElementById(matchingQuestionID).style.backgroundColor =
-      '#6fff18';
+      'rgba(175,255,142,0.71)';
     wrongAttempt.value++;
     return true;
   }

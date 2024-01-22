@@ -78,14 +78,13 @@ function convertDateFormat(inputDate: string): string {
                 {{ obj.gamesPlayed }} Spiele gespielt
             </div>
             <div class="points center">
-                {{ obj.score }} Punkte
+                {{ obj.score }} richtig
             </div>
         </div>
             <div class="stats">
         </div>
     </div>
     <div class="general">
-        <h1>{{ obj.username }} </h1>
       <div class="container">
         <div class="avatar avatar--green">
           <div class="avatar-body body--green">
@@ -109,6 +108,7 @@ function convertDateFormat(inputDate: string): string {
           </div>
         </div>
         </div>
+      <h1>{{ obj.username }} </h1>
       <div class="coords">
             <span>Email: </span>
             <span>{{ obj.email }}</span>
