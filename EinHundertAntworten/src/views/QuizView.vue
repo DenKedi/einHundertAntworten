@@ -372,7 +372,10 @@ window.getCurrentGameObject = getCurrentGameObject;
         </div>
         <!--Button mit hauptmenü verbinden!!!!1-->
         <div class="modal-button-container">
-          <button @click="resetScoreModal">Haumptmenü</button>
+          <a href="/home">
+            <button @click="resetScoreModal">Hauptmenü</button>
+          </a>
+          
         </div>
       </div>
     </div>
