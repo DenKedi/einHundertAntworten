@@ -31,6 +31,7 @@ let answers = ref<Answer[]>(storedAnswers ? JSON.parse(storedAnswers) : []);
 let fillerIds: string[] = [];
 let currentSelectedAnswerId: string;
 let answerIdToDelete: string;
+let removedFillerIds: string[] = [];
 
 interface Answer {
   id: string;
@@ -56,7 +57,7 @@ function fillAnswers() {
       answerId = 'answers-right';
     }
 
-    $(`<div class="answer " id="${answers.value[i].id}"><p>${answers.value[i].text}</p><i class="fa-solid fa-close answer-tag"></i></div>`).appendTo(`#${answerId}`);
+    $(`<div class="answer " id="${answers.value[i].id}"><p>${answers.value[i].text}</p><i class="fa-solid fa-close answer-delete"></i></div>`).appendTo(`#${answerId}`);
   }
 
   let elements = document.getElementsByClassName('answer');
@@ -66,7 +67,7 @@ function fillAnswers() {
     });
   }
 
-  let closeButtons = document.getElementsByClassName('fa-close');
+  let closeButtons = document.getElementsByClassName('answer-delete');
   for (let close of closeButtons) {
     close.addEventListener('click', function () {
       document.getElementById('confirm-modal').style.display = 'flex';
@@ -86,6 +87,11 @@ function clearTable() {
   let table = $('#tableBody').get(0);
   table.innerHTML = '<tr></tr>';
   (document.getElementsByClassName('current-answer')[0] as HTMLParagraphElement).innerHTML = 'Antwort: ';
+}
+
+async function removeFillerAndMatches() {
+  await game.removeMatchesAndFillerFromAnswer(currentSelectedAnswerId, [], removedFillerIds);
+  removedFillerIds = [];
 }
 
 async function addQuizSet() {
@@ -194,7 +200,7 @@ async function clearAnswerContainer() {
 function addSelectFillerListener() {
   let select = document.getElementById('filler') as HTMLSelectElement;
   select.addEventListener("change", function () {
-    addFillerTableRow(select.options[select.selectedIndex].text);
+    addFillerTableRow(select.options[select.selectedIndex].text, select.options[select.selectedIndex].value);
     fillerIds.push(this.value);
     for (let i = 0; i < select.length; i++) {
       if (select.options[i].value == this.value)
@@ -224,8 +230,9 @@ function addButtonListener() {
   });
 
   let saveFiller = document.getElementsByClassName('save-filler')[0];
-  saveFiller.addEventListener('click', function () {
-    addFillerToAnswer();
+  saveFiller.addEventListener('click', async function () {
+    await removeFillerAndMatches();
+    await addFillerToAnswer();
   });
 }
 
@@ -240,7 +247,8 @@ async function addFillerToAnswer() {
   await clearAnswerContainer();
   await getGameobjects();
   fillAnswers();
-  saveFillerMessageElem.innerHTML = 'Filler erfolgreich hinzugefügt.'
+  fillerIds = [];
+  saveFillerMessageElem.innerHTML = 'Filler erfolgreich aktualisiert.'
   saveFillerMessageElem.classList.add('success');
 }
 
@@ -253,7 +261,7 @@ async function getGameobjects() {
   answers = ref<Answer[]>(storedAnswers ? JSON.parse(storedAnswers) : []);
 }
 
-function addFillerTableRow(question: string) {
+function addFillerTableRow(question: string, id: string) {
   let table = $('#tableBody').get(0);
   let hasEmptyRow = false;
   for (let i = 0; i < table.children.length; i++) {
@@ -263,7 +271,7 @@ function addFillerTableRow(question: string) {
       }
       if ((table.children[i].children[j] as HTMLTableCellElement).innerText == '') {
         hasEmptyRow = true;
-        (table.children[i].children[j] as HTMLTableCellElement).innerText = question;
+        (table.children[i].children[j] as HTMLTableCellElement).innerHTML = `<span>${question}</span>` + '<i class="fa-solid fa-close remove-filler"></i>';;
         return;
       };
     }
@@ -272,8 +280,14 @@ function addFillerTableRow(question: string) {
     let row = table.insertRow();
     row.insertCell();
     let cell2 = row.insertCell();
-    cell2.innerHTML = question;
+    cell2.innerHTML = `<span>${question}</span>` + '<i class="fa-solid fa-close remove-filler"></i>';;
   }
+
+  let button = Array.from(document.querySelectorAll('.remove-filler')).pop();
+  button.addEventListener("click", function () {
+    (document.getElementsByClassName('save-filler')[0] as HTMLButtonElement).disabled = false;
+    removedFillerIds.push(id);
+  })
 }
 
 async function confirmDeleteAnswer() {
@@ -298,6 +312,9 @@ async function fillTable(id: string) {
   let answer = answers.value.find(answer => answer.id === id);
   let fillerIDs = [];
   let matchesIDs = [];
+
+  console.log(id);
+  console.log(answer.id);
 
   for (let i = 0; i < answer.filler.length; i++) {
     fillerIDs.push(answer.filler[i]);
@@ -334,11 +351,19 @@ async function fillTable(id: string) {
     if (filler[i] != undefined) {
       let fillerAnswer = await game.getAnswerById(filler[i].match);
       if (fillerAnswer) {
-        cell2.innerHTML = '(' + fillerAnswer.text + ') ' + filler[i].text;
+        cell2.innerHTML = `<span>(${fillerAnswer.text}) ${filler[i].text}</span>` + '<i class="fa-solid fa-close remove-filler"></i>';
       } else {
-        cell2.innerHTML = filler[i].text;
+        cell2.innerHTML = `<span>${filler[i].text}</span>` + '<i class="fa-solid fa-close remove-filler"></i>';
       }
     }
+  }
+  let removeButtons = document.getElementsByClassName('remove-filler');
+  for (let i = 0; i < removeButtons.length; i++) {
+    removeButtons[i].addEventListener('click', function () {
+      (document.getElementsByClassName('save-filler')[0] as HTMLButtonElement).disabled = false;
+      removedFillerIds.push(filler[i].id)
+      removeButtons[i].parentElement.innerHTML = '';
+    });
   }
 
   (document.getElementsByClassName('current-answer')[0] as HTMLParagraphElement).innerHTML = 'Antwort: ' + answer.text.toString();
@@ -566,10 +591,18 @@ onMounted(() => {
       th,
       td {
         border: 1px solid #ddd;
-        padding: 12px;
+        padding: 24px 24px 12px 12px;
         text-align: center;
         font-size: 16px;
         width: 50%;
+        position: relative;
+
+        .fa-solid {
+          position: absolute;
+          top: 10px;
+          right: 10px;
+          cursor: pointer;
+        }
       }
 
       th {
