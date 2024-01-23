@@ -653,7 +653,6 @@ onMounted(() => {
 
       .add-gameobjects {
         width: 80%;
-        margin-top: 10%;
         margin-bottom: 20%;
 
         .add-button {
