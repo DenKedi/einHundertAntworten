@@ -114,22 +114,30 @@ currentGameObject = {
 */
 
 function getRandomAnswer(): Answer {
+  
   var answer: Answer =
     answers.value[Math.floor(Math.random() * answers.value.length)];
-  if (answer.matches.length >= 1 && answer.filler.length >= 3) {
-    return answer;
+      if (answer.matches.length >= 1 && answer.filler.length >= 3) {
+          
+          return answer;
   }
+   
+      
+    
   return getRandomAnswer();
 }
 
+
 function getRandomFiller(answer: Answer): Question[] {
-  var fillerIDs = [];
+  var fillerIDs:string[] = [];
   var fillerQuestions: Question[] = [];
+  var fillerIDs2:string[] = answer.filler;
   //Get 3 random filler Questions from answer.filler
   for (let i = 0; i < 3; i++) {
-    fillerIDs.push(
-      answer.filler[Math.floor(Math.random() * answer.filler.length)]
-    );
+    let fillerID = fillerIDs2[Math.floor(Math.random() * answer.filler.length)];
+    fillerIDs.push(fillerID);
+    //remove fillerID from fillerIDs2
+    fillerIDs2 = fillerIDs2.filter(id => id !== fillerID);
   }
 
   try {
@@ -184,6 +192,7 @@ function packRandomGameObject(): GameObject | null {
       return packRandomGameObject();
     }
   } catch (error) {
+    console.log(error);
     console.log("Something is wrong with game object.")
     console.log(answer, filler, match, options)
     return packRandomGameObject();
@@ -331,6 +340,7 @@ function handleEndGame() {
 
 //resettet das Spiel, mischt wieder die Fragen und schließt natürlich das Score board
 function resetScoreModal() {
+  
   currentTurn.value = 0;
   playerScore.value = 0;
   wrongAttempt.value = 0;
