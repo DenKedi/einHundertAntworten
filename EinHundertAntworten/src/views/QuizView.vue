@@ -188,7 +188,6 @@ function packRandomGameObject(): GameObject | null {
     console.log(answer, filler, match, options)
     return packRandomGameObject();
   }
-
 }
 
 // ... rest of the code ...
@@ -237,17 +236,24 @@ function handleNextQuestion() {
   if (!checkForAnswer()) {
     return;
   } //checkt, ob die Antwort richtig oder falsch
+  toggleNextButton();
   unCheckRadioButtons();
   //verzögert die Frage um eine Sekunde, um es smoother zu gestalten
   setTimeout(() => {
     if (currentTurn.value < 10) {
       //erzeugt die nächste Frage, wenn der Index nicht höher als neun ist - 10 Fragen insgesamt
+      toggleNextButton();
       nextTurn();
     } else {
       handleEndGame(); //beendet das Spiel nach der 10. frage
     }
     resetOptionBackground();
   }, 1000);
+}
+
+function toggleNextButton() {
+  let button = document.getElementsByClassName('next-button')[0] as HTMLButtonElement;
+  button.disabled = !button.disabled;
 }
 
 //resettet alle hintergrund optionen zu null
@@ -462,7 +468,7 @@ window.getCurrentGameObject = getCurrentGameObject;
       </div>
 
       <div class="next-button-container">
-        <button @click="handleNextQuestion">Weiter hihi</button>
+        <button class="next-button" @click="handleNextQuestion">Weiter hihi</button>
       </div>
     </div>
   </main>
