@@ -30,6 +30,7 @@ let answers = ref<Answer[]>(storedAnswers ? JSON.parse(storedAnswers) : []);
 
 let fillerIds: string[] = [];
 let currentSelectedAnswerId: string;
+let answerIdToDelete: string;
 
 interface Answer {
   id: string;
@@ -68,7 +69,9 @@ function fillAnswers() {
   let closeButtons = document.getElementsByClassName('fa-close');
   for (let close of closeButtons) {
     close.addEventListener('click', function () {
-      deleteAnswer(close.parentElement.id);
+      document.getElementById('confirm-modal').style.display = 'flex';
+      document.getElementsByClassName('deleted-answer')[0].innerHTML = close.parentElement.innerText;
+      answerIdToDelete = close.parentElement.id;
     });
   }
 }
@@ -273,6 +276,19 @@ function addFillerTableRow(question: string) {
   }
 }
 
+async function confirmDeleteAnswer() {
+  document.getElementById('confirm-modal').style.display = 'none';
+  if (answerIdToDelete != '') {
+    deleteAnswer(answerIdToDelete);
+    answerIdToDelete = ''
+  }
+}
+
+async function cancelDeleteAnswer() {
+  document.getElementById('confirm-modal').style.display = 'none';
+  answerIdToDelete = ''
+}
+
 async function fillTable(id: string) {
   let saveFillerMessageElem = document.getElementsByClassName('save-filler-message')[0];
   saveFillerMessageElem.innerHTML = ''
@@ -343,6 +359,20 @@ onMounted(() => {
   <div class="game-manager">
     <NavbarForm />
     <div class="main">
+
+      <div class="delete-confirmation">
+        <div class="modal-container" id="confirm-modal">
+          <div class="modal-content-container">
+            <h2>Bist Du sicher, dass du die Antwort</h2>
+            <p class="deleted-answer"></p>
+            <h2>löschen möchtest?</h2>
+            <div class="modal-button-container">
+              <button @click="confirmDeleteAnswer">Bestätigen</button>
+              <button @click="cancelDeleteAnswer">Abbrechen</button>
+            </div>
+          </div>
+        </div>
+      </div>
 
       <div class="left">
         <div class="answers-container">
@@ -418,6 +448,29 @@ onMounted(() => {
     justify-content: center;
     align-items: flex-start;
 
+    .modal-content-container {
+      justify-content: center;
+      height: 15rem;
+
+      h2 {
+        margin: 0;
+      }
+
+      p {
+        margin-top: 0;
+        color: white;
+        font-weight: bold;
+      }
+
+      .modal-button-container {
+        gap: 10px;
+
+        button {
+          width: 10rem;
+        }
+      }
+    }
+
     .left {
       width: 60%;
 
@@ -465,7 +518,6 @@ onMounted(() => {
               position: absolute;
               top: 10px;
               right: 10px;
-              z-index: 100;
             }
 
             p {

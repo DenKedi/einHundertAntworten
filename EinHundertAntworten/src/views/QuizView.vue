@@ -158,37 +158,37 @@ function getRandomMatch(answer: Answer): Question {
 function packRandomGameObject(): GameObject | null {
   try {
     var answer: Answer = getRandomAnswer();
-  if (!answer) {
-    return null;
-  }
-  console.log(answer);
-  var filler: Question[] = getRandomFiller(answer);
-  var match: Question = getRandomMatch(answer);
-  var options = [match, filler[0], filler[1], filler[2]].sort(
-    () => Math.random() - 0.5
-  );
-  var go: GameObject = {
-    answer: answer,
-    optionA: options[0],
-    optionB: options[1],
-    optionC: options[2],
-    optionD: options[3],
-    correctOption: match,
-  };
-  if (go.answer!=undefined && go.optionA != undefined && go.optionB != undefined && 
-  go.optionC != undefined && go.optionD != undefined && go.correctOption != undefined){
-    return go;
-  }else{
-    console.log("One or more attributes of game object are undefined.");
-    console.log(answer, filler, match, options);
-    return packRandomGameObject();
-  }
-  }catch(error){
+    if (!answer) {
+      return null;
+    }
+    console.log(answer);
+    var filler: Question[] = getRandomFiller(answer);
+    var match: Question = getRandomMatch(answer);
+    var options = [match, filler[0], filler[1], filler[2]].sort(
+      () => Math.random() - 0.5
+    );
+    var go: GameObject = {
+      answer: answer,
+      optionA: options[0],
+      optionB: options[1],
+      optionC: options[2],
+      optionD: options[3],
+      correctOption: match,
+    };
+    if (go.answer != undefined && go.optionA != undefined && go.optionB != undefined &&
+      go.optionC != undefined && go.optionD != undefined && go.correctOption != undefined) {
+      return go;
+    } else {
+      console.log("One or more attributes of game object are undefined.");
+      console.log(answer, filler, match, options);
+      return packRandomGameObject();
+    }
+  } catch (error) {
     console.log("Something is wrong with game object.")
     console.log(answer, filler, match, options)
     return packRandomGameObject();
   }
-  
+
 }
 
 // ... rest of the code ...
@@ -425,18 +425,8 @@ window.getCurrentGameObject = getCurrentGameObject;
 
         <!--Antwortoptionen:-->
         <span>
-          <input
-            type="radio"
-            id="optionA"
-            name="option"
-            class="radio"
-            value="optionA"
-          />
-          <label
-            for="optionA"
-            class="option optionA-label"
-            :id="currentGameObject ? currentGameObject.optionA.id : ''"
-          >
+          <input type="radio" id="optionA" name="option" class="radio" value="optionA" />
+          <label for="optionA" class="option optionA-label" :id="currentGameObject ? currentGameObject.optionA.id : ''">
             {{
               currentGameObject ? currentGameObject.optionA.text : 'Loading...'
             }}
@@ -444,18 +434,8 @@ window.getCurrentGameObject = getCurrentGameObject;
         </span>
 
         <span>
-          <input
-            type="radio"
-            id="optionB"
-            name="option"
-            class="radio"
-            value="optionB"
-          />
-          <label
-            for="optionB"
-            class="option optionB-label"
-            :id="currentGameObject ? currentGameObject.optionB.id : ''"
-          >
+          <input type="radio" id="optionB" name="option" class="radio" value="optionB" />
+          <label for="optionB" class="option optionB-label" :id="currentGameObject ? currentGameObject.optionB.id : ''">
             {{
               currentGameObject ? currentGameObject.optionB.text : 'Loading...'
             }}
@@ -463,18 +443,8 @@ window.getCurrentGameObject = getCurrentGameObject;
         </span>
 
         <span>
-          <input
-            type="radio"
-            id="optionC"
-            name="option"
-            class="radio"
-            value="optionC"
-          />
-          <label
-            for="optionC"
-            class="option optionC-label"
-            :id="currentGameObject ? currentGameObject.optionC.id : ''"
-          >
+          <input type="radio" id="optionC" name="option" class="radio" value="optionC" />
+          <label for="optionC" class="option optionC-label" :id="currentGameObject ? currentGameObject.optionC.id : ''">
             {{
               currentGameObject ? currentGameObject.optionC.text : 'Loading...'
             }}
@@ -482,18 +452,8 @@ window.getCurrentGameObject = getCurrentGameObject;
         </span>
 
         <span>
-          <input
-            type="radio"
-            id="optionD"
-            name="option"
-            class="radio"
-            value="optionD"
-          />
-          <label
-            for="optionD"
-            class="option optionD-label"
-            :id="currentGameObject ? currentGameObject.optionD.id : ''"
-          >
+          <input type="radio" id="optionD" name="option" class="radio" value="optionD" />
+          <label for="optionD" class="option optionD-label" :id="currentGameObject ? currentGameObject.optionD.id : ''">
             {{
               currentGameObject ? currentGameObject.optionD.text : 'Loading...'
             }}
