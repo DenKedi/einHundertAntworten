@@ -173,6 +173,7 @@ public class GameController {
                     }
                     questionRepository.delete(question);
                 }
+
             }
             answerRepository.delete(answer);
             return new ResponseEntity<>(answer, HttpStatus.OK);
