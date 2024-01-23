@@ -40,7 +40,6 @@ export const useGameStore = defineStore({
         }
       );
       const data = await response.json();
-      console.log(response.status);
       if (response.ok) {
         this.questions = data;
         localStorage.removeItem('questions');
@@ -58,7 +57,6 @@ export const useGameStore = defineStore({
         },
       });
       const data = await response.json();
-      console.log(response.status);
       if (response.ok) {
         this.answers = data;
         localStorage.removeItem('answers');
@@ -136,7 +134,6 @@ export const useGameStore = defineStore({
         }
       );
       const data = await response.json();
-      console.log(response.status);
       if (response.ok) {
         return data;
       } else {
@@ -155,8 +152,6 @@ export const useGameStore = defineStore({
         }
       );
       const data = await response.json();
-      console.log(response.status);
-      console.log("test");
       if (response.ok) {
         return data;
       } else {
@@ -175,11 +170,42 @@ export const useGameStore = defineStore({
         }
       );
       const data = await response.json();
-      console.log(response.status);
       if (response.ok) {
         return data;
       } else {
         return data.message.toString();
+      }
+    },
+    async getFillerOfAnswer(id: string): Promise<String[]> {
+      const response = await fetch(
+        'http://localhost:8080/game/Answer/getFiller?id=' + id,
+        {
+          method: 'GET',
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: 'Bearer ' + this.token,
+          },
+        }
+      );
+      const data = await response.json();
+      if (response.ok) {
+        return data;
+      }
+    },
+    async deleteAnswerById(id: string): Promise<Answer> {
+      const response = await fetch(
+        'http://localhost:8080/game/deleteAnswer/' + id,
+        {
+          method: 'DELETE',
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: 'Bearer ' + this.token,
+          },
+        }
+      );
+      const data = await response.json();
+      if (response.ok) {
+        return data;
       }
     },
     getQ() {

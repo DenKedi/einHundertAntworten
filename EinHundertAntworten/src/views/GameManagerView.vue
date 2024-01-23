@@ -305,7 +305,6 @@ async function fillTable(id: string) {
       }
     }
   }
-  console.log(answer.text.toString());
 
   (document.getElementsByClassName('current-answer')[0] as HTMLParagraphElement).innerHTML = 'Antwort: ' + answer.text.toString();
 
