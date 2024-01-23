@@ -236,13 +236,13 @@ function handleNextQuestion() {
   if (!checkForAnswer()) {
     return;
   } //checkt, ob die Antwort richtig oder falsch
-  toggleNextButton();
+  toggleNextButton(true);
   unCheckRadioButtons();
   //verzögert die Frage um eine Sekunde, um es smoother zu gestalten
   setTimeout(() => {
     if (currentTurn.value < 10) {
       //erzeugt die nächste Frage, wenn der Index nicht höher als neun ist - 10 Fragen insgesamt
-      toggleNextButton();
+      toggleNextButton(false);
       nextTurn();
     } else {
       handleEndGame(); //beendet das Spiel nach der 10. frage
@@ -251,9 +251,9 @@ function handleNextQuestion() {
   }, 1000);
 }
 
-function toggleNextButton() {
+function toggleNextButton(isDisabled: boolean) {
   let button = document.getElementsByClassName('next-button')[0] as HTMLButtonElement;
-  button.disabled = !button.disabled;
+  button.disabled = isDisabled;
 }
 
 //resettet alle hintergrund optionen zu null
@@ -338,6 +338,7 @@ function resetScoreModal() {
   remarkColor = '';
   playerGrade.value = 0;
   document.getElementById('score-modal').style.display = 'none';
+  toggleNextButton(false);
 }
 
 //Funktion um die Close warnung zu schließen
