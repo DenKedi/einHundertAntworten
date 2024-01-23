@@ -114,16 +114,11 @@ currentGameObject = {
 */
 
 function getRandomAnswer(): Answer {
-  
   var answer: Answer =
     answers.value[Math.floor(Math.random() * answers.value.length)];
-      if (answer.matches.length >= 1 && answer.filler.length >= 3) {
-          
+      if (answer.matches.length >= 1 && answer.filler.length >= 3) {       
           return answer;
   }
-   
-      
-    
   return getRandomAnswer();
 }
 
@@ -185,6 +180,7 @@ function packRandomGameObject(): GameObject | null {
     };
     if (go.answer != undefined && go.optionA != undefined && go.optionB != undefined &&
       go.optionC != undefined && go.optionD != undefined && go.correctOption != undefined) {
+      answers.value = answers.value.filter(a => a.id !== go.answer.id);
       return go;
     } else {
       console.log("One or more attributes of game object are undefined.");
@@ -340,7 +336,8 @@ function handleEndGame() {
 
 //resettet das Spiel, mischt wieder die Fragen und schließt natürlich das Score board
 function resetScoreModal() {
-  
+  answers = ref<Answer[]>(storedAnswers ? JSON.parse(storedAnswers) : []);
+  questions = ref<Question[]>(storedQuestions ? JSON.parse(storedQuestions) : []);
   currentTurn.value = 0;
   playerScore.value = 0;
   wrongAttempt.value = 0;
