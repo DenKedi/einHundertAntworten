@@ -386,7 +386,7 @@ window.getCurrentGameObject = getCurrentGameObject;
           </p>
         </div>
         <div class="modal-button-container">
-          <button @click="startNewGame">ich will noch einmal</button>
+          <button @click="startNewGame">Ich will noch einmal!</button>
         </div>
         <!--Button mit hauptmenü verbinden!!!!1-->
         <div class="modal-button-container">
