@@ -20,9 +20,19 @@ onMounted(async () => {
 });
 
 
+window.addEventListener('DOMContentLoaded', function() {
+            var mainbody = document.querySelector('.mainbody-blur');
+            var rect = mainbody.getBoundingClientRect();
+            var windowHeight = window.innerHeight || document.documentElement.clientHeight;
+            if (rect.top <= windowHeight && rect.bottom >= 0) {
+                mainbody.classList.add('in-viewport');
+            }
+        });
 </script>
 <template>
     <NavbarForm />
+    <div class="mainbody-wrapper">
+        <body class="mainbody">
     <div class="main">
     <h1>Moin {{ data }}! Willkommen bei 100 Antworten!</h1>
 
@@ -32,6 +42,9 @@ onMounted(async () => {
         <a v-if="auth.role === 'ADMIN'" href="/gameManager" class="home-button">Admin Panel</a>
         </div>
 </div>
+</body>
+    </div>
+
 </template>
 
 <style>

@@ -7,8 +7,39 @@ body {
   margin: 0;
   padding: 0;
   font-family: 'Exo', sans-serif;
+  overflow: hidden;
+}
+.mainbody-wrapper {
+  height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  color: #fff;
+  position: relative;
+  overflow: hidden; /* Ensure child elements don't overflow */
 }
 
+.mainbody {
+  background-image: linear-gradient(315deg, #e0d27e 0%, #87d2ff 74%);
+  width: 100%;
+}
+
+.mainbody-blur {
+  filter: blur(20px); /* Initial blur amount */
+  transition: filter 2s ease-in-out; /* Transition effect */
+}
+
+/* Add animation to remove blur */
+@keyframes fadeIn {
+  from { filter: blur(20px); }
+  to { filter: blur(0); }
+}
+
+/* Apply animation when the element is in the viewport */
+.mainbody-blur.in-viewport {
+  animation: fadeIn 2s forwards;
+}
 nav {
   background-color: #333;
   padding: 15px 15px 15px;
@@ -126,14 +157,21 @@ nav div {
   margin: 0;
   padding: 0;
   display: flex;
+  flex-direction: column;
   justify-content: center;
+  background-color: #e0d27e;
+  background-image: linear-gradient(315deg, #e0d27e 0%, #87d2ff 74%);
   align-items: center;
   min-height: 100vh;
+  flex-direction: column;/* or use display: inline-flex; */
+  border: 1px solid #ccc;
+  margin: auto;
   font-family: 'Exo', sans-serif;
 }
 
 .mainlogin {
   width: 350px;
+  box-sizing: border-box;
   height: 500px;
   background: rgb(166, 166, 166);
   overflow: hidden;
