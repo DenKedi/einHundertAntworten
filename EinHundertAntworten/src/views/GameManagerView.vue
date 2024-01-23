@@ -55,7 +55,7 @@ function fillAnswers() {
       answerId = 'answers-right';
     }
 
-    $(`<div class="answer " id="${answers.value[i].id}"><p>${answers.value[i].text}</p></div>`).appendTo(`#${answerId}`);
+    $(`<div class="answer " id="${answers.value[i].id}"><p>${answers.value[i].text}</p><i class="fa-solid fa-close answer-tag"></i></div>`).appendTo(`#${answerId}`);
   }
 
   let elements = document.getElementsByClassName('answer');
@@ -64,6 +64,25 @@ function fillAnswers() {
       fillTable(element.id);
     });
   }
+
+  let closeButtons = document.getElementsByClassName('fa-close');
+  for (let close of closeButtons) {
+    close.addEventListener('click', function () {
+      deleteAnswer(close.parentElement.id);
+    });
+  }
+}
+
+async function deleteAnswer(id: string) {
+  await game.deleteAnswerById(id);
+  document.getElementById(id).remove();
+  clearTable();
+}
+
+function clearTable() {
+  let table = $('#tableBody').get(0);
+  table.innerHTML = '<tr></tr>';
+  (document.getElementsByClassName('current-answer')[0] as HTMLParagraphElement).innerHTML = 'Antwort: ';
 }
 
 async function addQuizSet() {
@@ -427,6 +446,7 @@ onMounted(() => {
           }
 
           .answer {
+            position: relative;
             flex: 50%;
             grid-column: auto;
             display: flex;
@@ -440,6 +460,13 @@ onMounted(() => {
             cursor: default;
             max-width: 100%;
             min-height: 20%;
+
+            .fa-solid {
+              position: absolute;
+              top: 10px;
+              right: 10px;
+              z-index: 100;
+            }
 
             p {
               margin: 0;
