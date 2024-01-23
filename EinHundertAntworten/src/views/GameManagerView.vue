@@ -305,6 +305,9 @@ async function fillTable(id: string) {
       }
     }
   }
+  console.log(answer.text.toString());
+
+  (document.getElementsByClassName('current-answer')[0] as HTMLParagraphElement).innerHTML = 'Antwort: ' + answer.text.toString();
 
   addFillerOptions(answer);
   currentSelectedAnswerId = answer.id;
@@ -325,7 +328,7 @@ onMounted(() => {
 
       <div class="left">
         <div class="answers-container">
-          <h1 class="heading">Antworten</h1>
+          <h1 class="heading">Alle Antworten</h1>
           <div class="answers">
             <div id="answers-left"></div>
             <div id="answers-right"></div>
@@ -333,6 +336,7 @@ onMounted(() => {
         </div>
       </div>
       <div class="right">
+        <p class="current-answer">Antwort: </p>
         <table>
           <thead>
             <tr>
