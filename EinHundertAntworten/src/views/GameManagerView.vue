@@ -588,7 +588,7 @@ onMounted(() => {
     }
 
     .right {
-      margin-top: 70px;
+      margin-top: 12px;
       display: flex;
       align-items: center;
       flex-direction: column;
@@ -619,8 +619,8 @@ onMounted(() => {
 
       th,
       td {
+        padding: 12px;
         border: 1px solid #ddd;
-        padding: 24px 24px 12px 12px;
         text-align: center;
         font-size: 16px;
         width: 50%;
@@ -638,8 +638,12 @@ onMounted(() => {
         }
       }
 
+      td {
+        padding: 24px 24px 12px 12px;
+      }
+
       th {
-        background-color: #007bff;
+        background-color: #87d2ff;
         color: #fff;
       }
 
