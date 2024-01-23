@@ -146,6 +146,12 @@ public class GameController {
                 Optional<Question> questionOptional = questionRepository.findById(match);
                 if (questionOptional.isPresent()){
                     Question question = questionOptional.get();
+                    for (Answer a : answerRepository.findAll()) {
+                        if (a.getFiller().contains(question.getId())){
+                            a.getFiller().remove(question.getId());
+                            answerRepository.save(a);
+                        }
+                    }
                     questionRepository.delete(question);
                 }
             }
