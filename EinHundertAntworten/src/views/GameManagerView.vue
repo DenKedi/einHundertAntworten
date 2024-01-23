@@ -156,6 +156,10 @@ async function addQuizSet() {
   messageElement.innerText = 'Quizset erfolgreich angelegt.';
   questionValue.value = '';
 
+  await reset(category);
+}
+
+async function reset(category: string) {
   await clearAnswerContainer();
   let filter = document.getElementById('filter') as HTMLSelectElement;
   if (filter.options[filter.selectedIndex].value != 'all') {
@@ -242,13 +246,7 @@ function addButtonListener() {
 
   let filter = document.getElementById('filter') as HTMLSelectElement;
   filter.addEventListener('change', async function () {
-    await clearAnswerContainer();
-    if (filter.options[filter.selectedIndex].value == "all") {
-      await getGameobjects();
-    } else {
-      await getGameobjectsByCategory(filter.options[filter.selectedIndex].value);
-    }
-    fillAnswers();
+    reset(filter.options[filter.selectedIndex].value);
     clearTable();
   });
 }
@@ -261,9 +259,9 @@ async function addFillerToAnswer() {
   }
   (document.getElementsByClassName('save-filler')[0] as HTMLButtonElement).disabled = true;
 
-  await clearAnswerContainer();
-  await getGameobjects();
-  fillAnswers();
+  let filter = document.getElementById('filter') as HTMLSelectElement;
+  reset(filter.options[filter.selectedIndex].value);
+
   fillerIds = [];
   saveFillerMessageElem.innerHTML = 'Filler erfolgreich aktualisiert.'
   saveFillerMessageElem.classList.add('success');
@@ -627,6 +625,10 @@ onMounted(() => {
         font-size: 16px;
         width: 50%;
         position: relative;
+
+        span:hover {
+          background-color: white;
+        }
 
         .fa-solid {
           position: absolute;
