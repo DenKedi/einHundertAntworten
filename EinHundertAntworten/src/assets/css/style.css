@@ -45,6 +45,7 @@ nav div {
   text-decoration: none;
   margin-top: auto;
   margin-bottom: auto;
+  transition: color 0.125s;
 
   :hover {
     color: #3787ee;
@@ -113,9 +114,10 @@ nav div {
   border: none;
   outline: none;
   border-radius: 5px;
+  transition: background-color 0.25s;
 
   &:hover {
-    opacity: 0.7;
+    background-color: #2fafff;
   }
 }
 
@@ -333,7 +335,6 @@ input {
 .card .additional .user-card .points {
   top: 85%;
 }
-
 
 .card .general {
   width: 330px;
@@ -571,7 +572,6 @@ main {
   width: 0;
 }
 
-
 .game-quiz-container {
   width: 60rem;
   height: 40rem;
@@ -647,7 +647,6 @@ span label {
 }
 
 span label:hover {
-
   transform: scale(1.05);
   color: white;
 }

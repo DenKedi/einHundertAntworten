@@ -567,6 +567,7 @@ onMounted(() => {
             cursor: default;
             max-width: 100%;
             min-height: 20%;
+            transition: background-color 0.25s;
 
             .fa-solid {
               position: absolute;
@@ -593,6 +594,31 @@ onMounted(() => {
       align-items: center;
       flex-direction: column;
       width: 40%;
+
+      button {
+        background-color: #87d2ff;
+        color: white;
+        text-align: center;
+        text-decoration: none;
+        margin: auto;
+        cursor: pointer;
+        justify-content: center;
+        display: flex;
+        padding: 10px;
+        border: none;
+        outline: none;
+        border-radius: 5px;
+        transition: background-color 0.25s;
+      }
+
+      button:hover {
+        background-color: #2fafff;
+      }
+
+      button:disabled {
+        background-color: grey;
+        cursor: auto;
+      }
 
       table {
         width: 80%;
