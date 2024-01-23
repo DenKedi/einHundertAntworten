@@ -566,7 +566,7 @@ onMounted(() => {
             font-size: 20px;
             cursor: default;
             max-width: 100%;
-            min-height: 20%;
+            min-height: 3rem;
             transition: background-color 0.25s;
 
             .fa-solid {
