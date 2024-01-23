@@ -45,6 +45,7 @@ nav div {
   text-decoration: none;
   margin-top: auto;
   margin-bottom: auto;
+  transition: color 0.125s;
 
   :hover {
     color: #3787ee;
@@ -113,9 +114,10 @@ nav div {
   border: none;
   outline: none;
   border-radius: 5px;
+  transition: background-color 0.25s;
 
   &:hover {
-    opacity: 0.7;
+    background-color: #2fafff;
   }
 }
 
@@ -299,7 +301,7 @@ input {
   position: absolute;
   width: 150px;
   height: 100%;
-  background: linear-gradient( #113850, #87d2ff);
+  background: linear-gradient(#113850, #87d2ff);
   transition: width 0.4s;
   overflow: hidden;
   z-index: 2;
@@ -333,7 +335,6 @@ input {
 .card .additional .user-card .points {
   top: 85%;
 }
-
 
 .card .general {
   width: 330px;
@@ -378,19 +379,18 @@ body {
   border-radius: 20px;
   margin-right: 5vmax;
   margin-top: 2vmax;
-  margin-bottom:2vmax;
+  margin-bottom: 2vmax;
   overflow: hidden;
-  opacity:1;
+  opacity: 1;
   box-shadow: 0px 0px 50px rgba(0, 0, 0, 0.3);
 }
 
 .avatar--green {
-  background: linear-gradient(
-          to right,
-          #87d2ff,
-          #113850
-  );
+  background: linear-gradient(to right,
+      #87d2ff,
+      #113850);
 }
+
 .avatar-body {
   position: relative;
   left: 50%;
@@ -402,36 +402,36 @@ body {
 }
 
 .body--green {
-  background: linear-gradient(
-          to right,
-          rgba(230, 244, 202, 1),
-          rgba(17, 81, 58, 1)
-  );
+  background: linear-gradient(to right,
+      rgba(230, 244, 202, 1),
+      rgba(17, 81, 58, 1));
   border-top-left-radius: 50px;
   border-top-right-radius: 50px;
 }
+
 .avatar-eye {
   position: absolute;
   top: 5%;
   left: 50%;
   width: 65px;
   height: 65px;
-  background: linear-gradient(
-          105deg,
-          rgba(255, 255, 255, 1),
-          rgba(203, 135, 244, 1)
-  );
+  background: linear-gradient(105deg,
+      rgba(255, 255, 255, 1),
+      rgba(203, 135, 244, 1));
   border-radius: 100%;
   box-shadow: 4px 8px 5px rgba(0, 0, 0, 0.2);
   margin: 5px;
   transform: translateX(-50%);
 }
+
 .eye--left {
   left: 10%;
 }
+
 .eye--right {
   left: 85%;
 }
+
 .avatar-eye-pupil {
   position: absolute;
   width: 55%;
@@ -442,17 +442,17 @@ body {
   z-index: 100;
   border-radius: 100%;
 }
+
 .pupil--purple {
-  background: linear-gradient(
-          135deg,
-          rgba(218, 171, 229, 1),
-          rgba(104, 45, 157, 1) 75%
-  );
+  background: linear-gradient(135deg,
+      rgba(218, 171, 229, 1),
+      rgba(104, 45, 157, 1) 75%);
 }
 
-.pupil--purple::after{
-  content:'';
+.pupil--purple::after {
+  content: '';
 }
+
 .avatar-eye-pupil-blackThing {
   position: absolute;
   width: 55%;
@@ -464,6 +464,7 @@ body {
   border-radius: 100%;
   box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.2);
 }
+
 .avatar-eye-pupil-lightReflection {
   position: absolute;
   width: 7px;
@@ -475,6 +476,7 @@ body {
   border-radius: 100%;
   box-shadow: 10px 10px 10px rgba(255, 255, 255, 0.2);
 }
+
 .avatar-smile {
   position: absolute;
   left: 50%;
@@ -482,28 +484,28 @@ body {
   transform: translate(-50%);
   padding: 0.2em;
   transition: 0.2s all linear;
-  width:60px;
-  height:23px;
-  background:rgba(0,0,0,0.3);
-  border:2px solid rgba(96,163,138,1);
-  border-radius:10px;
+  width: 60px;
+  height: 23px;
+  background: rgba(0, 0, 0, 0.3);
+  border: 2px solid rgba(96, 163, 138, 1);
+  border-radius: 10px;
 }
-.avatar-tooth{
-  position:absolute;
-  width:10px;
-  height:10px;
-  background:rgba(210,237,227,1);
-  border-radius:2px;
+
+.avatar-tooth {
+  position: absolute;
+  width: 10px;
+  height: 10px;
+  background: rgba(210, 237, 227, 1);
+  border-radius: 2px;
   top: 61%;
   transform: translate(-50%);
 }
-.tooth--right
-{
+
+.tooth--right {
   left: 45%;
 }
 
-.tooth--left
-{
+.tooth--left {
   left: 55%;
 }
 
@@ -570,7 +572,6 @@ main {
   width: 0;
 }
 
-
 .game-quiz-container {
   width: 60rem;
   height: 40rem;
@@ -597,7 +598,7 @@ main {
 
 .game-question-container {
   width: 80%;
-  height: 17rem;
+  height: 10rem;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -617,11 +618,11 @@ main {
   display: flex;
   flex-wrap: wrap;
   align-items: center;
-  justify-content: space-around;
+  justify-content: space-between;
 }
 
 .game-options-container span {
-  width: 45%;
+  width: 48%;
   height: 6rem;
   border: 2px solid darkgray;
   border-radius: 10px;
@@ -646,8 +647,7 @@ span label {
 }
 
 span label:hover {
-
-  transform: scale(1.12);
+  transform: scale(1.05);
   color: white;
 }
 
@@ -670,6 +670,7 @@ input[type=radio]:checked~.option {
   height: 3rem;
   display: flex;
   justify-content: center;
+  margin: 1rem 0;
 }
 
 .next-button-container button {
@@ -686,7 +687,7 @@ input[type=radio]:checked~.option {
 
 .next-button-container button:hover {
   background-color: #87d2ff;
-  color:#ffffff;
+  color: #ffffff;
 }
 
 .modal-container {
