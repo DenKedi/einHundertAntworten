@@ -149,6 +149,30 @@ export const useGameStore = defineStore({
       );
       const data = await response.json();
       if (response.ok) {
+        this.questions = data;
+        localStorage.removeItem('questions');
+        localStorage.setItem('questions', JSON.stringify(this.questions));
+        return data;
+      } else {
+        return data.message.toString();
+      }
+    },
+    async getAnswerByCategory(category: string): Promise<Answer[]> {
+      const response = await fetch(
+        'http://localhost:8080/game/getAnswers?category=' + category,
+        {
+          method: 'GET',
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: 'Bearer ' + this.token,
+          },
+        }
+      );
+      const data = await response.json();
+      if (response.ok) {
+        this.answers = data;
+        localStorage.removeItem('answers');
+        localStorage.setItem('answers', JSON.stringify(this.answers));
         return data;
       } else {
         return data.message.toString();

@@ -157,7 +157,12 @@ async function addQuizSet() {
   questionValue.value = '';
 
   await clearAnswerContainer();
-  await getGameobjects();
+  let filter = document.getElementById('filter') as HTMLSelectElement;
+  if (filter.options[filter.selectedIndex].value != 'all') {
+    await getGameobjectsByCategory(category);
+  } else {
+    await getGameobjects();
+  }
   fillAnswers();
 }
 
@@ -234,6 +239,18 @@ function addButtonListener() {
     await removeFillerAndMatches();
     await addFillerToAnswer();
   });
+
+  let filter = document.getElementById('filter') as HTMLSelectElement;
+  filter.addEventListener('change', async function () {
+    await clearAnswerContainer();
+    if (filter.options[filter.selectedIndex].value == "all") {
+      await getGameobjects();
+    } else {
+      await getGameobjectsByCategory(filter.options[filter.selectedIndex].value);
+    }
+    fillAnswers();
+    clearTable();
+  });
 }
 
 async function addFillerToAnswer() {
@@ -250,6 +267,15 @@ async function addFillerToAnswer() {
   fillerIds = [];
   saveFillerMessageElem.innerHTML = 'Filler erfolgreich aktualisiert.'
   saveFillerMessageElem.classList.add('success');
+}
+
+async function getGameobjectsByCategory(category: string) {
+  await game.getQuestionByCategory(category);
+  await game.getAnswerByCategory(category);
+  storedQuestions = localStorage.getItem('questions');
+  storedAnswers = localStorage.getItem('answers');
+  questions = ref<Question[]>(storedQuestions ? JSON.parse(storedQuestions) : []);
+  answers = ref<Answer[]>(storedAnswers ? JSON.parse(storedAnswers) : []);
 }
 
 async function getGameobjects() {
@@ -285,6 +311,7 @@ function addFillerTableRow(question: string, id: string) {
 
   let button = Array.from(document.querySelectorAll('.remove-filler')).pop();
   button.addEventListener("click", function () {
+    button.parentElement.innerHTML = '';
     (document.getElementsByClassName('save-filler')[0] as HTMLButtonElement).disabled = false;
     removedFillerIds.push(id);
   })
@@ -304,6 +331,7 @@ async function cancelDeleteAnswer() {
 }
 
 async function fillTable(id: string) {
+  (document.getElementsByClassName('save-filler')[0] as HTMLButtonElement).disabled = true;
   let saveFillerMessageElem = document.getElementsByClassName('save-filler-message')[0];
   saveFillerMessageElem.innerHTML = ''
   saveFillerMessageElem.classList.remove('success');
@@ -312,9 +340,6 @@ async function fillTable(id: string) {
   let answer = answers.value.find(answer => answer.id === id);
   let fillerIDs = [];
   let matchesIDs = [];
-
-  console.log(id);
-  console.log(answer.id);
 
   for (let i = 0; i < answer.filler.length; i++) {
     fillerIDs.push(answer.filler[i]);
@@ -402,6 +427,12 @@ onMounted(() => {
       <div class="left">
         <div class="answers-container">
           <h1 class="heading">Alle Antworten</h1>
+          <select name="filter" id="filter">
+            <option value="all">Alle</option>
+            <option value="number">Zahlen</option>
+            <option value="person">Personen</option>
+            <option value="place">Orte</option>
+          </select>
           <div class="answers">
             <div id="answers-left"></div>
             <div id="answers-right"></div>
