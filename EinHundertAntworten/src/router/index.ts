@@ -13,7 +13,11 @@ const router = createRouter({
       path: '/home',
       name: 'Dashboard',
       component: DashboardView
-    },
+    },{
+      path: '/',
+      name: 'start',
+      redirect: '/home'
+    },    
     {
       path: '/login',
       name: 'Login',
