@@ -31,11 +31,12 @@ export const useAuthStore = defineStore({
       userProfile: localStorage.getItem('userProfile') ? JSON.parse(localStorage.getItem('userProfile')!) : '',
       returnUrl: '/home',
       logoutMessage: '',
+      serverIP: 'https://53067-3000.2.codesphere.com'
     };
   },
   actions: {
     async login(emailOrUsername: string, password: string) {
-      const response = await fetch('http://localhost:8080/user/login', {
+      const response = await fetch(`${this.serverIP}/user/login`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -60,7 +61,7 @@ export const useAuthStore = defineStore({
       }
     },
     async register(username: string, email: string, password: string) {
-      const response = await fetch('http://localhost:8080/user/register', {
+      const response = await fetch(`${this.serverIP}/user/register`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -84,7 +85,7 @@ export const useAuthStore = defineStore({
         return data.message.toString();
       }
     }, async getUserProfile(bearer: string, userID: string) {
-      const response = await fetch(`http://localhost:8080/user/getUser/${userID}`, {
+      const response = await fetch(`${this.serverIP}/user/getUser/${userID}`, {
         method: 'GET',
         headers: {
           'Content-Type': 'application/json',
@@ -98,7 +99,7 @@ export const useAuthStore = defineStore({
         return data;
       }
     }, async updateUserProfile(bearer: string, userProfile: UserProfile, userID: string) {
-      const response = await fetch(`http://localhost:8080/user/updateUser/${userID}`, {
+      const response = await fetch(`${this.serverIP}/user/updateUser/${userID}`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
@@ -114,7 +115,7 @@ export const useAuthStore = defineStore({
       }
     },
     async getUserID(username: string, bearer: string) {
-      const url = new URL('http://localhost:8080/user/userID');
+      const url = new URL(`${this.serverIP}/user/userID`);
       url.searchParams.append('username', username);
 
       const response = await fetch(url.toString(), {

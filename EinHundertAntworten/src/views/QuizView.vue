@@ -8,7 +8,7 @@ import type { UserProfile } from '@/stores/auth';
 //Setup on mounted
 onMounted(async () => {
   try {
-    const response = await fetch('http://localhost:8080/', {
+    const response = await fetch(`${auth.serverIP}/`, {
       headers: {
         Authorization: `Bearer ${token}`,
       },
