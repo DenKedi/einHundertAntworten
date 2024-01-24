@@ -1,4 +1,5 @@
 import router from '@/router';
+import { Server } from 'http';
 import { defineStore } from 'pinia';
 
 export interface Question {
@@ -25,6 +26,7 @@ export const useGameStore = defineStore({
       token: localStorage.getItem('token')
         ? JSON.parse(localStorage.getItem('token')!)
         : '',
+        ServerIP: 'https://53067-3000.2.codesphere.com'
     };
   },
   actions: {
