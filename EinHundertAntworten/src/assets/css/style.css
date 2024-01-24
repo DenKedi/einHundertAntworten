@@ -1,7 +1,12 @@
+@font-face {
+  font-family: 'Exo';
+  src: url('../font/Exo2-Regular.ttf') format('truetype');
+}
+
 body {
   margin: 0;
   padding: 0;
-  font-family: Arial, sans-serif;
+  font-family: 'Exo', sans-serif;
 }
 
 nav {
@@ -40,6 +45,7 @@ nav div {
   text-decoration: none;
   margin-top: auto;
   margin-bottom: auto;
+  transition: color 0.125s;
 
   :hover {
     color: #3787ee;
@@ -51,7 +57,7 @@ nav div {
   padding-top: 2%;
   margin: auto;
   display: flex;
-  flex-direction:column;
+  flex-direction: column;
   min-height: 100vh;
   justify-content: flex-start;
   align-items: center;
@@ -93,7 +99,7 @@ nav div {
 }
 
 .home-button {
-  background-color: #1c87c9;
+  background-color: #87d2ff;
   color: white;
   text-align: center;
   text-decoration: none;
@@ -108,9 +114,10 @@ nav div {
   border: none;
   outline: none;
   border-radius: 5px;
+  transition: background-color 0.25s;
 
   &:hover {
-    opacity: 0.7;
+    background-color: #2fafff;
   }
 }
 
@@ -122,7 +129,7 @@ nav div {
   justify-content: center;
   align-items: center;
   min-height: 100vh;
-  font-family: Arial, sans-serif;
+  font-family: 'Exo', sans-serif;
 }
 
 .mainlogin {
@@ -131,7 +138,7 @@ nav div {
   background: rgb(166, 166, 166);
   overflow: hidden;
   border-radius: 10px;
-  box-shadow: 5px 20px 50px #000;
+  box-shadow: 5px 20px 50px #777777;
 }
 
 #go {
@@ -144,13 +151,15 @@ nav div {
   height: 100%;
 }
 
-label {
+.labellogin {
   color: #000000;
-  font-size: 1em;
+  font-size: 2em;
   justify-content: center;
   display: flex;
   font-weight: bold;
   cursor: pointer;
+  margin-top: 40px;
+  margin-bottom: 30px;
   transition: 0.5s ease-in-out;
 }
 
@@ -162,12 +171,13 @@ small {
   margin: 0px 60px 0px 60px;
   font-weight: lighter;
 
-  
+
 }
-.logout-message{
+
+.logout-message {
   padding-top: 0.5rem;
   justify-content: center;
- }
+}
 
 #registerUsernameInput,
 #registerEmailInput,
@@ -184,8 +194,7 @@ input {
   background: #e0dede;
   justify-content: center;
   display: flex;
-  margin: 20px auto;
-  margin-top: 1px;
+  margin: 10px auto;
   padding: 10px;
   border: none;
   outline: none;
@@ -195,11 +204,13 @@ input {
 .buttonBig {
   width: 66%;
   height: 40px;
-  margin: auto;
+  margin-top: 30px;
+  margin-left: auto;
+  margin-right: auto;
   justify-content: center;
   display: block;
   color: #fff;
-  background: #508d28;
+  background: #87d2ff;
   font-size: 1em;
   font-weight: bold;
   outline: none;
@@ -228,7 +239,7 @@ input {
 }
 
 .buttonBig:hover {
-  background: #7cc93f;
+  background: #87d2ff;
 }
 
 .buttonSmall:hover {
@@ -238,18 +249,18 @@ input {
 .login {
   height: 500px;
   background: #eee;
-  transform: translateY(-190px);
+  transform: translateY(-150px);
   transition: 0.7s ease-in-out;
 }
 
 .login label {
-  color: #508d28;
+  color: rgba(0, 130, 206, 0.89);
   transform: scale(0.5);
   padding-top: 15px;
 }
 
 #go:checked~.login {
-  transform: translateY(-510px);
+  transform: translateY(-490px);
 }
 
 #go:checked~.login label {
@@ -269,51 +280,42 @@ input {
 }
 
 .card {
-  width: 550px;
-  height: 350px;
+  width: 500px;
+  height: 370px;
   background-color: #fff;
   background: linear-gradient(#f8f8f8, #fff);
   border-radius: 10px;
   overflow: hidden;
   position: relative;
-  margin: 1.5rem;
-  box-shadow: 5px 20px 50px #000;
+  margin: 5rem auto;
+  box-shadow: 5px 20px 50px #777777;
   justify-content: center;
 }
 
 .card h1 {
-  text-align: center;
+  text-align: left;
+
 }
 
 .card .additional {
   position: absolute;
   width: 150px;
   height: 100%;
-  background: linear-gradient(#4f4e4e, #a6a6a6);
+  background: linear-gradient(#113850, #87d2ff);
   transition: width 0.4s;
   overflow: hidden;
   z-index: 2;
 }
 
-.card:hover .additional {
-  width: 100%;
-  border-radius: 0 5px 5px 0;
-}
-
 .card .additional .user-card {
   width: 150px;
-  height: 100%;
-  position: relative;
   float: left;
-}
-
-.card .additional .user-card::after {
   content: '';
   display: block;
   position: absolute;
-  top: 10%;
+  top: 85%;
   right: -2px;
-  height: 80%;
+  height: 2%;
   border-left: 2px solid rgba(0, 0, 0, 0.025);
 }
 
@@ -334,71 +336,8 @@ input {
   top: 85%;
 }
 
-.card .additional .user-card svg {
-  top: 50%;
-}
-
-.card .additional .more-info {
-  width: 300px;
-  float: left;
-  position: absolute;
-  left: 150px;
-  height: 100%;
-}
-
-.card .additional .more-info h1 {
-  color: #fff;
-  margin-bottom: 0;
-}
-
-.card .additional .coords {
-  margin: 0 1rem;
-  color: #fff;
-  font-size: 1rem;
-}
-
-.card .additional .coords span+span {
-  float: right;
-}
-
-.card .additional .stats {
-  font-size: 2rem;
-  display: flex;
-  position: absolute;
-  bottom: 1rem;
-  left: 1rem;
-  right: 1rem;
-  top: auto;
-  color: #fff;
-}
-
-.card .additional .stats>div {
-  flex: 1;
-  text-align: center;
-}
-
-.card .additional .stats i {
-  display: block;
-}
-
-.card .additional .stats div.title {
-  font-size: 0.75rem;
-  font-weight: bold;
-  text-transform: uppercase;
-}
-
-.card .additional .stats div.value {
-  font-size: 1.5rem;
-  font-weight: bold;
-  line-height: 1.5rem;
-}
-
-.card .additional .stats div.value.infinity {
-  font-size: 2.5rem;
-}
-
 .card .general {
-  width: 300px;
+  width: 330px;
   height: 100%;
   position: absolute;
   top: 0;
@@ -414,6 +353,160 @@ input {
   bottom: 1rem;
   right: 1rem;
   font-size: 0.9em;
+}
+
+/** Avatar mausi
+Credit: https://codepen.io/akhil_001/pen/MWYjBgJ*/
+html {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  padding: 0;
+  margin: 0;
+}
+
+.container {
+  position: relative;
+  flex-flow: row wrap;
+  align-content: center;
+}
+
+.avatar {
+  width: 200px;
+  height: 200px;
+  border-radius: 20px;
+  margin-right: 5vmax;
+  margin-top: 2vmax;
+  margin-bottom: 2vmax;
+  overflow: hidden;
+  opacity: 1;
+  box-shadow: 0px 0px 50px rgba(0, 0, 0, 0.3);
+}
+
+.avatar--green {
+  background: linear-gradient(to right,
+      #87d2ff,
+      #113850);
+}
+
+.avatar-body {
+  position: relative;
+  left: 50%;
+  top: 70%;
+  transform: translate(-50%, -50%);
+  width: 50%;
+  height: 80%;
+  box-shadow: 10px 0px 10px rgba(0, 0, 0, 0.5);
+}
+
+.body--green {
+  background: linear-gradient(to right,
+      rgba(230, 244, 202, 1),
+      rgba(17, 81, 58, 1));
+  border-top-left-radius: 50px;
+  border-top-right-radius: 50px;
+}
+
+.avatar-eye {
+  position: absolute;
+  top: 5%;
+  left: 50%;
+  width: 65px;
+  height: 65px;
+  background: linear-gradient(105deg,
+      rgba(255, 255, 255, 1),
+      rgba(203, 135, 244, 1));
+  border-radius: 100%;
+  box-shadow: 4px 8px 5px rgba(0, 0, 0, 0.2);
+  margin: 5px;
+  transform: translateX(-50%);
+}
+
+.eye--left {
+  left: 10%;
+}
+
+.eye--right {
+  left: 85%;
+}
+
+.avatar-eye-pupil {
+  position: absolute;
+  width: 55%;
+  height: 55%;
+  left: 50%;
+  top: 25%;
+  transform: translate(-50%);
+  z-index: 100;
+  border-radius: 100%;
+}
+
+.pupil--purple {
+  background: linear-gradient(135deg,
+      rgba(218, 171, 229, 1),
+      rgba(104, 45, 157, 1) 75%);
+}
+
+.pupil--purple::after {
+  content: '';
+}
+
+.avatar-eye-pupil-blackThing {
+  position: absolute;
+  width: 55%;
+  height: 55%;
+  left: 50%;
+  top: 25%;
+  background: rgba(44, 47, 50, 1);
+  transform: translate(-50%);
+  border-radius: 100%;
+  box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.2);
+}
+
+.avatar-eye-pupil-lightReflection {
+  position: absolute;
+  width: 7px;
+  height: 7px;
+  left: 25%;
+  top: 10%;
+  background: rgba(235, 235, 235, 1);
+  transform: translate(-50%);
+  border-radius: 100%;
+  box-shadow: 10px 10px 10px rgba(255, 255, 255, 0.2);
+}
+
+.avatar-smile {
+  position: absolute;
+  left: 50%;
+  top: 60%;
+  transform: translate(-50%);
+  padding: 0.2em;
+  transition: 0.2s all linear;
+  width: 60px;
+  height: 23px;
+  background: rgba(0, 0, 0, 0.3);
+  border: 2px solid rgba(96, 163, 138, 1);
+  border-radius: 10px;
+}
+
+.avatar-tooth {
+  position: absolute;
+  width: 10px;
+  height: 10px;
+  background: rgba(210, 237, 227, 1);
+  border-radius: 2px;
+  top: 61%;
+  transform: translate(-50%);
+}
+
+.tooth--right {
+  left: 45%;
+}
+
+.tooth--left {
+  left: 55%;
 }
 
 /* Quiz */
@@ -479,7 +572,6 @@ main {
   width: 0;
 }
 
-
 .game-quiz-container {
   width: 60rem;
   height: 40rem;
@@ -506,11 +598,11 @@ main {
 
 .game-question-container {
   width: 80%;
-  height: 17rem;
+  height: 10rem;
   display: flex;
   align-items: center;
   justify-content: center;
-  border: 2px solid #a6a6a6;
+  border: 2px solid #4f4e4e;
   border-radius: 10px;
 }
 
@@ -526,11 +618,11 @@ main {
   display: flex;
   flex-wrap: wrap;
   align-items: center;
-  justify-content: space-around;
+  justify-content: space-between;
 }
 
 .game-options-container span {
-  width: 45%;
+  width: 48%;
   height: 6rem;
   border: 2px solid darkgray;
   border-radius: 10px;
@@ -541,7 +633,7 @@ main {
 }
 
 span label {
-  width: 80%;
+  width: 100%;
   height: 100%;
   display: flex;
   align-items: center;
@@ -550,25 +642,27 @@ span label {
   transition: transform 0.3s;
   font-weight: 200;
   color: rgb(7, 7, 7);
-  align-content: center;
+  margin: auto;
+  text-align: center;
 }
 
 span label:hover {
-
-  transform: scale(1.12);
+  transform: scale(1.05);
   color: white;
 }
+
 span:hover {
   background: #7c7c7c;
 }
+
 input[type="radio"] {
   position: relative;
   display: none;
 }
 
-
 input[type=radio]:checked~.option {
-  background: #1c87c9;
+  background: #87d2ff;
+  color: #ffffff;
 }
 
 .next-button-container {
@@ -576,6 +670,7 @@ input[type=radio]:checked~.option {
   height: 3rem;
   display: flex;
   justify-content: center;
+  margin: 1rem 0;
 }
 
 .next-button-container button {
@@ -591,7 +686,8 @@ input[type=radio]:checked~.option {
 }
 
 .next-button-container button:hover {
-  background-color: #1c87c9;
+  background-color: #87d2ff;
+  color: #ffffff;
 }
 
 .modal-container {

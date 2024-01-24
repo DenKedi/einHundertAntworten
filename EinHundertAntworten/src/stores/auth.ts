@@ -153,6 +153,7 @@ export const useAuthStore = defineStore({
       this.userID = '';
       this.role = '';
       this.userProfile = '';
+      this.logoutMessage = 'Du hast dich erfolgreich abgemeldet.';
       localStorage.removeItem('user');
       localStorage.removeItem('token');
       localStorage.removeItem('userID');

@@ -41,7 +41,6 @@ export const useGameStore = defineStore({
         }
       );
       const data = await response.json();
-      console.log(response.status);
       if (response.ok) {
         this.questions = data;
         localStorage.removeItem('questions');
@@ -59,7 +58,6 @@ export const useGameStore = defineStore({
         },
       });
       const data = await response.json();
-      console.log(response.status);
       if (response.ok) {
         this.answers = data;
         localStorage.removeItem('answers');
@@ -81,6 +79,20 @@ export const useGameStore = defineStore({
         return await response.json();
       }
     },
+    async removeMatchesAndFillerFromAnswer(answerId: string, matches: string[], filler: string[]): Promise<Answer> {
+      const response = await fetch('http://localhost:8080/game/answer/removeFillerAndMatches/' + answerId, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: 'Bearer ' + this.token,
+        },
+        body: JSON.stringify({ filler, matches }),
+      });
+      const data = await response.json();
+      if (response.ok) {
+        return data;
+      }
+    },
     async addMatchesToAnswer(answerId: string, matches: string[], filler: string[]): Promise<Answer> {
       const response = await fetch(`http://localhost:8080/game/answer/${answerId}`, {
         method: 'PUT',
@@ -94,8 +106,6 @@ export const useGameStore = defineStore({
       const data = await response.json();
       if (response.ok) {
         return data;
-      } else {
-        return data.message.toString();
       }
     },
     async addQuestion(text: string, category: string): Promise<Question> {
@@ -127,6 +137,48 @@ export const useGameStore = defineStore({
         return data.message.toString();
       }
     },
+    async getQuestionByCategory(category: string): Promise<Question[]> {
+      const response = await fetch(
+        'http://localhost:8080/game/getQuestions?category=' + category,
+        {
+          method: 'GET',
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: 'Bearer ' + this.token,
+          },
+        }
+      );
+      const data = await response.json();
+      if (response.ok) {
+        this.questions = data;
+        localStorage.removeItem('questions');
+        localStorage.setItem('questions', JSON.stringify(this.questions));
+        return data;
+      } else {
+        return data.message.toString();
+      }
+    },
+    async getAnswerByCategory(category: string): Promise<Answer[]> {
+      const response = await fetch(
+        'http://localhost:8080/game/getAnswers?category=' + category,
+        {
+          method: 'GET',
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: 'Bearer ' + this.token,
+          },
+        }
+      );
+      const data = await response.json();
+      if (response.ok) {
+        this.answers = data;
+        localStorage.removeItem('answers');
+        localStorage.setItem('answers', JSON.stringify(this.answers));
+        return data;
+      } else {
+        return data.message.toString();
+      }
+    },
     async getQuestionById(id: string): Promise<Question> {
       const response = await fetch(
         'http://localhost:8080/game/getQuestion/' + id,
@@ -139,8 +191,6 @@ export const useGameStore = defineStore({
         }
       );
       const data = await response.json();
-      console.log(response.status);
-      console.log("test");
       if (response.ok) {
         return data;
       } else {
@@ -159,11 +209,42 @@ export const useGameStore = defineStore({
         }
       );
       const data = await response.json();
-      console.log(response.status);
       if (response.ok) {
         return data;
       } else {
         return data.message.toString();
+      }
+    },
+    async getFillerOfAnswer(id: string): Promise<String[]> {
+      const response = await fetch(
+        'http://localhost:8080/game/Answer/getFiller?id=' + id,
+        {
+          method: 'GET',
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: 'Bearer ' + this.token,
+          },
+        }
+      );
+      const data = await response.json();
+      if (response.ok) {
+        return data;
+      }
+    },
+    async deleteAnswerById(id: string): Promise<Answer> {
+      const response = await fetch(
+        'http://localhost:8080/game/deleteAnswer/' + id,
+        {
+          method: 'DELETE',
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: 'Bearer ' + this.token,
+          },
+        }
+      );
+      const data = await response.json();
+      if (response.ok) {
+        return data;
       }
     },
     getQ() {

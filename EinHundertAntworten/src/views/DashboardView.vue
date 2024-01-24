@@ -24,11 +24,11 @@ onMounted(async () => {
 <template>
     <NavbarForm />
     <div class="main">
-    <h1>Willkommen {{ data }} bei 100 Antworten!</h1>
+    <h1>Moin {{ data }}! Willkommen bei 100 Antworten!</h1>
 
     <div class="home-button-container">
-        <a href="/quiz" class="home-button">Quiz Overview</a>
-        <a href="/login" class="home-button">Registrieren/Anmelden</a>
+        <a href="/quiz" class="home-button">Quiz Mich!</a>
+        <!--<a href="/login" class="home-button">Registrieren/Anmelden</a>-->
         <a v-if="auth.role === 'ADMIN'" href="/gameManager" class="home-button">Admin Panel</a>
         </div>
 </div>

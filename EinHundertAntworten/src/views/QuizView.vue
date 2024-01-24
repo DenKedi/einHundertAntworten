@@ -115,29 +115,25 @@ currentGameObject = {
 */
 
 function getRandomAnswer(): Answer {
-
   var answer: Answer =
     answers.value[Math.floor(Math.random() * answers.value.length)];
-  if (answer.matches.length <= 1 && answer.filler.length <= 3) {
-    return answer;
+      if (answer.matches.length >= 1 && answer.filler.length >= 3) {
+          return answer;
   }
   return getRandomAnswer();
 }
 
+
 function getRandomFiller(answer: Answer): Question[] {
   var fillerIDs:string[] = [];
   var fillerQuestions: Question[] = [];
+  var fillerIDs2:string[] = answer.filler;
   //Get 3 random filler Questions from answer.filler
   for (let i = 0; i < 3; i++) {
-    let question = answer.filler[Math.floor(Math.random() * answer.filler.length)]
-    if (fillerIDs.includes(question)) {
-      i--;
-      continue;
-    }else{
-      fillerIDs.push(
-      answer.filler[Math.floor(Math.random() * answer.filler.length)]
-    );
-    }
+    let fillerID = fillerIDs2[Math.floor(Math.random() * answer.filler.length)];
+    fillerIDs.push(fillerID);
+    //remove fillerID from fillerIDs2
+    fillerIDs2 = fillerIDs2.filter(id => id !== fillerID);
   }
 
   try {
@@ -164,26 +160,40 @@ function getRandomMatch(answer: Answer): Question {
 }
 
 function packRandomGameObject(): GameObject | null {
-  var answer: Answer = getRandomAnswer();
-  if (!answer) {
-    return null;
+  try {
+    var answer: Answer = getRandomAnswer();
+    if (!answer) {
+      return null;
+    }
+    console.log(answer);
+    var filler: Question[] = getRandomFiller(answer);
+    var match: Question = getRandomMatch(answer);
+    var options = [match, filler[0], filler[1], filler[2]].sort(
+      () => Math.random() - 0.5
+    );
+    var go: GameObject = {
+      answer: answer,
+      optionA: options[0],
+      optionB: options[1],
+      optionC: options[2],
+      optionD: options[3],
+      correctOption: match,
+    };
+    if (go.answer != undefined && go.optionA != undefined && go.optionB != undefined &&
+      go.optionC != undefined && go.optionD != undefined && go.correctOption != undefined) {
+      answers.value = answers.value.filter(a => a.id !== go.answer.id);
+      return go;
+    } else {
+      console.log("One or more attributes of game object are undefined.");
+      console.log(answer, filler, match, options);
+      return packRandomGameObject();
+    }
+  } catch (error) {
+    console.log(error);
+    console.log("Something is wrong with game object.")
+    console.log(answer, filler, match, options)
+    return packRandomGameObject();
   }
-  console.log(answer);
-  var filler: Question[] = getRandomFiller(answer);
-  var match: Question = getRandomMatch(answer);
-  var options = [match, filler[0], filler[1], filler[2]].sort(
-    () => Math.random() - 0.5
-  );
-  var go: GameObject = {
-    answer: answer,
-    optionA: options[0],
-    optionB: options[1],
-    optionC: options[2],
-    optionD: options[3],
-    correctOption: match,
-  };
-
-  return go;
 }
 
 // ... rest of the code ...
@@ -215,13 +225,13 @@ function checkForAnswer() {
   var selectionID = userSelection.nextElementSibling.id; //bekommt die ID der ausgewählten Antwort
 
   if (selectionID === matchingQuestionID) {
-    document.getElementById(selectionID).style.backgroundColor = '#6fff18';
+    document.getElementById(selectionID).style.backgroundColor = 'rgba(175,255,142,0.71)';
     playerScore.value++;
     return true;
   } else {
-    document.getElementById(selectionID).style.backgroundColor = '#f12727';
+    document.getElementById(selectionID).style.backgroundColor = 'rgba(252,125,125,0.81)';
     document.getElementById(matchingQuestionID).style.backgroundColor =
-      '#6fff18';
+      'rgba(175,255,142,0.71)';
     wrongAttempt.value++;
     return true;
   }
@@ -232,17 +242,24 @@ function handleNextQuestion() {
   if (!checkForAnswer()) {
     return;
   } //checkt, ob die Antwort richtig oder falsch
+  toggleNextButton(true);
   unCheckRadioButtons();
   //verzögert die Frage um eine Sekunde, um es smoother zu gestalten
   setTimeout(() => {
     if (currentTurn.value < 10) {
       //erzeugt die nächste Frage, wenn der Index nicht höher als neun ist - 10 Fragen insgesamt
+      toggleNextButton(false);
       nextTurn();
     } else {
       handleEndGame(); //beendet das Spiel nach der 10. frage
     }
     resetOptionBackground();
   }, 1000);
+}
+
+function toggleNextButton(isDisabled: boolean) {
+  let button = document.getElementsByClassName('next-button')[0] as HTMLButtonElement;
+  button.disabled = isDisabled;
 }
 
 //resettet alle hintergrund optionen zu null
@@ -320,6 +337,8 @@ function handleEndGame() {
 
 //resettet das Spiel, mischt wieder die Fragen und schließt natürlich das Score board
 function resetScoreModal() {
+  answers = ref<Answer[]>(storedAnswers ? JSON.parse(storedAnswers) : []);
+  questions = ref<Question[]>(storedQuestions ? JSON.parse(storedQuestions) : []);
   currentTurn.value = 0;
   playerScore.value = 0;
   wrongAttempt.value = 0;
@@ -327,6 +346,7 @@ function resetScoreModal() {
   remarkColor = '';
   playerGrade.value = 0;
   document.getElementById('score-modal').style.display = 'none';
+  toggleNextButton(false);
 }
 
 //Funktion um die Close warnung zu schließen
@@ -375,11 +395,13 @@ window.getCurrentGameObject = getCurrentGameObject;
           </p>
         </div>
         <div class="modal-button-container">
-          <button @click="startNewGame">ich will noch einmal</button>
+          <button @click="startNewGame">Ich will noch einmal!</button>
         </div>
         <!--Button mit hauptmenü verbinden!!!!1-->
         <div class="modal-button-container">
-          <button @click="resetScoreModal">Haumptmenü</button>
+          <a href="/home">
+            <button @click="resetScoreModal">Hauptmenü</button>
+          </a>
         </div>
       </div>
     </div>
@@ -418,18 +440,8 @@ window.getCurrentGameObject = getCurrentGameObject;
 
         <!--Antwortoptionen:-->
         <span>
-          <input
-            type="radio"
-            id="optionA"
-            name="option"
-            class="radio"
-            value="optionA"
-          />
-          <label
-            for="optionA"
-            class="option optionA-label"
-            :id="currentGameObject ? currentGameObject.optionA.id : ''"
-          >
+          <input type="radio" id="optionA" name="option" class="radio" value="optionA" />
+          <label for="optionA" class="option optionA-label" :id="currentGameObject ? currentGameObject.optionA.id : ''">
             {{
               currentGameObject ? currentGameObject.optionA.text : 'Loading...'
             }}
@@ -437,18 +449,8 @@ window.getCurrentGameObject = getCurrentGameObject;
         </span>
 
         <span>
-          <input
-            type="radio"
-            id="optionB"
-            name="option"
-            class="radio"
-            value="optionB"
-          />
-          <label
-            for="optionB"
-            class="option optionB-label"
-            :id="currentGameObject ? currentGameObject.optionB.id : ''"
-          >
+          <input type="radio" id="optionB" name="option" class="radio" value="optionB" />
+          <label for="optionB" class="option optionB-label" :id="currentGameObject ? currentGameObject.optionB.id : ''">
             {{
               currentGameObject ? currentGameObject.optionB.text : 'Loading...'
             }}
@@ -456,18 +458,8 @@ window.getCurrentGameObject = getCurrentGameObject;
         </span>
 
         <span>
-          <input
-            type="radio"
-            id="optionC"
-            name="option"
-            class="radio"
-            value="optionC"
-          />
-          <label
-            for="optionC"
-            class="option optionC-label"
-            :id="currentGameObject ? currentGameObject.optionC.id : ''"
-          >
+          <input type="radio" id="optionC" name="option" class="radio" value="optionC" />
+          <label for="optionC" class="option optionC-label" :id="currentGameObject ? currentGameObject.optionC.id : ''">
             {{
               currentGameObject ? currentGameObject.optionC.text : 'Loading...'
             }}
@@ -475,18 +467,8 @@ window.getCurrentGameObject = getCurrentGameObject;
         </span>
 
         <span>
-          <input
-            type="radio"
-            id="optionD"
-            name="option"
-            class="radio"
-            value="optionD"
-          />
-          <label
-            for="optionD"
-            class="option optionD-label"
-            :id="currentGameObject ? currentGameObject.optionD.id : ''"
-          >
+          <input type="radio" id="optionD" name="option" class="radio" value="optionD" />
+          <label for="optionD" class="option optionD-label" :id="currentGameObject ? currentGameObject.optionD.id : ''">
             {{
               currentGameObject ? currentGameObject.optionD.text : 'Loading...'
             }}
@@ -495,7 +477,7 @@ window.getCurrentGameObject = getCurrentGameObject;
       </div>
 
       <div class="next-button-container">
-        <button @click="handleNextQuestion">Weiter hihi</button>
+        <button class="next-button" @click="handleNextQuestion">Weiter hihi</button>
       </div>
     </div>
   </main>

@@ -109,7 +109,7 @@ function highlightInput(id: string) {
         <form id="registerForm" @submit.prevent="registerOnSubmit">
             <div class="formFrame">
                 
-            <label for="go" aria-hidden="true">Registrieren</label>
+            <label class="labellogin" for="go" aria-hidden="true">Registrieren</label>
             
             <small id="usernameSmall"></small>
             <input id="registerUsernameInput" type="text" name="user" placeholder="Username" v-model="user.username">
@@ -125,10 +125,11 @@ function highlightInput(id: string) {
     </div>
     <div class="login">
         <form id="loginForm" @submit.prevent="loginOnSubmit">
-            <label for="go" aria-hidden="true">Anmelden</label>
-            
+            <label class="labellogin" for="go" aria-hidden="true">Anmelden</label>
+
             <small id="loginSmall"></small>
             <input id="loginUsermailInput" type="text" name="usermail" placeholder="Username/Email" v-model="user.username">
+            <small id="passwordSmall"></small>
             <input id="loginPasswordInput" type="password" name="pswd" placeholder="Password" v-model="user.password">
             <button class="buttonBig" type="submit">Anmelden</button>
             
