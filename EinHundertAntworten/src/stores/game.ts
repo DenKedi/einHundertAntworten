@@ -25,12 +25,13 @@ export const useGameStore = defineStore({
       token: localStorage.getItem('token')
         ? JSON.parse(localStorage.getItem('token')!)
         : '',
+        ServerIP: 'https://53067-3000.2.codesphere.com'
     };
   },
   actions: {
     async getQuestions(): Promise<String> {
       const response = await fetch(
-        'http://localhost:8080/game/getAllQuestions',
+        `${this.ServerIP}/game/getAllQuestions`,
         {
           method: 'GET',
           headers: {
@@ -40,7 +41,6 @@ export const useGameStore = defineStore({
         }
       );
       const data = await response.json();
-      console.log(response.status);
       if (response.ok) {
         this.questions = data;
         localStorage.removeItem('questions');
@@ -50,7 +50,7 @@ export const useGameStore = defineStore({
       }
     },
     async getAnswers(): Promise<String> {
-      const response = await fetch('http://localhost:8080/game/getAllAnswers', {
+      const response = await fetch(`${this.ServerIP}/game/getAllAnswers`, {
         method: 'GET',
         headers: {
           'Content-Type': 'application/json',
@@ -58,7 +58,6 @@ export const useGameStore = defineStore({
         },
       });
       const data = await response.json();
-      console.log(response.status);
       if (response.ok) {
         this.answers = data;
         localStorage.removeItem('answers');
@@ -68,7 +67,7 @@ export const useGameStore = defineStore({
       }
     },
     async addAnswer(text: string, category: string): Promise<Answer> {
-      const response = await fetch('http://localhost:8080/game/createAnswer', {
+      const response = await fetch(`${this.ServerIP}/game/createAnswer`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -80,8 +79,22 @@ export const useGameStore = defineStore({
         return await response.json();
       }
     },
+    async removeMatchesAndFillerFromAnswer(answerId: string, matches: string[], filler: string[]): Promise<Answer> {
+      const response = await fetch(`${this.ServerIP}/game/answer/removeFillerAndMatches/` + answerId, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: 'Bearer ' + this.token,
+        },
+        body: JSON.stringify({ filler, matches }),
+      });
+      const data = await response.json();
+      if (response.ok) {
+        return data;
+      }
+    },
     async addMatchesToAnswer(answerId: string, matches: string[], filler: string[]): Promise<Answer> {
-      const response = await fetch(`http://localhost:8080/game/answer/${answerId}`, {
+      const response = await fetch(`${this.ServerIP}/game/answer/${answerId}`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
@@ -96,7 +109,7 @@ export const useGameStore = defineStore({
       }
     },
     async addQuestion(text: string, category: string): Promise<Question> {
-      const response = await fetch('http://localhost:8080/game/createQuestion', {
+      const response = await fetch(`${this.ServerIP}/game/createQuestion`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -109,7 +122,7 @@ export const useGameStore = defineStore({
       }
     },
     async addMatchToQuestion(questionId: string, match: string): Promise<Question> {
-      const response = await fetch(`http://localhost:8080/game/question/${questionId}`, {
+      const response = await fetch(`${this.ServerIP}/game/question/${questionId}`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
@@ -126,7 +139,7 @@ export const useGameStore = defineStore({
     },
     async getQuestionByCategory(category: string): Promise<Question[]> {
       const response = await fetch(
-        'http://localhost:8080/game/getQuestions?category=' + category,
+        `${this.ServerIP}/game/getQuestions?category=` + category,
         {
           method: 'GET',
           headers: {
@@ -136,8 +149,31 @@ export const useGameStore = defineStore({
         }
       );
       const data = await response.json();
-      console.log(response.status);
       if (response.ok) {
+        this.questions = data;
+        localStorage.removeItem('questions');
+        localStorage.setItem('questions', JSON.stringify(this.questions));
+        return data;
+      } else {
+        return data.message.toString();
+      }
+    },
+    async getAnswerByCategory(category: string): Promise<Answer[]> {
+      const response = await fetch(
+        `${this.ServerIP}/game/getAnswers?category=` + category,
+        {
+          method: 'GET',
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: 'Bearer ' + this.token,
+          },
+        }
+      );
+      const data = await response.json();
+      if (response.ok) {
+        this.answers = data;
+        localStorage.removeItem('answers');
+        localStorage.setItem('answers', JSON.stringify(this.answers));
         return data;
       } else {
         return data.message.toString();
@@ -145,7 +181,7 @@ export const useGameStore = defineStore({
     },
     async getQuestionById(id: string): Promise<Question> {
       const response = await fetch(
-        'http://localhost:8080/game/getQuestion/' + id,
+        `${this.ServerIP}/game/getQuestion/` + id,
         {
           method: 'GET',
           headers: {
@@ -155,8 +191,6 @@ export const useGameStore = defineStore({
         }
       );
       const data = await response.json();
-      console.log(response.status);
-      console.log("test");
       if (response.ok) {
         return data;
       } else {
@@ -165,7 +199,7 @@ export const useGameStore = defineStore({
     },
     async getAnswerById(id: string): Promise<Answer> {
       const response = await fetch(
-        'http://localhost:8080/game/getAnswer/' + id,
+        `${this.ServerIP}/game/getAnswer/` + id,
         {
           method: 'GET',
           headers: {
@@ -175,11 +209,42 @@ export const useGameStore = defineStore({
         }
       );
       const data = await response.json();
-      console.log(response.status);
       if (response.ok) {
         return data;
       } else {
         return data.message.toString();
+      }
+    },
+    async getFillerOfAnswer(id: string): Promise<String[]> {
+      const response = await fetch(
+        '${this.ServerIP}/game/Answer/getFiller?id=' + id,
+        {
+          method: 'GET',
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: 'Bearer ' + this.token,
+          },
+        }
+      );
+      const data = await response.json();
+      if (response.ok) {
+        return data;
+      }
+    },
+    async deleteAnswerById(id: string): Promise<Answer> {
+      const response = await fetch(
+        `${this.ServerIP}/game/deleteAnswer/` + id,
+        {
+          method: 'DELETE',
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: 'Bearer ' + this.token,
+          },
+        }
+      );
+      const data = await response.json();
+      if (response.ok) {
+        return data;
       }
     },
     getQ() {

@@ -113,12 +113,31 @@ public class GameController {
                       answer.addFiller(filler);
                   }
               }
-              answerRepository.save(answer);
+                 answerRepository.save(answer);
               return new ResponseEntity<>(answer, HttpStatus.OK);
        }
 
                return new ResponseEntity<>(HttpStatus.NOT_FOUND);
     }
+
+    @PutMapping("/answer/removeFillerAndMatches/{id}") //remove filler and matches for answer
+    public ResponseEntity<Answer> updateAnswerFiller(@PathVariable String id, @RequestBody Answer answerRequest) {
+        Optional<Answer> answerOptional = answerRepository.findById(id);
+        if (answerOptional.isPresent()){
+            Answer answer = answerOptional.get();
+            for (String match : answerRequest.getMatches()) {
+                answer.getMatches().remove(match);
+            }
+            for (String filler : answerRequest.getFiller()) {
+                answer.getFiller().remove(filler);
+            }
+            answerRepository.save(answer);
+            return new ResponseEntity<>(answer, HttpStatus.OK);
+        }
+
+        return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+    }
+
     @PutMapping("/question/{id}") //Add match for question
     //Anmerkung: Änderung möglich machen, auch wenn match schon gesetzt ist?
     public ResponseEntity<Question> updateQuestion(@PathVariable String id, @RequestBody QuestionRequest request) {
@@ -146,8 +165,15 @@ public class GameController {
                 Optional<Question> questionOptional = questionRepository.findById(match);
                 if (questionOptional.isPresent()){
                     Question question = questionOptional.get();
+                    for (Answer a : answerRepository.findAll()) {
+                        if (a.getFiller().contains(question.getId())){
+                            a.getFiller().remove(question.getId());
+                            answerRepository.save(a);
+                        }
+                    }
                     questionRepository.delete(question);
                 }
+
             }
             answerRepository.delete(answer);
             return new ResponseEntity<>(answer, HttpStatus.OK);

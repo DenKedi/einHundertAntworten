@@ -1,7 +1,7 @@
 import router from '@/router';
 import { defineStore } from 'pinia';
 
-export interface UserProfile{
+export interface UserProfile {
   userID: string;
   username: string;
   firstName: string;
@@ -31,11 +31,12 @@ export const useAuthStore = defineStore({
       userProfile: localStorage.getItem('userProfile') ? JSON.parse(localStorage.getItem('userProfile')!) : '',
       returnUrl: '/home',
       logoutMessage: '',
+      serverIP: 'https://53067-3000.2.codesphere.com'
     };
   },
   actions: {
     async login(emailOrUsername: string, password: string) {
-      const response = await fetch('http://localhost:8080/user/login', {
+      const response = await fetch(`${this.serverIP}/user/login`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -43,8 +44,6 @@ export const useAuthStore = defineStore({
         body: JSON.stringify({ emailOrUsername, password }),
       });
       const data = await response.json();
-      console.log(response.status);
-      console.log(data);
       if (response.ok) {
         const token = await data.token;
         const role = await data.role;
@@ -62,7 +61,7 @@ export const useAuthStore = defineStore({
       }
     },
     async register(username: string, email: string, password: string) {
-      const response = await fetch('http://localhost:8080/user/register', {
+      const response = await fetch(`${this.serverIP}/user/register`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -70,8 +69,6 @@ export const useAuthStore = defineStore({
         body: JSON.stringify({ username, email, password }),
       });
       const data = await response.json();
-      console.log(response.status);
-      console.log(data);
       if (response.ok) {
         const token = await data.token;
         localStorage.setItem('user', JSON.stringify(username));
@@ -85,11 +82,10 @@ export const useAuthStore = defineStore({
         await this.getUserProfile(token, this.userID);
         router.push(this.returnUrl || '/');
       } else {
-        console.log(data.message)
         return data.message.toString();
       }
     }, async getUserProfile(bearer: string, userID: string) {
-      const response = await fetch(`http://localhost:8080/user/getUser/${userID}`, {
+      const response = await fetch(`${this.serverIP}/user/getUser/${userID}`, {
         method: 'GET',
         headers: {
           'Content-Type': 'application/json',
@@ -101,11 +97,9 @@ export const useAuthStore = defineStore({
         localStorage.setItem('userProfile', JSON.stringify(data));
         this.userProfile = data;
         return data;
-      } else {
-        console.log('error');
       }
     }, async updateUserProfile(bearer: string, userProfile: UserProfile, userID: string) {
-      const response = await fetch(`http://localhost:8080/user/updateUser/${userID}`, {
+      const response = await fetch(`${this.serverIP}/user/updateUser/${userID}`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
@@ -118,12 +112,10 @@ export const useAuthStore = defineStore({
         localStorage.setItem('userProfile', JSON.stringify(data));
         this.userProfile = data;
         return response;
-      } else {
-        console.log('error');
       }
     },
     async getUserID(username: string, bearer: string) {
-      const url = new URL('http://localhost:8080/user/userID');
+      const url = new URL(`${this.serverIP}/user/userID`);
       url.searchParams.append('username', username);
 
       const response = await fetch(url.toString(), {
@@ -134,8 +126,6 @@ export const useAuthStore = defineStore({
         },
       });
       const data = await response.json();
-      console.log(response.status);
-      console.log(data);
       if (response.ok) {
         const userID = await data.userID;
         localStorage.setItem('userID', JSON.stringify(userID));

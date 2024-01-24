@@ -6,7 +6,7 @@ import { ref, onMounted } from 'vue';
 import { useAuthStore } from '@/stores/auth';
 
 onMounted(async () => {
-  const response = await fetch('http://localhost:8080/', {
+  const response = await fetch(`${auth.serverIP}/`, {
     headers: {
       'Authorization': `Bearer ${token}`
     },
@@ -30,6 +30,8 @@ let answers = ref<Answer[]>(storedAnswers ? JSON.parse(storedAnswers) : []);
 
 let fillerIds: string[] = [];
 let currentSelectedAnswerId: string;
+let answerIdToDelete: string;
+let removedFillerIds: string[] = [];
 
 interface Answer {
   id: string;
@@ -55,7 +57,7 @@ function fillAnswers() {
       answerId = 'answers-right';
     }
 
-    $(`<div class="answer " id="${answers.value[i].id}"><p>${answers.value[i].text}</p></div>`).appendTo(`#${answerId}`);
+    $(`<div class="answer " id="${answers.value[i].id}"><p>${answers.value[i].text}</p><i class="fa-solid fa-close answer-delete"></i></div>`).appendTo(`#${answerId}`);
   }
 
   let elements = document.getElementsByClassName('answer');
@@ -64,6 +66,32 @@ function fillAnswers() {
       fillTable(element.id);
     });
   }
+
+  let closeButtons = document.getElementsByClassName('answer-delete');
+  for (let close of closeButtons) {
+    close.addEventListener('click', function () {
+      document.getElementById('confirm-modal').style.display = 'flex';
+      document.getElementsByClassName('deleted-answer')[0].innerHTML = close.parentElement.innerText;
+      answerIdToDelete = close.parentElement.id;
+    });
+  }
+}
+
+async function deleteAnswer(id: string) {
+  await game.deleteAnswerById(id);
+  document.getElementById(id).remove();
+  clearTable();
+}
+
+function clearTable() {
+  let table = $('#tableBody').get(0);
+  table.innerHTML = '<tr></tr>';
+  (document.getElementsByClassName('current-answer')[0] as HTMLParagraphElement).innerHTML = 'Antwort: ';
+}
+
+async function removeFillerAndMatches() {
+  await game.removeMatchesAndFillerFromAnswer(currentSelectedAnswerId, [], removedFillerIds);
+  removedFillerIds = [];
 }
 
 async function addQuizSet() {
@@ -128,8 +156,17 @@ async function addQuizSet() {
   messageElement.innerText = 'Quizset erfolgreich angelegt.';
   questionValue.value = '';
 
+  await reset(category);
+}
+
+async function reset(category: string) {
   await clearAnswerContainer();
-  await getGameobjects();
+  let filter = document.getElementById('filter') as HTMLSelectElement;
+  if (filter.options[filter.selectedIndex].value != 'all') {
+    await getGameobjectsByCategory(category);
+  } else {
+    await getGameobjects();
+  }
   fillAnswers();
 }
 
@@ -172,7 +209,7 @@ async function clearAnswerContainer() {
 function addSelectFillerListener() {
   let select = document.getElementById('filler') as HTMLSelectElement;
   select.addEventListener("change", function () {
-    addFillerTableRow(select.options[select.selectedIndex].text);
+    addFillerTableRow(select.options[select.selectedIndex].text, select.options[select.selectedIndex].value);
     fillerIds.push(this.value);
     for (let i = 0; i < select.length; i++) {
       if (select.options[i].value == this.value)
@@ -202,8 +239,15 @@ function addButtonListener() {
   });
 
   let saveFiller = document.getElementsByClassName('save-filler')[0];
-  saveFiller.addEventListener('click', function () {
-    addFillerToAnswer();
+  saveFiller.addEventListener('click', async function () {
+    await removeFillerAndMatches();
+    await addFillerToAnswer();
+  });
+
+  let filter = document.getElementById('filter') as HTMLSelectElement;
+  filter.addEventListener('change', async function () {
+    reset(filter.options[filter.selectedIndex].value);
+    clearTable();
   });
 }
 
@@ -215,11 +259,21 @@ async function addFillerToAnswer() {
   }
   (document.getElementsByClassName('save-filler')[0] as HTMLButtonElement).disabled = true;
 
-  await clearAnswerContainer();
-  await getGameobjects();
-  fillAnswers();
-  saveFillerMessageElem.innerHTML = 'Filler erfolgreich hinzugefügt.'
+  let filter = document.getElementById('filter') as HTMLSelectElement;
+  reset(filter.options[filter.selectedIndex].value);
+
+  fillerIds = [];
+  saveFillerMessageElem.innerHTML = 'Filler erfolgreich aktualisiert.'
   saveFillerMessageElem.classList.add('success');
+}
+
+async function getGameobjectsByCategory(category: string) {
+  await game.getQuestionByCategory(category);
+  await game.getAnswerByCategory(category);
+  storedQuestions = localStorage.getItem('questions');
+  storedAnswers = localStorage.getItem('answers');
+  questions = ref<Question[]>(storedQuestions ? JSON.parse(storedQuestions) : []);
+  answers = ref<Answer[]>(storedAnswers ? JSON.parse(storedAnswers) : []);
 }
 
 async function getGameobjects() {
@@ -231,7 +285,7 @@ async function getGameobjects() {
   answers = ref<Answer[]>(storedAnswers ? JSON.parse(storedAnswers) : []);
 }
 
-function addFillerTableRow(question: string) {
+function addFillerTableRow(question: string, id: string) {
   let table = $('#tableBody').get(0);
   let hasEmptyRow = false;
   for (let i = 0; i < table.children.length; i++) {
@@ -241,7 +295,7 @@ function addFillerTableRow(question: string) {
       }
       if ((table.children[i].children[j] as HTMLTableCellElement).innerText == '') {
         hasEmptyRow = true;
-        (table.children[i].children[j] as HTMLTableCellElement).innerText = question;
+        (table.children[i].children[j] as HTMLTableCellElement).innerHTML = `<span>${question}</span>` + '<i class="fa-solid fa-close remove-filler"></i>';;
         return;
       };
     }
@@ -250,11 +304,32 @@ function addFillerTableRow(question: string) {
     let row = table.insertRow();
     row.insertCell();
     let cell2 = row.insertCell();
-    cell2.innerHTML = question;
+    cell2.innerHTML = `<span>${question}</span>` + '<i class="fa-solid fa-close remove-filler"></i>';;
+  }
+
+  let button = Array.from(document.querySelectorAll('.remove-filler')).pop();
+  button.addEventListener("click", function () {
+    button.parentElement.innerHTML = '';
+    (document.getElementsByClassName('save-filler')[0] as HTMLButtonElement).disabled = false;
+    removedFillerIds.push(id);
+  })
+}
+
+async function confirmDeleteAnswer() {
+  document.getElementById('confirm-modal').style.display = 'none';
+  if (answerIdToDelete != '') {
+    deleteAnswer(answerIdToDelete);
+    answerIdToDelete = ''
   }
 }
 
+async function cancelDeleteAnswer() {
+  document.getElementById('confirm-modal').style.display = 'none';
+  answerIdToDelete = ''
+}
+
 async function fillTable(id: string) {
+  (document.getElementsByClassName('save-filler')[0] as HTMLButtonElement).disabled = true;
   let saveFillerMessageElem = document.getElementsByClassName('save-filler-message')[0];
   saveFillerMessageElem.innerHTML = ''
   saveFillerMessageElem.classList.remove('success');
@@ -299,12 +374,22 @@ async function fillTable(id: string) {
     if (filler[i] != undefined) {
       let fillerAnswer = await game.getAnswerById(filler[i].match);
       if (fillerAnswer) {
-        cell2.innerHTML = '(' + fillerAnswer.text + ') ' + filler[i].text;
+        cell2.innerHTML = `<span>(${fillerAnswer.text}) ${filler[i].text}</span>` + '<i class="fa-solid fa-close remove-filler"></i>';
       } else {
-        cell2.innerHTML = filler[i].text;
+        cell2.innerHTML = `<span>${filler[i].text}</span>` + '<i class="fa-solid fa-close remove-filler"></i>';
       }
     }
   }
+  let removeButtons = document.getElementsByClassName('remove-filler');
+  for (let i = 0; i < removeButtons.length; i++) {
+    removeButtons[i].addEventListener('click', function () {
+      (document.getElementsByClassName('save-filler')[0] as HTMLButtonElement).disabled = false;
+      removedFillerIds.push(filler[i].id)
+      removeButtons[i].parentElement.innerHTML = '';
+    });
+  }
+
+  (document.getElementsByClassName('current-answer')[0] as HTMLParagraphElement).innerHTML = 'Antwort: ' + answer.text.toString();
 
   addFillerOptions(answer);
   currentSelectedAnswerId = answer.id;
@@ -323,9 +408,29 @@ onMounted(() => {
     <NavbarForm />
     <div class="main">
 
+      <div class="delete-confirmation">
+        <div class="modal-container" id="confirm-modal">
+          <div class="modal-content-container">
+            <h2>Bist Du sicher, dass du die Antwort</h2>
+            <p class="deleted-answer"></p>
+            <h2>löschen möchtest?</h2>
+            <div class="modal-button-container">
+              <button @click="confirmDeleteAnswer">Bestätigen</button>
+              <button @click="cancelDeleteAnswer">Abbrechen</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
       <div class="left">
         <div class="answers-container">
-          <h1 class="heading">Antworten</h1>
+          <h1 class="heading">Alle Antworten</h1>
+          <select name="filter" id="filter">
+            <option value="all">Alle</option>
+            <option value="number">Zahlen</option>
+            <option value="person">Personen</option>
+            <option value="place">Orte</option>
+          </select>
           <div class="answers">
             <div id="answers-left"></div>
             <div id="answers-right"></div>
@@ -333,6 +438,7 @@ onMounted(() => {
         </div>
       </div>
       <div class="right">
+        <p class="current-answer">Antwort: </p>
         <table>
           <thead>
             <tr>
@@ -396,6 +502,29 @@ onMounted(() => {
     justify-content: center;
     align-items: flex-start;
 
+    .modal-content-container {
+      justify-content: center;
+      height: 15rem;
+
+      h2 {
+        margin: 0;
+      }
+
+      p {
+        margin-top: 0;
+        color: white;
+        font-weight: bold;
+      }
+
+      .modal-button-container {
+        gap: 10px;
+
+        button {
+          width: 10rem;
+        }
+      }
+    }
+
     .left {
       width: 60%;
 
@@ -424,6 +553,7 @@ onMounted(() => {
           }
 
           .answer {
+            position: relative;
             flex: 50%;
             grid-column: auto;
             display: flex;
@@ -436,7 +566,14 @@ onMounted(() => {
             font-size: 20px;
             cursor: default;
             max-width: 100%;
-            min-height: 20%;
+            min-height: 3rem;
+            transition: background-color 0.25s;
+
+            .fa-solid {
+              position: absolute;
+              top: 10px;
+              right: 10px;
+            }
 
             p {
               margin: 0;
@@ -452,11 +589,36 @@ onMounted(() => {
     }
 
     .right {
-      margin-top: 70px;
+      margin-top: 12px;
       display: flex;
       align-items: center;
       flex-direction: column;
       width: 40%;
+
+      button {
+        background-color: #87d2ff;
+        color: white;
+        text-align: center;
+        text-decoration: none;
+        margin: auto;
+        cursor: pointer;
+        justify-content: center;
+        display: flex;
+        padding: 10px;
+        border: none;
+        outline: none;
+        border-radius: 5px;
+        transition: background-color 0.25s;
+      }
+
+      button:hover {
+        background-color: #2fafff;
+      }
+
+      button:disabled {
+        background-color: grey;
+        cursor: auto;
+      }
 
       table {
         width: 80%;
@@ -483,15 +645,31 @@ onMounted(() => {
 
       th,
       td {
-        border: 1px solid #ddd;
         padding: 12px;
+        border: 1px solid #ddd;
         text-align: center;
         font-size: 16px;
         width: 50%;
+        position: relative;
+
+        span:hover {
+          background-color: white;
+        }
+
+        .fa-solid {
+          position: absolute;
+          top: 10px;
+          right: 10px;
+          cursor: pointer;
+        }
+      }
+
+      td {
+        padding: 24px 24px 12px 12px;
       }
 
       th {
-        background-color: #007bff;
+        background-color: #87d2ff;
         color: #fff;
       }
 
@@ -501,7 +679,6 @@ onMounted(() => {
 
       .add-gameobjects {
         width: 80%;
-        margin-top: 10%;
         margin-bottom: 20%;
 
         .add-button {

@@ -13,7 +13,11 @@ const router = createRouter({
       path: '/home',
       name: 'Dashboard',
       component: DashboardView
-    },
+    },{
+      path: '/',
+      name: 'start',
+      redirect: '/home'
+    },    
     {
       path: '/login',
       name: 'Login',
@@ -43,11 +47,11 @@ router.beforeEach(async (to) => {
   const authRequired = !publicPages.includes(to.path)
   const auth = useAuthStore();
   // if auth is required and user is not logged in ->
-  /*
+  
   if(authRequired && !auth.user) {
     return '/login'
   }
-  */
+  
 })
 
 
