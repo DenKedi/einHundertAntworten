@@ -8,7 +8,7 @@ const data = ref('');
 
 
 onMounted(async () => {
-    const response = await fetch('http://localhost:8080/', {
+    const response = await fetch(`${auth.serverIP}/`, {
         headers: {
             'Authorization': `Bearer ${token}`
         },

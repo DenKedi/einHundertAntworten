@@ -4,7 +4,7 @@ import { useAuthStore } from '@/stores/auth';
 import { onMounted, ref } from 'vue';
 
 onMounted(async () => {
-    const response = await fetch('http://localhost:8080/', {
+    const response = await fetch(`${auth.serverIP}/`, {
         headers: {
             'Authorization': `Bearer ${token}`
         },
