@@ -90,6 +90,16 @@
 					</image>
 				</configuration>
 			</plugin>
+			<plugin>
+				<artifactId>maven-compiler-plugin</artifactId>
+				<version>3.12.1</version>
+				<configuration>
+					 <configuration>
+					<source>1.8</source>
+					<target>1.8</target>
+				</configuration>
+				</configuration>
+			</plugin>
 		</plugins>
 	</build>
 
