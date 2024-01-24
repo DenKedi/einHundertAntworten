@@ -95,9 +95,6 @@
 						<goals>
 							<goal>repackage</goal>
 						</goals>
-						<configuration>
-							<packaging>war</packaging>
-						</configuration>
 					</execution>
 				</executions>
 			</plugin>
