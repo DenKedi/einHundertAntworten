@@ -35,8 +35,7 @@ export const useGameStore = defineStore({
         {
           method: 'GET',
           headers: {
-            'Content-Type': 'application/json',
-            Authorization: 'Bearer ' + this.token,
+            'Content-Type': 'application/json'
           },
         }
       );
@@ -53,8 +52,7 @@ export const useGameStore = defineStore({
       const response = await fetch(`${this.ServerIP}/game/getAllAnswers`, {
         method: 'GET',
         headers: {
-          'Content-Type': 'application/json',
-          Authorization: 'Bearer ' + this.token,
+          'Content-Type': 'application/json'
         },
       });
       const data = await response.json();

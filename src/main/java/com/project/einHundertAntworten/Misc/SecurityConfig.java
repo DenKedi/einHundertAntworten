@@ -63,7 +63,7 @@ public class SecurityConfig  {
                 .cors(Customizer.withDefaults())
                 .csrf(csrf -> csrf.disable())
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/user/register", "/user/login", "/home", "/login", "/quizpanel", "/overview").permitAll()
+                        .requestMatchers("/user/register", "/user/login", "/home", "/login", "/game/getAllAnswers", "/game/getAllAnswers", "/overview").permitAll()
                         .requestMatchers("/css/**", "/img/**", "/js/**").permitAll() // Permit access to static resources
                         .anyRequest().authenticated()
                 )

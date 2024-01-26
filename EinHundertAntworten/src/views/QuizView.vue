@@ -13,14 +13,16 @@ onMounted(async () => {
         Authorization: `Bearer ${token}`,
       },
     });
+    /*
     if (response.status === 401) {
       auth.logout();
     }
-    if (response.status === 200) {
+    */
+    
       game.getAnswers();
       game.getQuestions();
       startNewGame();
-    }
+    
   } catch (error) {
     console.log(error);
   }
@@ -328,10 +330,12 @@ function handleEndGame() {
   document.getElementById('score-modal').style.display = 'flex';
 
   //Saving Data for User  
+  if (auth.token) {
   var userProfile: UserProfile = auth.userProfile;
   userProfile.gamesPlayed++;
   userProfile.score += playerScore.value;
   auth.updateUserProfile(token, userProfile, auth.userID);
+  }
 }
 
 //resettet das Spiel, mischt wieder die Fragen und schließt natürlich das Score board
@@ -392,6 +396,9 @@ window.getCurrentGameObject = getCurrentGameObject;
           <p>
             <span id="remarks">{{ remark }}</span>
           </p>
+          <small v-if="!auth.token" style="color: white;">
+            Melde dich an, um deine Ergebnisse zu speichern!
+          </small>
         </div>
         <div class="modal-button-container">
           <button @click="startNewGame">Ich will noch einmal!</button>

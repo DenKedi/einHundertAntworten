@@ -32,7 +32,7 @@ onMounted(async () => {
 
     <div class="home-button-container">
         <h2 style="text-align: center;" v-if="!auth.token"> Bitte erstelle kurz ein Profil oder melde dich an, <br>damit wir deine Erfolge speichern können.</h2>
-        <a v-if="auth.token" href="/quiz" class="home-button">Quiz Mich!</a>
+        <a href="/quiz" class="home-button">Quiz Mich!</a>
         <a v-if="!auth.token" href="/login" class="home-button">Registrieren/Anmelden</a>
         <!--<a href="/login" class="home-button">Registrieren/Anmelden</a>-->
         <a v-if="auth.role === 'ADMIN'" href="/gameManager" class="home-button">Admin Panel</a>
