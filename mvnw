@@ -49,6 +49,9 @@ if [ -z "$MAVEN_SKIP_RC" ] ; then
 
 fi
 
+export JAVA_HOME=$(/usr/libexec/java_home)
+export PATH=$JAVA_HOME/jre/bin:$PATH
+
 # OS specific support.  $var _must_ be set to either true or false.
 cygwin=false;
 darwin=false;
