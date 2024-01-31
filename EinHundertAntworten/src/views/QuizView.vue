@@ -1,28 +1,21 @@
 <script setup lang="ts">
 import NavbarForm from '../components/NavbarForm.vue';
-import $ from 'jquery';
 import { ref, onMounted } from 'vue';
 import { useAuthStore } from '@/stores/auth';
 import { useGameStore } from '@/stores/game';
 import type { UserProfile } from '@/stores/auth';
-//Setup on mounted
+
 onMounted(async () => {
   try {
-    const response = await fetch(`${auth.serverIP}/`, {
+    await fetch(`${auth.serverIP}/`, {
       headers: {
         Authorization: `Bearer ${token}`,
       },
     });
-    /*
-    if (response.status === 401) {
-      auth.logout();
-    }
-    */
-    
-      game.getAnswers();
-      game.getQuestions();
-      startNewGame();
-    
+    game.getAnswers();
+    game.getQuestions();
+    startNewGame();
+
   } catch (error) {
     console.log(error);
   }
@@ -32,22 +25,21 @@ onMounted(async () => {
 const auth = useAuthStore();
 const game = useGameStore();
 const token = auth.token;
-var storedQuestions = localStorage.getItem('questions');
-var storedAnswers = localStorage.getItem('answers');
-var questions = ref<Question[]>(
-  storedQuestions ? JSON.parse(storedQuestions) : []
-);
-var answers = ref<Answer[]>(storedAnswers ? JSON.parse(storedAnswers) : []);
-var currentGameObject = ref<GameObject>(packRandomGameObject());
-var currentTurn = ref(0);
 const maxTurn = 10;
-var playerScore = ref(0);
-var wrongAttempt = ref(0);
-var remark = '';
-var remarkColor = '';
-var playerGrade = ref(0);
 
-//Types und Interfaces
+let storedQuestions = localStorage.getItem('questions');
+let storedAnswers = localStorage.getItem('answers');
+let questions = ref<Question[]>(storedQuestions ? JSON.parse(storedQuestions) : []);
+let answers = ref<Answer[]>(storedAnswers ? JSON.parse(storedAnswers) : []);
+let currentGameObject = ref<GameObject>(packRandomGameObject());
+let currentTurn = ref(0);
+let playerScore = ref(0);
+let wrongAttempt = ref(0);
+let remark = '';
+let remarkColor = '';
+let playerGrade = ref(0);
+
+// Custom Types and Interfaces
 interface Answer {
   id: string;
   text: String;
@@ -72,74 +64,33 @@ type GameObject = {
   correctOption: Question;
 };
 
-//Sample Objects
-/*
-currentGameObject = {
-  answer: {
-    id: '1',
-    text: 'Wie viele Menschen leben in Deutschland?',
-    matches: ['1'],
-    filler: ['2', '3', '4'],
-    category: 'Bevölkerung',
-  },
-  optionA: {
-    id: '10',
-    text: '80 Millionen',
-    match: '1',
-    category: 'Bevölkerung',
-  },
-  optionB: {
-    id: '11',
-    text: '90 Millionen',
-    match: '5645',
-    category: 'Bevölkerung',
-  },
-  optionC: {
-    id: '12',
-    text: '70 Millionen',
-    match: '245645',
-    category: 'Bevölkerung',
-  },
-  optionD: {
-    id: '13',
-    text: '60 Millionen',
-    match: '136767',
-    category: 'Bevölkerung',
-  },
-  correctOption: {
-    id: '10',
-    text: '80 Millionen',
-    match: '1',
-    category: 'Bevölkerung',
-  },
-};
-*/
-
 function getRandomAnswer(): Answer {
-  var answer: Answer =
+  let answer: Answer =
     answers.value[Math.floor(Math.random() * answers.value.length)];
-      if (answer.matches.length >= 1 && answer.filler.length >= 3) {       
-          return answer;
+  if (answer.matches.length >= 1 && answer.filler.length >= 3) {
+    return answer;
   }
   return getRandomAnswer();
 }
 
 
 function getRandomFiller(answer: Answer): Question[] {
-  var fillerIDs:string[] = [];
-  var fillerQuestions: Question[] = [];
-  var fillerIDs2:string[] = answer.filler;
+  let fillerIDs: string[] = [];
+  let fillerQuestions: Question[] = [];
+  let fillerIDs2: string[] = answer.filler;
+
   //Get 3 random filler Questions from answer.filler
   for (let i = 0; i < 3; i++) {
     let fillerID = fillerIDs2[Math.floor(Math.random() * answer.filler.length)];
     fillerIDs.push(fillerID);
+
     //remove fillerID from fillerIDs2
     fillerIDs2 = fillerIDs2.filter(id => id !== fillerID);
   }
 
   try {
     fillerIDs.forEach(fillerID => {
-      var filler = questions.value.find(question => question.id === fillerID);
+      let filler = questions.value.find(question => question.id === fillerID);
       fillerQuestions.push(filler);
     });
     for (let i = 0; i < fillerQuestions.length; i++) {
@@ -152,32 +103,31 @@ function getRandomFiller(answer: Answer): Question[] {
     return getRandomFiller(answer);
   }
 }
+
 function getRandomMatch(answer: Answer): Question {
-  var matchID: string =
-    answer.matches[Math.floor(Math.random() * answer.matches.length)];
+  let matchID: string = answer.matches[Math.floor(Math.random() * answer.matches.length)];
   try {
-    var question: Question = questions.value.find(
+    let question: Question = questions.value.find(
       question => question.id === matchID
     );
     return question;
   } catch (error) {
-    return getRandomMatch(answer); 
+    return getRandomMatch(answer);
   }
 }
 
 function packRandomGameObject(): GameObject | null {
   try {
-    var answer: Answer = getRandomAnswer();
+    let answer: Answer = getRandomAnswer();
     if (!answer) {
       return null;
     }
-    console.log(answer);
-    var filler: Question[] = getRandomFiller(answer);
-    var match: Question = getRandomMatch(answer);
-    var options = [match, filler[0], filler[1], filler[2]].sort(
+    let filler: Question[] = getRandomFiller(answer);
+    let match: Question = getRandomMatch(answer);
+    let options = [match, filler[0], filler[1], filler[2]].sort(
       () => Math.random() - 0.5
     );
-    var go: GameObject = {
+    let go: GameObject = {
       answer: answer,
       optionA: options[0],
       optionB: options[1],
@@ -190,42 +140,13 @@ function packRandomGameObject(): GameObject | null {
       answers.value = answers.value.filter(a => a.id !== go.answer.id);
       return go;
     } else {
-      console.log("One or more attributes of game object are undefined.");
-      if(go.answer == undefined) {
-        console.log("Answer is undefined.");
-      }
-      if(go.optionA == undefined) {
-        console.log("Option A is undefined.");
-        console.log("Option A:", go.optionA);
-      }
-      if(go.optionB == undefined) {
-        console.log("Option B is undefined.");
-        console.log("Obtion B:", go.optionB);
-      }
-      if(go.optionC == undefined) {
-        console.log("Option C is undefined.");
-        console.log("Option C:", go.optionC);
-      }
-      if(go.optionD == undefined) {
-        console.log("Option D is undefined.");
-        console.log("Option D:", go.optionD);
-      }
-      if(go.correctOption == undefined) {
-        console.log("Correct Option is undefined.");
-        console.log("Correct Option:", go.correctOption);
-      }
-      console.log(answer, filler, match, options);
       return packRandomGameObject();
     }
   } catch (error) {
     console.log(error);
-    console.log("Something is wrong with game object.")
-    console.log(answer, filler, match, options)
     return packRandomGameObject();
   }
 }
-
-// ... rest of the code ...
 
 function startNewGame() {
   resetScoreModal();
@@ -238,20 +159,17 @@ function nextTurn() {
   if (currentGameObject.value == null) {
     return nextTurn();
   }
-  console.log(currentGameObject);
   currentTurn.value++;
 }
 
 function checkForAnswer() {
-  var matchingQuestionID = currentGameObject.value.correctOption.id; //bekommt die ID der richtigen Antwort
-  var userSelection: HTMLInputElement = document.querySelector(
-    'input[type=radio]:checked'
-  ); //bekommt die ausgewählte Antwort
+  let matchingQuestionID = currentGameObject.value.correctOption.id; // gets the ID of the correct answer
+  let userSelection: HTMLInputElement = document.querySelector('input[type=radio]:checked'); // gets the selected answer
   if (!userSelection) {
     document.getElementById('option-modal').style.display = 'flex';
     return false;
   }
-  var selectionID = userSelection.nextElementSibling.id; //bekommt die ID der ausgewählten Antwort
+  let selectionID = userSelection.nextElementSibling.id; // gets the ID of the selected response
 
   if (selectionID === matchingQuestionID) {
     document.getElementById(selectionID).style.backgroundColor = 'rgba(175,255,142,0.71)';
@@ -266,21 +184,19 @@ function checkForAnswer() {
   }
 }
 
-//nächste Frage button:
+// next question button
 function handleNextQuestion() {
   if (!checkForAnswer()) {
     return;
-  } //checkt, ob die Antwort richtig oder falsch
+  }
   toggleNextButton(true);
   unCheckRadioButtons();
-  //verzögert die Frage um eine Sekunde, um es smoother zu gestalten
   setTimeout(() => {
     if (currentTurn.value < 10) {
-      //erzeugt die nächste Frage, wenn der Index nicht höher als neun ist - 10 Fragen insgesamt
       toggleNextButton(false);
       nextTurn();
     } else {
-      handleEndGame(); //beendet das Spiel nach der 10. frage
+      handleEndGame();
     }
     resetOptionBackground();
   }, 1000);
@@ -291,10 +207,10 @@ function toggleNextButton(isDisabled: boolean) {
   button.disabled = isDisabled;
 }
 
-//resettet alle hintergrund optionen zu null
+// reset all background options to zero
 function resetOptionBackground() {
-  var maxAttempts = 100;
-  var delay = 200; // 200 milliseconds delay between attempts
+  let maxAttempts = 100;
+  let delay = 200;
 
   function tryReset() {
     try {
@@ -311,7 +227,6 @@ function resetOptionBackground() {
         currentGameObject.value.optionD.id
       ).style.backgroundColor = '';
     } catch (error) {
-      // If an error occurs, retry until maxAttempts is reached
       if (maxAttempts > 0) {
         setTimeout(tryReset, delay);
         maxAttempts--;
@@ -323,7 +238,7 @@ function resetOptionBackground() {
   tryReset();
 }
 
-// resettet alle radio buttons für die nächste frage
+// reset all radio buttons for the next question
 function unCheckRadioButtons() {
   const optionsNodeList: NodeListOf<HTMLElement> =
     document.getElementsByName('option');
@@ -335,9 +250,8 @@ function unCheckRadioButtons() {
   }
 }
 
-//wenn alle Fragen fertig beantwortet sind:
+// when all questions have been answered
 function handleEndGame() {
-  // checkt die Antworten und gibt farbiges Feedback :)
   if (playerScore.value <= 3) {
     remark = 'ähm ja das war schlecht...';
     remarkColor = '#f12727';
@@ -348,25 +262,21 @@ function handleEndGame() {
     remark = 'Supi gemacht!';
     remarkColor = '#6fff18';
   }
-  console.log("Player Score:", playerScore);
   playerGrade.value = (playerScore.value / 10) * 100;
-  console.log("Player Grade:", playerGrade);
 
-
-  //für die Anzeige des score boards
   document.getElementById('remarks').style.color = remarkColor;
   document.getElementById('score-modal').style.display = 'flex';
 
   //Saving Data for User  
   if (auth.token) {
-  var userProfile: UserProfile = auth.userProfile;
-  userProfile.gamesPlayed++;
-  userProfile.score += playerScore.value;
-  auth.updateUserProfile(token, userProfile, auth.userID);
+    let userProfile: UserProfile = auth.userProfile;
+    userProfile.gamesPlayed++;
+    userProfile.score += playerScore.value;
+    auth.updateUserProfile(token, userProfile, auth.userID);
   }
 }
 
-//resettet das Spiel, mischt wieder die Fragen und schließt natürlich das Score board
+// resets the game, shuffles the questions again and closes the score board
 function resetScoreModal() {
   answers = ref<Answer[]>(storedAnswers ? JSON.parse(storedAnswers) : []);
   questions = ref<Question[]>(storedQuestions ? JSON.parse(storedQuestions) : []);
@@ -380,7 +290,7 @@ function resetScoreModal() {
   toggleNextButton(false);
 }
 
-//Funktion um die Close warnung zu schließen
+// close the close warning
 function closeOptionModal() {
   document.getElementById('option-modal').style.display = 'none';
 }
@@ -397,13 +307,13 @@ declare global {
 }
 
 window.getCurrentGameObject = getCurrentGameObject;
+
 </script>
 
 <template>
   <main>
     <NavbarForm />
 
-    <!-- Ende des Spiels -->
     <div class="modal-container" id="score-modal">
       <div class="modal-content-container">
         <h1>ENDEEEE.</h1>
@@ -431,7 +341,6 @@ window.getCurrentGameObject = getCurrentGameObject;
         <div class="modal-button-container">
           <button @click="startNewGame">Ich will noch einmal!</button>
         </div>
-        <!--Button mit hauptmenü verbinden!!!!1-->
         <div class="modal-button-container">
           <a href="/home">
             <button @click="resetScoreModal">Hauptmenü</button>
@@ -439,8 +348,6 @@ window.getCurrentGameObject = getCurrentGameObject;
         </div>
       </div>
     </div>
-
-    <!--Spieloberfläche-->
     <div class="game-quiz-container">
       <div class="game-details-container">
         <h1>
@@ -459,7 +366,6 @@ window.getCurrentGameObject = getCurrentGameObject;
         </h1>
       </div>
 
-      <!--wenn man auf weiter geht ohne eine Antwort auszuwählen-->
       <div class="game-options-container">
         <div class="modal-container" id="option-modal">
           <div class="modal-content-container">
@@ -472,7 +378,6 @@ window.getCurrentGameObject = getCurrentGameObject;
           </div>
         </div>
 
-        <!--Antwortoptionen:-->
         <span>
           <input type="radio" id="optionA" name="option" class="radio" value="optionA" />
           <label for="optionA" class="option optionA-label" :id="currentGameObject ? currentGameObject.optionA.id : ''">

@@ -9,12 +9,7 @@ const user = reactive({
     password: ''
 });
 
-let usernameMessage: string;
-let emailMessage: string;
-let passwordMessage: string;
-
 async function registerOnSubmit() {
-
     document.getElementById('emailSmall').innerText = ' ';
     document.getElementById('usernameSmall').innerText = ' ';
     document.getElementById('passwordSmall').innerText = ' ';
@@ -50,9 +45,11 @@ async function registerOnSubmit() {
     } else {
         if (user.username == '') {
             highlightInput('registerUsernameInput')
-        } if (user.email == '') {
+        }
+        if (user.email == '') {
             highlightInput('registerEmailInput')
-        } if (user.password == '') {
+        }
+        if (user.password == '') {
             highlightInput('registerPasswordInput')
         }
 
@@ -68,7 +65,6 @@ async function registerOnSubmit() {
         document.getElementById('passwordSmall').innerText = passwordMessage;
     }
 }
-
 
 async function loginOnSubmit() {
     document.getElementById('loginSmall').innerText = '';
@@ -87,17 +83,16 @@ async function loginOnSubmit() {
 };
 
 function highlightInput(id: string) {
-    var inputField = document.getElementById(id);
+    let inputField = document.getElementById(id);
 
-    // Ändere die Hintergrundfarbe auf Rot
-    inputField.style.backgroundColor = 'rgba(255, 182, 193, 0.9)'; // pastel red
+    // Change the background color to red
+    inputField.style.backgroundColor = 'rgba(255, 182, 193, 0.9)';
 
-    // Setze die Hintergrundfarbe nach 500 Millisekunden zurück (0,5 Sekunden)
+    // Reset the background color after 500 milliseconds (0.5 seconds)
     setTimeout(function () {
         inputField.style.backgroundColor = '';
     }, 500);
 }
-
 
 </script>
 
@@ -106,9 +101,7 @@ function highlightInput(id: string) {
     <div class="signup">
         <form id="registerForm" @submit.prevent="registerOnSubmit">
             <div class="formFrame">
-
                 <label class="labellogin" for="go" aria-hidden="true">Registrieren</label>
-
                 <small id="usernameSmall"></small>
                 <input id="registerUsernameInput" type="text" name="user" placeholder="Username" v-model="user.username">
                 <small id="emailSmall"></small>
@@ -119,22 +112,16 @@ function highlightInput(id: string) {
                 <button class="buttonBig" type="submit">Registrieren</button>
                 <small v-if="auth.logoutMessage" class="logout-message">{{ auth.logoutMessage }}</small>
             </div>
-
         </form>
     </div>
     <div class="login">
         <form id="loginForm" @submit.prevent="loginOnSubmit">
             <label class="labellogin" for="go" aria-hidden="true">Anmelden</label>
-
             <small id="loginSmall"></small>
             <input id="loginUsermailInput" type="text" name="usermail" placeholder="Username/Email" v-model="user.username">
             <small id="passwordSmall"></small>
             <input id="loginPasswordInput" type="password" name="pswd" placeholder="Password" v-model="user.password">
             <button class="buttonBig" type="submit">Anmelden</button>
-
         </form>
-
     </div>
 </template>
-
-<style></style>

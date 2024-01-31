@@ -1,20 +1,28 @@
 <script lang="ts" setup>
 import NavbarForm from '../components/NavbarForm.vue';
 import { useAuthStore } from '@/stores/auth';
-import { onMounted, ref } from 'vue';
+import { onMounted } from 'vue';
 
 onMounted(async () => {
-    const response = await fetch(`${auth.serverIP}/`, {
-        headers: {
-            'Authorization': `Bearer ${token}`
-        },
-    });
-    if (response.status === 401) {
-        auth.logout();
-    }
+  const response = await fetch(`${auth.serverIP}/`, {
+    headers: {
+      'Authorization': `Bearer ${token}`
+    },
+  });
+  if (response.status === 401) {
+    auth.logout();
+  }
 });
 
-interface UserProfile{
+// Constants and Variables
+const auth = useAuthStore();
+const token = auth.token;
+const storedData = localStorage.getItem('userProfile');
+
+let obj: UserProfile;
+
+// Interfaces
+interface UserProfile {
   userID: string;
   username: string;
   firstName: string;
@@ -25,33 +33,25 @@ interface UserProfile{
   score: number;
 }
 
-const auth = useAuthStore();
-const userID = auth.userID;
-const token = auth.token;
-const storedData = localStorage.getItem('userProfile');
-
-let obj: UserProfile;
-
-
-if (storedData){
+if (storedData) {
   obj = JSON.parse(storedData);
-}else{
+} else {
   obj = {
-  userID: '',
-  username: '',
-  firstName: '',
-  lastName: '',
-  email: '',
-  gamesPlayed: 0,
-  createdOn: '',
-  score: 0,
-};
+    userID: '',
+    username: '',
+    firstName: '',
+    lastName: '',
+    email: '',
+    gamesPlayed: 0,
+    createdOn: '',
+    score: 0,
+  };
 }
 obj.createdOn = convertDateFormat(obj.createdOn);
-  
+
 function convertDateFormat(inputDate: string): string {
   const inputDateTime = new Date(inputDate);
-  
+
   // Ensure the date is valid
   if (isNaN(inputDateTime.getTime())) {
     throw new Error("Invalid date format");
@@ -68,56 +68,53 @@ function convertDateFormat(inputDate: string): string {
 
 <template>
   <NavbarForm />
-
   <div class="center">
-
-<div class="card" >
-    <div class="additional">
+    <div class="card">
+      <div class="additional">
         <div class="user-card">
-            <div class="level center">
-                {{ obj.gamesPlayed }} Spiele gespielt
-            </div>
-            <div class="points center">
-                {{ obj.score }} richtig
-            </div>
-        </div>
-            <div class="stats">
-        </div>
-    </div>
-    <div class="general">
-      <div class="container">
-        <div class="avatar avatar--green">
-          <div class="avatar-body body--green">
-            <div class="avatar-eye eye--left">
-              <div class="avatar-eye-pupil pupil--purple">
-          <span class="avatar-eye-pupil-blackThing">
-            <span class="avatar-eye-pupil-lightReflection"></span>
-          </span>
-              </div>
-            </div>
-            <div class="avatar-eye eye--right">
-              <div class="avatar-eye-pupil pupil--purple">
-          <span class="avatar-eye-pupil-blackThing">
-            <span class="avatar-eye-pupil-lightReflection"></span>
-          </span>
-              </div>
-            </div>
-            <div class="avatar-smile"></div>
-            <div class="avatar-tooth tooth--left"></div>
-            <div class="avatar-tooth tooth--right"></div>
+          <div class="level center">
+            {{ obj.gamesPlayed }} Spiele gespielt
+          </div>
+          <div class="points center">
+            {{ obj.score }} richtig
           </div>
         </div>
+        <div class="stats">
         </div>
-      <h1>{{ obj.username }} </h1>
-      <div class="coords">
-            <span>Email: </span>
-            <span>{{ obj.email }}</span>
-        </div>
-      <div class="coords">
-        <span>Mitglied seit: {{ obj.createdOn }}</span>
       </div>
-
+      <div class="general">
+        <div class="container">
+          <div class="avatar avatar--green">
+            <div class="avatar-body body--green">
+              <div class="avatar-eye eye--left">
+                <div class="avatar-eye-pupil pupil--purple">
+                  <span class="avatar-eye-pupil-blackThing">
+                    <span class="avatar-eye-pupil-lightReflection"></span>
+                  </span>
+                </div>
+              </div>
+              <div class="avatar-eye eye--right">
+                <div class="avatar-eye-pupil pupil--purple">
+                  <span class="avatar-eye-pupil-blackThing">
+                    <span class="avatar-eye-pupil-lightReflection"></span>
+                  </span>
+                </div>
+              </div>
+              <div class="avatar-smile"></div>
+              <div class="avatar-tooth tooth--left"></div>
+              <div class="avatar-tooth tooth--right"></div>
+            </div>
+          </div>
+        </div>
+        <h1>{{ obj.username }} </h1>
+        <div class="coords">
+          <span>Email: </span>
+          <span>{{ obj.email }}</span>
+        </div>
+        <div class="coords">
+          <span>Mitglied seit: {{ obj.createdOn }}</span>
+        </div>
+      </div>
     </div>
-</div>
-</div>
+  </div>
 </template>

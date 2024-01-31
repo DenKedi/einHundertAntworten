@@ -20,19 +20,21 @@ onMounted(async () => {
   }
 });
 
+// Constants and Variables
 const auth = useAuthStore();
 const game = useGameStore();
 const token = auth.token;
+
 let storedQuestions = localStorage.getItem('questions');
 let storedAnswers = localStorage.getItem('answers');
 let questions = ref<Question[]>(storedQuestions ? JSON.parse(storedQuestions) : []);
 let answers = ref<Answer[]>(storedAnswers ? JSON.parse(storedAnswers) : []);
-
 let fillerIds: string[] = [];
 let currentSelectedAnswerId: string;
 let answerIdToDelete: string;
 let removedFillerIds: string[] = [];
 
+// Interfaces
 interface Answer {
   id: string;
   text: String;
@@ -108,8 +110,8 @@ async function addQuizSet() {
 
   let hasAnswer = false;
   let hasQuestion = false;
-  var answerFound: Answer;
-  var newAnswer: Answer;
+  let answerFound: Answer;
+  let newAnswer: Answer;
 
   answers.value.forEach(function (answer) {
     if (answerValue.value.toLocaleLowerCase() == answer.text.toLocaleLowerCase()) {
@@ -333,6 +335,7 @@ async function fillTable(id: string) {
   let saveFillerMessageElem = document.getElementsByClassName('save-filler-message')[0];
   saveFillerMessageElem.innerHTML = ''
   saveFillerMessageElem.classList.remove('success');
+
   let table = $('#tableBody').get(0);
   table.innerHTML = '<tr></tr>';
   let answer = answers.value.find(answer => answer.id === id);
@@ -342,9 +345,11 @@ async function fillTable(id: string) {
   for (let i = 0; i < answer.filler.length; i++) {
     fillerIDs.push(answer.filler[i]);
   }
+
   for (let i = 0; i < answer.matches.length; i++) {
     matchesIDs.push(answer.matches[i]);
   }
+
   let filler: Question[] = [];
   let matches: Question[] = [];
 
@@ -353,17 +358,20 @@ async function fillTable(id: string) {
       filler.push(await game.getQuestionById(fillerIDs[i]));
     }
   }
+
   for (let i = 0; i < matchesIDs.length; i++) {
     if (matchesIDs[i] != '') {
       matches.push(await game.getQuestionById(matchesIDs[i]));
     }
   }
+
   let length;
   if (filler.length > matches.length) {
     length = filler.length;
   } else {
     length = matches.length;
   }
+
   for (let i = 0; i < length; i++) {
     let row = table.insertRow();
     let cell1 = row.insertCell();
@@ -380,6 +388,7 @@ async function fillTable(id: string) {
       }
     }
   }
+
   let removeButtons = document.getElementsByClassName('remove-filler');
   for (let i = 0; i < removeButtons.length; i++) {
     removeButtons[i].addEventListener('click', function () {
@@ -407,7 +416,6 @@ onMounted(() => {
   <div class="game-manager">
     <NavbarForm />
     <div class="main">
-
       <div class="delete-confirmation">
         <div class="modal-container" id="confirm-modal">
           <div class="modal-content-container">
@@ -421,7 +429,6 @@ onMounted(() => {
           </div>
         </div>
       </div>
-
       <div class="left">
         <div class="answers-container">
           <h1 class="heading">Alle Antworten</h1>
@@ -743,7 +750,6 @@ onMounted(() => {
 
     .table-container {
       display: block;
-      /* Change this line */
       width: 100%;
     }
   }
