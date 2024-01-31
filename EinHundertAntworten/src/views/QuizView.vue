@@ -8,19 +8,21 @@ import type { UserProfile } from '@/stores/auth';
 //Setup on mounted
 onMounted(async () => {
   try {
-    const response = await fetch('http://localhost:8080/', {
+    const response = await fetch(`${auth.serverIP}/`, {
       headers: {
         Authorization: `Bearer ${token}`,
       },
     });
+    /*
     if (response.status === 401) {
       auth.logout();
     }
-    if (response.status === 200) {
+    */
+    
       game.getAnswers();
       game.getQuestions();
       startNewGame();
-    }
+    
   } catch (error) {
     console.log(error);
   }
@@ -140,9 +142,14 @@ function getRandomFiller(answer: Answer): Question[] {
       var filler = questions.value.find(question => question.id === fillerID);
       fillerQuestions.push(filler);
     });
+    for (let i = 0; i < fillerQuestions.length; i++) {
+      if (fillerQuestions[i] == undefined) {
+        return getRandomFiller(answer);
+      }
+    }
     return fillerQuestions;
   } catch (error) {
-    return [];
+    return getRandomFiller(answer);
   }
 }
 function getRandomMatch(answer: Answer): Question {
@@ -154,7 +161,7 @@ function getRandomMatch(answer: Answer): Question {
     );
     return question;
   } catch (error) {
-    return { id: '', text: '', match: '', category: '' }; //Some other way of handling errors
+    return getRandomMatch(answer); 
   }
 }
 
@@ -184,6 +191,29 @@ function packRandomGameObject(): GameObject | null {
       return go;
     } else {
       console.log("One or more attributes of game object are undefined.");
+      if(go.answer == undefined) {
+        console.log("Answer is undefined.");
+      }
+      if(go.optionA == undefined) {
+        console.log("Option A is undefined.");
+        console.log("Option A:", go.optionA);
+      }
+      if(go.optionB == undefined) {
+        console.log("Option B is undefined.");
+        console.log("Obtion B:", go.optionB);
+      }
+      if(go.optionC == undefined) {
+        console.log("Option C is undefined.");
+        console.log("Option C:", go.optionC);
+      }
+      if(go.optionD == undefined) {
+        console.log("Option D is undefined.");
+        console.log("Option D:", go.optionD);
+      }
+      if(go.correctOption == undefined) {
+        console.log("Correct Option is undefined.");
+        console.log("Correct Option:", go.correctOption);
+      }
       console.log(answer, filler, match, options);
       return packRandomGameObject();
     }
@@ -328,10 +358,12 @@ function handleEndGame() {
   document.getElementById('score-modal').style.display = 'flex';
 
   //Saving Data for User  
+  if (auth.token) {
   var userProfile: UserProfile = auth.userProfile;
   userProfile.gamesPlayed++;
   userProfile.score += playerScore.value;
   auth.updateUserProfile(token, userProfile, auth.userID);
+  }
 }
 
 //resettet das Spiel, mischt wieder die Fragen und schließt natürlich das Score board
@@ -392,6 +424,9 @@ window.getCurrentGameObject = getCurrentGameObject;
           <p>
             <span id="remarks">{{ remark }}</span>
           </p>
+          <small v-if="!auth.token" style="color: white;">
+            Melde dich an, um deine Ergebnisse zu speichern!
+          </small>
         </div>
         <div class="modal-button-container">
           <button @click="startNewGame">Ich will noch einmal!</button>
@@ -476,7 +511,7 @@ window.getCurrentGameObject = getCurrentGameObject;
       </div>
 
       <div class="next-button-container">
-        <button class="next-button" @click="handleNextQuestion">Weiter hihi</button>
+        <button class="next-button" @click="handleNextQuestion">Weiter</button>
       </div>
     </div>
   </main>

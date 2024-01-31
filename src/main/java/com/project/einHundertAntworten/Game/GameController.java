@@ -141,7 +141,7 @@ public class GameController {
     @PutMapping("/question/{id}") //Add match for question
     //Anmerkung: Änderung möglich machen, auch wenn match schon gesetzt ist?
     public ResponseEntity<Question> updateQuestion(@PathVariable String id, @RequestBody QuestionRequest request) {
-        System.out.println(request.match);
+
         Optional<Question> questionOptional = questionRepository.findById(id);
         if (questionOptional.isPresent()){
          Question question = questionOptional.get();

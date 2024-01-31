@@ -49,11 +49,11 @@ public class UserController {
         }
 
         if (Utility.pwMeetsRequirements(user.getPassword()) != Utility.statusOK) {
-            System.out.println(Utility.pwMeetsRequirements(user.getPassword()));
+
             return new ResponseEntity<>(Collections.singletonMap("message", Utility.pwMeetsRequirements(user.getPassword())), HttpStatus.BAD_REQUEST);
         }
         if (Utility.usernameMeetsRequirements(user.getUsername()) != Utility.statusOK) {
-            System.out.println(Utility.usernameMeetsRequirements(user.getUsername()));
+
             return new ResponseEntity<>(Collections.singletonMap("message", Utility.usernameMeetsRequirements(user.getUsername())), HttpStatus.BAD_REQUEST);
         }
 
@@ -71,24 +71,15 @@ public class UserController {
         userProfile = userProfileRepository.findByUserID(user.getId());
         user.setProfileID(userProfile.getId());
         userRepository.save(user);
-        if (userProfileRepository.existsByUserID(user.getId())) {
-            System.out.println("User Profile created successfully");
-        } else{
-            System.out.println("User Profile not created");
-        }
         return new ResponseEntity<>(Collections.singletonMap("token", loadUserAndToken(user.getUsername(), false)), HttpStatus.CREATED);
     }
 
     @PostMapping("/login")
     public ResponseEntity<Map<String, String>> loginUser(@RequestBody UserLoginRequest userLoginRequest) {
         String token;
-        System.out.println(userLoginRequest.getEmailOrUsername());
-        System.out.println(userLoginRequest.getPassword());
-
         User userDB;
         if (userRepository.existsByUsername(userLoginRequest.getEmailOrUsername())) {
             userDB = userRepository.findByUsername(userLoginRequest.getEmailOrUsername());
-            System.out.println(passwordEncoder.matches(userLoginRequest.getPassword(), userDB.getPassword()));
             if (passwordEncoder.matches(userLoginRequest.getPassword(), userDB.getPassword())) {
                 token = loadUserAndToken(userLoginRequest.getEmailOrUsername(), false);
             }else {
@@ -111,7 +102,7 @@ public class UserController {
     }
         @GetMapping("/userID")
         public ResponseEntity<Map<String, String>> getUserID (@RequestParam String username){
-            System.out.println(username);
+
             User userDB = userRepository.findByUsername(username);
             if (userDB == null) {
                 userDB = userRepository.findByEmail(username);
@@ -168,8 +159,6 @@ public class UserController {
         @PutMapping("/changePassword")
         public ResponseEntity<String> changePassword (@RequestBody PasswordChangeRequest loginRequest) {
             User userDB;
-            System.out.println(loginRequest.getPasswordNew());
-            System.out.println(loginRequest.getEmailOrUsername());
             if (userRepository.existsByUsername(loginRequest.getEmailOrUsername())) {
                  userDB = userRepository.findByUsername(loginRequest.getEmailOrUsername());
 
@@ -177,7 +166,7 @@ public class UserController {
                  userDB = userRepository.findByEmail(loginRequest.getEmailOrUsername());
 
             }else {
-                System.out.println("something");
+
                 return new ResponseEntity<>("Username or Password wrong", HttpStatus.BAD_REQUEST);
             }
             if (passwordEncoder.matches(loginRequest.getPasswordOld(), userDB.getPassword())) {

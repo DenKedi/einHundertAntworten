@@ -377,9 +377,9 @@ body {
   width: 200px;
   height: 200px;
   border-radius: 20px;
-  margin-right: 5vmax;
-  margin-top: 2vmax;
-  margin-bottom: 2vmax;
+  margin-right: 5rem;
+  margin-top: 2rem;
+  margin-bottom: 2rem;
   overflow: hidden;
   opacity: 1;
   box-shadow: 0px 0px 50px rgba(0, 0, 0, 0.3);

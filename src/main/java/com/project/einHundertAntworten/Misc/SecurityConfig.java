@@ -63,7 +63,7 @@ public class SecurityConfig  {
                 .cors(Customizer.withDefaults())
                 .csrf(csrf -> csrf.disable())
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/user/register", "/user/login", "/home", "/login", "/quizpanel", "/overview").permitAll()
+                        .requestMatchers("/user/register", "/user/login", "/home", "/login", "/game/getAllQuestions", "/game/getAllAnswers", "/overview").permitAll()
                         .requestMatchers("/css/**", "/img/**", "/js/**").permitAll() // Permit access to static resources
                         .anyRequest().authenticated()
                 )
@@ -96,7 +96,7 @@ public class SecurityConfig  {
     @Bean
     CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
-        configuration.setAllowedOrigins(List.of("http://localhost:5173"));
+        configuration.setAllowedOrigins(List.of("*"));
         configuration.setAllowedMethods(List.of("GET","POST", "PUT", "DELETE", "OPTIONS"));
         configuration.setAllowedHeaders(List.of("Content-Type", "Authorization"));
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
