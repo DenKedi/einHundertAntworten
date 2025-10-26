@@ -96,9 +96,16 @@ public class SecurityConfig  {
     @Bean
     CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
-        configuration.setAllowedOrigins(List.of("*"));
+        // Production: Whitelist specific origins
+        configuration.setAllowedOrigins(List.of(
+                "http://localhost:5173",  // Local development
+                "http://localhost:3000",  // Local backend dev
+                "https://einhundertantworten.pages.dev",  // Cloudflare Pages production
+                "https://einhundertantworten.bleck.it"    // Custom domain
+        ));
         configuration.setAllowedMethods(List.of("GET","POST", "PUT", "DELETE", "OPTIONS"));
         configuration.setAllowedHeaders(List.of("Content-Type", "Authorization"));
+        configuration.setAllowCredentials(true);  // Allow credentials (cookies, auth headers)
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         source.registerCorsConfiguration("/**", configuration);
         return source;
