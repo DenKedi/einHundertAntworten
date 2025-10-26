@@ -103,9 +103,11 @@ public class SecurityConfig  {
                 "https://einhundertantworten.pages.dev",  // Cloudflare Pages production
                 "https://einhundertantworten.bleck.it"    // Custom domain
         ));
-        configuration.setAllowedMethods(List.of("GET","POST", "PUT", "DELETE", "OPTIONS"));
-        configuration.setAllowedHeaders(List.of("Content-Type", "Authorization"));
+        configuration.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));
+        configuration.setAllowedHeaders(List.of("*"));  // Allow all headers
+        configuration.setExposedHeaders(List.of("Authorization"));  // Expose auth header to client
         configuration.setAllowCredentials(true);  // Allow credentials (cookies, auth headers)
+        configuration.setMaxAge(3600L);  // Cache preflight for 1 hour
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         source.registerCorsConfiguration("/**", configuration);
         return source;
