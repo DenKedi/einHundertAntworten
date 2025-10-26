@@ -6,7 +6,7 @@ import { onMounted } from 'vue';
 onMounted(async () => {
   const response = await fetch(`${auth.serverIP}/`, {
     headers: {
-      'Authorization': `Bearer ${token}`
+      Authorization: `Bearer ${token}`,
     },
   });
   if (response.status === 401) {
@@ -54,16 +54,15 @@ function convertDateFormat(inputDate: string): string {
 
   // Ensure the date is valid
   if (isNaN(inputDateTime.getTime())) {
-    throw new Error("Invalid date format");
+    throw new Error('Invalid date format');
   }
 
-  const day = inputDateTime.getUTCDate().toString().padStart(2, "0");
-  const month = (inputDateTime.getUTCMonth() + 1).toString().padStart(2, "0");
+  const day = inputDateTime.getUTCDate().toString().padStart(2, '0');
+  const month = (inputDateTime.getUTCMonth() + 1).toString().padStart(2, '0');
   const year = inputDateTime.getUTCFullYear();
 
   return `${day}.${month}.${year}`;
 }
-
 </script>
 
 <template>
@@ -72,41 +71,41 @@ function convertDateFormat(inputDate: string): string {
     <div class="card">
       <div class="additional">
         <div class="user-card">
-          <div class="level center">
-            {{ obj.gamesPlayed }} Spiele gespielt
-          </div>
-          <div class="points center">
-            {{ obj.score }} richtig
-          </div>
+          <div class="level center">{{ obj.gamesPlayed }} Spiele gespielt</div>
+          <div class="points center">{{ obj.score }} richtig</div>
         </div>
-        <div class="stats">
-        </div>
+        <div class="stats"></div>
       </div>
       <div class="general">
         <div class="container">
           <div class="avatar avatar--green">
-            <div class="avatar-body body--green">
-              <div class="avatar-eye eye--left">
-                <div class="avatar-eye-pupil pupil--purple">
-                  <span class="avatar-eye-pupil-blackThing">
-                    <span class="avatar-eye-pupil-lightReflection"></span>
-                  </span>
+            <!-- Desktop: Show custom avatar -->
+            <div class="avatar-desktop">
+              <div class="avatar-body body--green">
+                <div class="avatar-eye eye--left">
+                  <div class="avatar-eye-pupil pupil--purple">
+                    <span class="avatar-eye-pupil-blackThing">
+                      <span class="avatar-eye-pupil-lightReflection"></span>
+                    </span>
+                  </div>
                 </div>
-              </div>
-              <div class="avatar-eye eye--right">
-                <div class="avatar-eye-pupil pupil--purple">
-                  <span class="avatar-eye-pupil-blackThing">
-                    <span class="avatar-eye-pupil-lightReflection"></span>
-                  </span>
+                <div class="avatar-eye eye--right">
+                  <div class="avatar-eye-pupil pupil--purple">
+                    <span class="avatar-eye-pupil-blackThing">
+                      <span class="avatar-eye-pupil-lightReflection"></span>
+                    </span>
+                  </div>
                 </div>
+                <div class="avatar-smile"></div>
+                <div class="avatar-tooth tooth--left"></div>
+                <div class="avatar-tooth tooth--right"></div>
               </div>
-              <div class="avatar-smile"></div>
-              <div class="avatar-tooth tooth--left"></div>
-              <div class="avatar-tooth tooth--right"></div>
             </div>
+            <!-- Mobile: Show icon.png -->
+            <img src="/icon.png" alt="Avatar" class="avatar-mobile" />
           </div>
         </div>
-        <h1>{{ obj.username }} </h1>
+        <h1>{{ obj.username }}</h1>
         <div class="coords">
           <span>Email: </span>
           <span>{{ obj.email }}</span>

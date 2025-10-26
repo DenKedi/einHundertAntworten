@@ -28,10 +28,12 @@ export const useAuthStore = defineStore({
       role: localStorage.getItem('role')
         ? JSON.parse(localStorage.getItem('role')!)
         : '',
-      userProfile: localStorage.getItem('userProfile') ? JSON.parse(localStorage.getItem('userProfile')!) : '',
+      userProfile: localStorage.getItem('userProfile')
+        ? JSON.parse(localStorage.getItem('userProfile')!)
+        : '',
       returnUrl: '/home',
       logoutMessage: '',
-      serverIP: 'https://53067-3000.2.codesphere.com'
+      serverIP: import.meta.env.VITE_API_URL || 'http://localhost:3000',
     };
   },
   actions: {
@@ -84,7 +86,8 @@ export const useAuthStore = defineStore({
       } else {
         return data.message.toString();
       }
-    }, async getUserProfile(bearer: string, userID: string) {
+    },
+    async getUserProfile(bearer: string, userID: string) {
       const response = await fetch(`${this.serverIP}/user/getUser/${userID}`, {
         method: 'GET',
         headers: {
@@ -92,22 +95,30 @@ export const useAuthStore = defineStore({
           Authorization: 'Bearer ' + bearer,
         },
       });
-      const data = await response.json() as UserProfile;
+      const data = (await response.json()) as UserProfile;
       if (response.ok) {
         localStorage.setItem('userProfile', JSON.stringify(data));
         this.userProfile = data;
         return data;
       }
-    }, async updateUserProfile(bearer: string, userProfile: UserProfile, userID: string) {
-      const response = await fetch(`${this.serverIP}/user/updateUser/${userID}`, {
-        method: 'PUT',
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: 'Bearer ' + bearer,
-        },
-        body: JSON.stringify(userProfile)
-      });
-      const data = await response.json() as UserProfile;
+    },
+    async updateUserProfile(
+      bearer: string,
+      userProfile: UserProfile,
+      userID: string
+    ) {
+      const response = await fetch(
+        `${this.serverIP}/user/updateUser/${userID}`,
+        {
+          method: 'PUT',
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: 'Bearer ' + bearer,
+          },
+          body: JSON.stringify(userProfile),
+        }
+      );
+      const data = (await response.json()) as UserProfile;
       if (response.ok) {
         localStorage.setItem('userProfile', JSON.stringify(data));
         this.userProfile = data;
@@ -146,7 +157,7 @@ export const useAuthStore = defineStore({
       localStorage.removeItem('token');
       localStorage.removeItem('userID');
       localStorage.removeItem('role');
-      localStorage.removeItem('userProfile')
+      localStorage.removeItem('userProfile');
       router.push('/login');
     },
   },

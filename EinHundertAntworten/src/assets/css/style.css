@@ -256,16 +256,16 @@ input {
   padding-top: 15px;
 }
 
-#go:checked~.login {
+#go:checked ~ .login {
   transform: translateY(-490px);
 }
 
-#go:checked~.login label {
+#go:checked ~ .login label {
   transform: scale(1);
   padding-top: 40px;
 }
 
-#go:checked~.signup label {
+#go:checked ~ .signup label {
   transform: scale(0.5);
   margin-top: 20px;
 }
@@ -278,7 +278,8 @@ input {
 
 .card {
   width: 500px;
-  height: 370px;
+  height: auto;
+  min-height: 420px;
   background-color: #fff;
   background: linear-gradient(#f8f8f8, #fff);
   border-radius: 10px;
@@ -334,7 +335,7 @@ input {
 
 .card .general {
   width: 330px;
-  height: 100%;
+  height: auto;
   position: absolute;
   top: 0;
   right: 0;
@@ -382,9 +383,19 @@ body {
 }
 
 .avatar--green {
-  background: linear-gradient(to right,
-      #87d2ff,
-      #113850);
+  background: linear-gradient(to right, #87d2ff, #113850);
+}
+
+.avatar-desktop {
+  width: 100%;
+  height: 100%;
+}
+
+.avatar-mobile {
+  display: none;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
 }
 
 .avatar-body {
@@ -398,9 +409,11 @@ body {
 }
 
 .body--green {
-  background: linear-gradient(to right,
-      rgba(230, 244, 202, 1),
-      rgba(17, 81, 58, 1));
+  background: linear-gradient(
+    to right,
+    rgba(230, 244, 202, 1),
+    rgba(17, 81, 58, 1)
+  );
   border-top-left-radius: 50px;
   border-top-right-radius: 50px;
 }
@@ -411,9 +424,11 @@ body {
   left: 50%;
   width: 65px;
   height: 65px;
-  background: linear-gradient(105deg,
-      rgba(255, 255, 255, 1),
-      rgba(203, 135, 244, 1));
+  background: linear-gradient(
+    105deg,
+    rgba(255, 255, 255, 1),
+    rgba(203, 135, 244, 1)
+  );
   border-radius: 100%;
   box-shadow: 4px 8px 5px rgba(0, 0, 0, 0.2);
   margin: 5px;
@@ -440,9 +455,11 @@ body {
 }
 
 .pupil--purple {
-  background: linear-gradient(135deg,
-      rgba(218, 171, 229, 1),
-      rgba(104, 45, 157, 1) 75%);
+  background: linear-gradient(
+    135deg,
+    rgba(218, 171, 229, 1),
+    rgba(104, 45, 157, 1) 75%
+  );
 }
 
 .pupil--purple::after {
@@ -629,6 +646,11 @@ span label {
   color: rgb(7, 7, 7);
   margin: auto;
   text-align: center;
+  padding: 1rem;
+  box-sizing: border-box;
+  overflow-wrap: break-word;
+  word-wrap: break-word;
+  word-break: break-word;
 }
 
 span label:hover {
@@ -640,12 +662,12 @@ span:hover {
   background: #7c7c7c;
 }
 
-input[type="radio"] {
+input[type='radio'] {
   position: relative;
   display: none;
 }
 
-input[type=radio]:checked~.option {
+input[type='radio']:checked ~ .option {
   background: #87d2ff;
   color: #ffffff;
 }
@@ -694,7 +716,7 @@ input[type=radio]:checked~.option {
 }
 
 .modal-content-container {
-  height: 27rem;
+  height: 30rem;
   width: 25rem;
   background-color: rgb(43, 42, 42);
   display: flex;
@@ -733,7 +755,7 @@ input[type=radio]:checked~.option {
 }
 
 .modal-button-container {
-  height: 2rem;
+  height: 3.5rem;
   width: 100%;
   display: flex;
   align-items: center;
@@ -741,17 +763,688 @@ input[type=radio]:checked~.option {
 }
 
 .modal-button-container button {
-  width: 15rem;
-  height: 2rem;
+  width: 18rem;
+  height: 3rem;
   background: none;
   outline: none;
   border: 1px solid rgb(252, 242, 241);
   color: white;
-  font-size: 1.1rem;
+  font-size: 1.2rem;
   cursor: pointer;
   border-radius: 10px;
+  transition: all 0.2s ease;
 }
 
 .modal-button-container button:hover {
   background-color: rgb(83, 82, 82);
+  transform: scale(1.05);
+}
+
+/* Custom Dropdown Styling */
+select {
+  appearance: none;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  padding: 0.75rem 2.5rem 0.75rem 1rem;
+  background: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="12" height="8" viewBox="0 0 12 8"><path fill="%23666" d="M1 1l5 5 5-5" stroke="%23666" stroke-width="1" stroke-linecap="round"/></svg>')
+    no-repeat right 0.75rem center;
+  background-color: #f0f0f0;
+  background-size: 16px;
+  border: 1px solid #ddd;
+  border-radius: 5px;
+  font-size: 1rem;
+  color: #333;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  min-width: 200px;
+}
+
+select:hover {
+  border-color: #999;
+  background-color: #f8f8f8;
+}
+
+select:focus {
+  outline: none;
+  border-color: #666;
+  box-shadow: 0 0 5px rgba(0, 0, 0, 0.1);
+  background-color: #fff;
+}
+
+select option {
+  padding: 0.5rem;
+  color: #333;
+  background-color: #fff;
+}
+
+select option:checked {
+  background: linear-gradient(#4caf50, #4caf50);
+  background-color: #4caf50;
+  color: white;
+}
+
+/* ========== MOBILE RESPONSIVENESS ========== */
+
+/* Tablets (768px - 1024px) */
+@media (max-width: 1024px) {
+  .main {
+    width: 90%;
+  }
+
+  .navbar {
+    padding: 0.5rem 1rem;
+  }
+
+  .navbar h1 {
+    font-size: 1.5rem;
+  }
+
+  .game-manager .main {
+    flex-direction: column;
+  }
+
+  .game-manager .main .left {
+    width: 100%;
+  }
+
+  .game-manager .main .right {
+    width: 100%;
+    margin-top: 2rem;
+  }
+
+  .answer-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .card {
+    width: 90%;
+    min-height: 400px;
+  }
+
+  .card .general {
+    width: 100%;
+    position: relative;
+    top: auto;
+    right: auto;
+  }
+}
+
+@media (max-width: 768px) {
+  body {
+    font-size: 14px;
+  }
+
+  nav {
+    padding: 0.75rem 0.5rem;
+    flex-direction: column;
+    gap: 0.5rem;
+    align-items: center;
+  }
+
+  .title {
+    font-size: 1.3rem;
+  }
+
+  nav div {
+    justify-content: center;
+    gap: 2rem;
+  }
+
+  .navIcon {
+    padding: 0 1rem;
+  }
+
+  .main {
+    width: 95%;
+    padding-top: 1rem;
+  }
+
+  .navbar {
+    padding: 0.5rem 0.75rem;
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+
+  .navbar h1 {
+    font-size: 1.2rem;
+  }
+
+  .navbar button {
+    padding: 0.5rem 1rem;
+    font-size: 0.9rem;
+  }
+
+  /* Dashboard */
+  .home-button-container {
+    margin-top: 1.5rem;
+    gap: 12px;
+  }
+
+  .home-button {
+    font-size: 1.2rem;
+    width: 95%;
+    height: 20px;
+    padding: 8px;
+  }
+
+  .main h1 {
+    font-size: 1.5rem;
+    text-align: center;
+  }
+
+  .main h2 {
+    font-size: 1rem;
+  }
+
+  /* Quiz View */
+  .game-quiz-container {
+    width: 95%;
+    flex-direction: column;
+  }
+
+  .game-details-container {
+    width: 100%;
+  }
+
+  .game-details-container h1 {
+    font-size: 1rem;
+  }
+
+  .game-question-container {
+    width: 100%;
+    min-height: 150px;
+  }
+
+  .game-question-container h1 {
+    font-size: 1.2rem;
+    padding: 1rem 0.5rem;
+  }
+
+  .game-options-container {
+    width: 100%;
+    height: auto;
+    flex-direction: column;
+    gap: 1rem;
+    margin-top: 2rem;
+  }
+
+  .game-options-container span {
+    width: 100%;
+    height: 5rem;
+  }
+
+  span label {
+    font-size: 0.9rem;
+    padding: 0.75rem;
+  }
+
+  .next-button-container {
+    width: 100%;
+    margin-bottom: 2rem;
+  }
+
+  .next-button-container button {
+    width: 90%;
+    padding: 0.75rem;
+    font-size: 1rem;
+  }
+
+  /* Profile Card */
+  .card {
+    width: 95%;
+    height: auto;
+    min-height: auto;
+    margin: 2rem auto;
+    display: flex;
+    flex-direction: column;
+  }
+
+  .card .additional {
+    width: 100%;
+    height: auto;
+    position: relative;
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    padding: 1rem 0;
+    background: linear-gradient(to right, #113850, #87d2ff);
+    border-radius: 10px 10px 0 0;
+  }
+
+  .card .additional .user-card {
+    width: auto;
+    position: relative;
+    top: auto;
+    right: auto;
+    height: auto;
+    display: flex;
+    gap: 1rem;
+    float: none;
+  }
+
+  .card .additional .user-card .level,
+  .card .additional .user-card .points {
+    top: auto;
+    background: rgba(0, 0, 0, 0.2);
+    font-size: 0.8rem;
+    padding: 0.5rem 0.75rem;
+  }
+
+  .card .additional .user-card .points {
+    top: auto;
+  }
+
+  .card .avatar {
+    width: 70px;
+    height: 70px;
+    margin: 0;
+    display: flex !important;
+  }
+
+  .card .avatar .avatar-desktop {
+    display: none !important;
+  }
+
+  .card .avatar .avatar-mobile {
+    display: block !important;
+  }
+
+  .card .general {
+    width: 100%;
+    position: relative;
+    top: auto;
+    right: auto;
+    padding: 1rem 0.75rem;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+  }
+
+  .card .general .container {
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    margin-bottom: 0.5rem;
+  }
+
+  .card .general h1 {
+    font-size: 1.3rem;
+    margin: 0.5rem 0;
+  }
+
+  .card .general .coords {
+    font-size: 0.85rem;
+    width: 100%;
+    word-break: break-word;
+  }
+
+  /* Game Manager */
+  .game-manager .main {
+    flex-direction: column;
+    width: 100%;
+    padding: 0.5rem;
+  }
+
+  .game-manager .main .left {
+    width: 100%;
+    margin: 0;
+  }
+
+  .game-manager .main .left .answers-container {
+    margin: 0;
+  }
+
+  .game-manager .main .left .answers-container .heading {
+    font-size: 1.1rem;
+  }
+
+  .game-manager .main .left select {
+    width: 100%;
+    font-size: 0.75rem;
+  }
+
+  .game-manager .main .left .answers {
+    flex-direction: column;
+    gap: 5px;
+  }
+
+  .game-manager .main .left .answers #answers-left,
+  .game-manager .main .left .answers #answers-right {
+    flex: 100%;
+  }
+
+  .game-manager .main .left .answer {
+    font-size: 0.75rem;
+    padding: 6px;
+    min-height: auto;
+  }
+
+  .game-manager .main .right {
+    width: 100%;
+    margin-top: 1.5rem;
+  }
+
+  .game-manager .main .right table {
+    width: 100%;
+    font-size: 0.85rem;
+  }
+
+  .game-manager .main .right table th,
+  .game-manager .main .right table td {
+    padding: 0.5rem;
+  }
+
+  .game-manager .main .right select {
+    width: 100%;
+  }
+
+  .game-manager .main .right button {
+    width: 100%;
+    padding: 0.75rem;
+    font-size: 0.9rem;
+  }
+
+  .game-manager .main .right .add-gameobjects {
+    width: 100%;
+  }
+
+  .game-manager .main .right .add-form {
+    width: 100%;
+    padding: 1rem 0.5rem;
+  }
+
+  .game-manager .main .right .add-form .form-container {
+    width: 100%;
+  }
+
+  .game-manager .main .right .add-form input,
+  .game-manager .main .right .add-form select {
+    width: 100%;
+    font-size: 0.9rem;
+  }
+
+  /* Login Form */
+  .mainlogin {
+    padding: 0.5rem;
+  }
+
+  .login-form {
+    width: 95%;
+    padding: 1.5rem;
+  }
+
+  .login-form h1 {
+    font-size: 1.3rem;
+  }
+
+  .login-form input,
+  .login-form button {
+    font-size: 0.95rem;
+    padding: 0.75rem;
+  }
+
+  /* Modals */
+  .modal-content-container {
+    width: 95%;
+    padding: 1rem;
+    height: auto;
+  }
+
+  .modal-content-container h1 {
+    font-size: 1.2rem;
+  }
+
+  .modal-content-container h2 {
+    font-size: 1rem;
+  }
+
+  .modal-button-container {
+    height: auto;
+    margin: 0.5rem 0;
+  }
+
+  .modal-button-container button {
+    width: 90%;
+    min-height: 2.5rem;
+    padding: 0.75rem;
+    font-size: 1rem;
+  }
+}
+
+/* Small Phones (up to 480px) */
+@media (max-width: 480px) {
+  body {
+    font-size: 13px;
+  }
+
+  nav {
+    padding: 0.5rem 0.25rem;
+  }
+
+  .title {
+    font-size: 1rem;
+  }
+
+  nav div {
+    gap: 1rem;
+  }
+
+  .navIcon {
+    padding: 0 0.75rem;
+    font-size: 0.9rem;
+  }
+
+  .main {
+    width: 98%;
+  }
+
+  .navbar {
+    flex-direction: column;
+    gap: 0.25rem;
+  }
+
+  .navbar h1 {
+    font-size: 1rem;
+  }
+
+  .navbar button {
+    padding: 0.4rem 0.75rem;
+    font-size: 0.8rem;
+  }
+
+  .main h1 {
+    font-size: 1.2rem;
+  }
+
+  .home-button {
+    font-size: 1rem;
+    padding: 6px;
+  }
+
+  .game-quiz-container {
+    width: 98%;
+  }
+
+  .game-details-container h1 {
+    font-size: 0.9rem;
+  }
+
+  .game-question-container h1 {
+    font-size: 1rem;
+    padding: 0.75rem 0.5rem;
+  }
+
+  .game-options-container span {
+    height: 4rem;
+  }
+
+  span label {
+    font-size: 0.8rem;
+    padding: 0.5rem;
+  }
+
+  .card {
+    width: 98%;
+    height: auto;
+    min-height: auto;
+    display: flex;
+    flex-direction: column;
+  }
+
+  .card .additional {
+    width: 100%;
+    height: auto;
+    position: relative;
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    padding: 0.75rem 0;
+    background: linear-gradient(to right, #113850, #87d2ff);
+    border-radius: 10px 10px 0 0;
+  }
+
+  .card .additional .user-card {
+    width: auto;
+    position: relative;
+    top: auto;
+    right: auto;
+    height: auto;
+    display: flex;
+    gap: 0.75rem;
+    float: none;
+  }
+
+  .card .additional .user-card .level,
+  .card .additional .user-card .points {
+    top: auto;
+    background: rgba(0, 0, 0, 0.2);
+    font-size: 0.7rem;
+    padding: 0.4rem 0.6rem;
+  }
+
+  .card .additional .user-card .points {
+    top: auto;
+  }
+
+  .card .avatar {
+    width: 60px;
+    height: 60px;
+    margin: 0;
+    display: flex !important;
+  }
+
+  .card .avatar .avatar-desktop {
+    display: none !important;
+  }
+
+  .card .avatar .avatar-mobile {
+    display: block !important;
+  }
+
+  .card .general {
+    width: 100%;
+    position: relative;
+    top: auto;
+    right: auto;
+    padding: 0.75rem;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+  }
+
+  .card .general .container {
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    margin-bottom: 0.5rem;
+  }
+
+  .card .general h1 {
+    font-size: 1.1rem;
+    margin: 0.25rem 0;
+  }
+
+  .card .general .coords {
+    font-size: 0.75rem;
+    width: 100%;
+    word-break: break-word;
+  }
+
+  .game-manager .main {
+    padding: 0.25rem;
+  }
+
+  .game-manager .main .left {
+    margin: 0;
+  }
+
+  .game-manager .main .left .answers-container .heading {
+    font-size: 1rem;
+  }
+
+  .game-manager .main .left select {
+    font-size: 0.7rem;
+  }
+
+  .game-manager .main .left .answers {
+    gap: 4px;
+  }
+
+  .game-manager .main .left .answer {
+    font-size: 0.7rem;
+    padding: 4px;
+    min-height: auto;
+  }
+
+  .game-manager .main .right {
+    margin-top: 1rem;
+  }
+
+  .game-manager .main .right table {
+    font-size: 0.75rem;
+  }
+
+  .game-manager .main .right table th,
+  .game-manager .main .right table td {
+    padding: 0.4rem;
+  }
+
+  .login-form {
+    width: 98%;
+    padding: 1rem;
+  }
+
+  .login-form h1 {
+    font-size: 1.1rem;
+  }
+
+  .login-form input,
+  .login-form button {
+    font-size: 0.9rem;
+    padding: 0.65rem;
+  }
+
+  .modal-content-container {
+    width: 98%;
+    padding: 0.75rem;
+    height: auto;
+  }
+
+  .modal-content-container h1 {
+    font-size: 1rem;
+  }
+
+  .modal-button-container {
+    height: auto;
+    margin: 0.5rem 0;
+  }
+
+  .modal-button-container button {
+    width: 90%;
+    min-height: 2.2rem;
+    padding: 0.65rem;
+    font-size: 0.9rem;
+  }
 }

@@ -4,7 +4,7 @@ export interface Question {
   id: string;
   text: string;
   match: string;
-  category: string
+  category: string;
 }
 
 export interface Answer {
@@ -12,7 +12,7 @@ export interface Answer {
   text: String;
   matches: [string];
   filler: [string];
-  category: string
+  category: string;
 }
 
 export const useGameStore = defineStore({
@@ -24,20 +24,17 @@ export const useGameStore = defineStore({
       token: localStorage.getItem('token')
         ? JSON.parse(localStorage.getItem('token')!)
         : '',
-      ServerIP: 'https://53067-3000.2.codesphere.com'
+      ServerIP: import.meta.env.VITE_API_URL || 'http://localhost:3000',
     };
   },
   actions: {
     async getQuestions(): Promise<String> {
-      const response = await fetch(
-        `${this.ServerIP}/game/getAllQuestions`,
-        {
-          method: 'GET',
-          headers: {
-            'Content-Type': 'application/json'
-          },
-        }
-      );
+      const response = await fetch(`${this.ServerIP}/game/getAllQuestions`, {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      });
       const data = await response.json();
       if (response.ok) {
         this.questions = data;
@@ -51,7 +48,7 @@ export const useGameStore = defineStore({
       const response = await fetch(`${this.ServerIP}/game/getAllAnswers`, {
         method: 'GET',
         headers: {
-          'Content-Type': 'application/json'
+          'Content-Type': 'application/json',
         },
       });
       const data = await response.json();
@@ -76,21 +73,32 @@ export const useGameStore = defineStore({
         return await response.json();
       }
     },
-    async removeMatchesAndFillerFromAnswer(answerId: string, matches: string[], filler: string[]): Promise<Answer> {
-      const response = await fetch(`${this.ServerIP}/game/answer/removeFillerAndMatches/` + answerId, {
-        method: 'PUT',
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: 'Bearer ' + this.token,
-        },
-        body: JSON.stringify({ filler, matches }),
-      });
+    async removeMatchesAndFillerFromAnswer(
+      answerId: string,
+      matches: string[],
+      filler: string[]
+    ): Promise<Answer> {
+      const response = await fetch(
+        `${this.ServerIP}/game/answer/removeFillerAndMatches/` + answerId,
+        {
+          method: 'PUT',
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: 'Bearer ' + this.token,
+          },
+          body: JSON.stringify({ filler, matches }),
+        }
+      );
       const data = await response.json();
       if (response.ok) {
         return data;
       }
     },
-    async addMatchesToAnswer(answerId: string, matches: string[], filler: string[]): Promise<Answer> {
+    async addMatchesToAnswer(
+      answerId: string,
+      matches: string[],
+      filler: string[]
+    ): Promise<Answer> {
       const response = await fetch(`${this.ServerIP}/game/answer/${answerId}`, {
         method: 'PUT',
         headers: {
@@ -118,15 +126,21 @@ export const useGameStore = defineStore({
         return await response.json();
       }
     },
-    async addMatchToQuestion(questionId: string, match: string): Promise<Question> {
-      const response = await fetch(`${this.ServerIP}/game/question/${questionId}`, {
-        method: 'PUT',
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: 'Bearer ' + this.token,
-        },
-        body: JSON.stringify({ match }),
-      });
+    async addMatchToQuestion(
+      questionId: string,
+      match: string
+    ): Promise<Question> {
+      const response = await fetch(
+        `${this.ServerIP}/game/question/${questionId}`,
+        {
+          method: 'PUT',
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: 'Bearer ' + this.token,
+          },
+          body: JSON.stringify({ match }),
+        }
+      );
       const data = await response.json();
       if (response.ok) {
         return data;
@@ -177,16 +191,13 @@ export const useGameStore = defineStore({
       }
     },
     async getQuestionById(id: string): Promise<Question> {
-      const response = await fetch(
-        `${this.ServerIP}/game/getQuestion/` + id,
-        {
-          method: 'GET',
-          headers: {
-            'Content-Type': 'application/json',
-            Authorization: 'Bearer ' + this.token,
-          },
-        }
-      );
+      const response = await fetch(`${this.ServerIP}/game/getQuestion/` + id, {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: 'Bearer ' + this.token,
+        },
+      });
       const data = await response.json();
       if (response.ok) {
         return data;
@@ -195,16 +206,13 @@ export const useGameStore = defineStore({
       }
     },
     async getAnswerById(id: string): Promise<Answer> {
-      const response = await fetch(
-        `${this.ServerIP}/game/getAnswer/` + id,
-        {
-          method: 'GET',
-          headers: {
-            'Content-Type': 'application/json',
-            Authorization: 'Bearer ' + this.token,
-          },
-        }
-      );
+      const response = await fetch(`${this.ServerIP}/game/getAnswer/` + id, {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: 'Bearer ' + this.token,
+        },
+      });
       const data = await response.json();
       if (response.ok) {
         return data;
@@ -229,16 +237,13 @@ export const useGameStore = defineStore({
       }
     },
     async deleteAnswerById(id: string): Promise<Answer> {
-      const response = await fetch(
-        `${this.ServerIP}/game/deleteAnswer/` + id,
-        {
-          method: 'DELETE',
-          headers: {
-            'Content-Type': 'application/json',
-            Authorization: 'Bearer ' + this.token,
-          },
-        }
-      );
+      const response = await fetch(`${this.ServerIP}/game/deleteAnswer/` + id, {
+        method: 'DELETE',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: 'Bearer ' + this.token,
+        },
+      });
       const data = await response.json();
       if (response.ok) {
         return data;
@@ -249,6 +254,6 @@ export const useGameStore = defineStore({
       this.answers = [];
       localStorage.removeItem('questions');
       localStorage.removeItem('answers');
-    }
+    },
   },
 });
