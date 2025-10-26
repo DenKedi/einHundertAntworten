@@ -15,8 +15,7 @@ coverage
 *.local
 
 # Environment files (except .env.example which serves as template)
-.env.local
-.env.*.local
+.env
 
 /cypress/videos/
 /cypress/screenshots/

@@ -1,0 +1,15 @@
+# RSA Keys for JWT
+rsa.private-key=classpath:certs/private.pem
+rsa.public-key=classpath:certs/public.pem
+
+# MongoDB Configuration
+# Replace with your MongoDB connection string and database name
+spring.data.mongodb.uri=mongodb+srv://username:password@cluster.mongodb.net/?appName=app
+spring.data.mongodb.database=100FragenGame
+
+# DevTools Configuration
+spring.devtools.restart.poll-interval=20ms
+spring.devtools.restart.quiet-period=10ms
+
+# Server Port
+server.port=3000
