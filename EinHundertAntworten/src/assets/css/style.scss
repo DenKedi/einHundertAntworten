@@ -1,0 +1,66 @@
+// Frontend Color Variables
+// Primary Colors
+$primary-blue: #87d2ff;
+$primary-blue-hover: #2fafff;
+$primary-blue-light: #9cd8fd;
+
+// Neutral Colors
+$dark-gray: #333;
+$medium-gray: #555;
+$light-gray: #b0b0b0;
+$very-light-gray: #e0e0e0;
+$background-gray: #f0f0f0;
+$border-gray: #ddd;
+$hover-gray: darkgray;
+
+// Text Colors
+$text-white: #ffffff;
+$text-dark: #333333;
+
+// Background Colors
+$nav-bg: $dark-gray;
+$question-panel-bg: $background-gray;
+$answer-panel-bg: $border-gray;
+
+// Theme Colors for BleckIt Footer Banner
+$banner-bg-dark: rgba(0, 30, 80, 0.6);
+$banner-bg-light: rgba(240, 245, 255, 0.6);
+$banner-border: rgba(0, 102, 255, 0.2);
+$banner-border-light: rgba(0, 102, 255, 0.3);
+
+// Button Colors
+$btn-primary: $primary-blue;
+$btn-primary-hover: $primary-blue-hover;
+$btn-secondary: #ff0000;
+$btn-secondary-hover: #cc0000;
+$btn-accent: #00d4ff;
+$btn-accent-hover: #00b8d4;
+
+// Export colors for use in components
+:export {
+  primaryBlue: $primary-blue;
+  primaryBlueHover: $primary-blue-hover;
+  primaryBlueLight: $primary-blue-light;
+  darkGray: $dark-gray;
+  mediumGray: $medium-gray;
+  lightGray: $light-gray;
+  veryLightGray: $very-light-gray;
+  backgroundGray: $background-gray;
+  borderGray: $border-gray;
+  hoverGray: $hover-gray;
+  textWhite: $text-white;
+  textDark: $text-dark;
+  navBg: $nav-bg;
+  questionPanelBg: $question-panel-bg;
+  answerPanelBg: $answer-panel-bg;
+  bannerBgDark: $banner-bg-dark;
+  bannerBgLight: $banner-bg-light;
+  bannerBorder: $banner-border;
+  bannerBorderLight: $banner-border-light;
+  btnPrimary: $btn-primary;
+  btnPrimaryHover: $btn-primary-hover;
+  btnSecondary: $btn-secondary;
+  btnSecondaryHover: $btn-secondary-hover;
+  btnAccent: $btn-accent;
+  btnAccentHover: $btn-accent-hover;
+}

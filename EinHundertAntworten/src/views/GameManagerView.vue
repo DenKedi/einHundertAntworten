@@ -1,6 +1,5 @@
 <script setup lang="ts">
 import { useGameStore } from '@/stores/game';
-import NavbarForm from '../components/NavbarForm.vue';
 import $ from 'jquery';
 import { ref, onMounted } from 'vue';
 import { useAuthStore } from '@/stores/auth';
@@ -8,7 +7,7 @@ import { useAuthStore } from '@/stores/auth';
 onMounted(async () => {
   const response = await fetch(`${auth.serverIP}/`, {
     headers: {
-      'Authorization': `Bearer ${token}`
+      Authorization: `Bearer ${token}`,
     },
   });
   if (response.status === 401) {
@@ -27,7 +26,9 @@ const token = auth.token;
 
 let storedQuestions = localStorage.getItem('questions');
 let storedAnswers = localStorage.getItem('answers');
-let questions = ref<Question[]>(storedQuestions ? JSON.parse(storedQuestions) : []);
+let questions = ref<Question[]>(
+  storedQuestions ? JSON.parse(storedQuestions) : []
+);
 let answers = ref<Answer[]>(storedAnswers ? JSON.parse(storedAnswers) : []);
 let fillerIds: string[] = [];
 let currentSelectedAnswerId: string;
@@ -40,14 +41,14 @@ interface Answer {
   text: String;
   matches: [string];
   filler: [string];
-  category: string
+  category: string;
 }
 
 interface Question {
   id: string;
   text: string;
   match: string;
-  category: string
+  category: string;
 }
 
 function fillAnswers() {
@@ -59,7 +60,9 @@ function fillAnswers() {
       answerId = 'answers-right';
     }
 
-    $(`<div class="answer " id="${answers.value[i].id}"><p>${answers.value[i].text}</p><i class="fa-solid fa-close answer-delete"></i></div>`).appendTo(`#${answerId}`);
+    $(
+      `<div class="answer " id="${answers.value[i].id}"><p>${answers.value[i].text}</p><i class="fa-solid fa-close answer-delete"></i></div>`
+    ).appendTo(`#${answerId}`);
   }
 
   let elements = document.getElementsByClassName('answer');
@@ -73,7 +76,8 @@ function fillAnswers() {
   for (let close of closeButtons) {
     close.addEventListener('click', function () {
       document.getElementById('confirm-modal').style.display = 'flex';
-      document.getElementsByClassName('deleted-answer')[0].innerHTML = close.parentElement.innerText;
+      document.getElementsByClassName('deleted-answer')[0].innerHTML =
+        close.parentElement.innerText;
       answerIdToDelete = close.parentElement.id;
     });
   }
@@ -88,23 +92,36 @@ async function deleteAnswer(id: string) {
 function clearTable() {
   let table = $('#tableBody').get(0);
   table.innerHTML = '<tr></tr>';
-  (document.getElementsByClassName('current-answer')[0] as HTMLParagraphElement).innerHTML = 'Antwort: ';
+  (
+    document.getElementsByClassName('current-answer')[0] as HTMLParagraphElement
+  ).innerHTML = 'Antwort: ';
 }
 
 async function removeFillerAndMatches() {
-  await game.removeMatchesAndFillerFromAnswer(currentSelectedAnswerId, [], removedFillerIds);
+  await game.removeMatchesAndFillerFromAnswer(
+    currentSelectedAnswerId,
+    [],
+    removedFillerIds
+  );
   removedFillerIds = [];
 }
 
 async function addQuizSet() {
-  const questionValue = (document.getElementById('question-input') as HTMLInputElement);
-  const answerValue = (document.getElementById('answer-input') as HTMLInputElement);
-  const category = (document.getElementById('category') as HTMLSelectElement).value;
-  const messageElement = (document.getElementsByClassName('message'))[0] as HTMLParagraphElement;
+  const questionValue = document.getElementById(
+    'question-input'
+  ) as HTMLInputElement;
+  const answerValue = document.getElementById(
+    'answer-input'
+  ) as HTMLInputElement;
+  const category = (document.getElementById('category') as HTMLSelectElement)
+    .value;
+  const messageElement = document.getElementsByClassName(
+    'message'
+  )[0] as HTMLParagraphElement;
   messageElement.classList.remove('success');
 
   if (questionValue.value == '' || answerValue.value == '' || category == '') {
-    messageElement.innerText = 'Bitte füllen Sie alle Felder aus.'
+    messageElement.innerText = 'Bitte füllen Sie alle Felder aus.';
     return;
   }
 
@@ -114,7 +131,9 @@ async function addQuizSet() {
   let newAnswer: Answer;
 
   answers.value.forEach(function (answer) {
-    if (answerValue.value.toLocaleLowerCase() == answer.text.toLocaleLowerCase()) {
+    if (
+      answerValue.value.toLocaleLowerCase() == answer.text.toLocaleLowerCase()
+    ) {
       hasAnswer = true;
       answerFound = answer;
       return;
@@ -122,12 +141,19 @@ async function addQuizSet() {
   });
 
   questions.value.forEach(function (question) {
-    if (questionValue.value == question.text ||
+    if (
+      questionValue.value == question.text ||
       questionValue.value == question.text + '?' ||
       questionValue.value == question.text + ' ?' ||
-      questionValue.value.toLocaleLowerCase() == question.text.toLocaleLowerCase() ||
-      questionValue.value.toLocaleLowerCase() == question.text.toLocaleLowerCase() + '?' ||
-      questionValue.value.toLocaleLowerCase() == question.text.toLocaleLowerCase() + ' ?' || questionValue.value.toLocaleLowerCase() + '?' == question.text.toLocaleLowerCase()) {
+      questionValue.value.toLocaleLowerCase() ==
+        question.text.toLocaleLowerCase() ||
+      questionValue.value.toLocaleLowerCase() ==
+        question.text.toLocaleLowerCase() + '?' ||
+      questionValue.value.toLocaleLowerCase() ==
+        question.text.toLocaleLowerCase() + ' ?' ||
+      questionValue.value.toLocaleLowerCase() + '?' ==
+        question.text.toLocaleLowerCase()
+    ) {
       hasQuestion = true;
       return;
     }
@@ -184,7 +210,10 @@ async function addFillerOptions(answer: Answer) {
   const questions = await game.getQuestionByCategory(answer.category);
 
   for (let i = 0; i < questions.length; i++) {
-    if (answer.filler.includes(questions[i].id) || answer.matches.includes(questions[i].id)) {
+    if (
+      answer.filler.includes(questions[i].id) ||
+      answer.matches.includes(questions[i].id)
+    ) {
       continue;
     }
 
@@ -210,32 +239,39 @@ async function clearAnswerContainer() {
 
 function addSelectFillerListener() {
   let select = document.getElementById('filler') as HTMLSelectElement;
-  select.addEventListener("change", function () {
-    addFillerTableRow(select.options[select.selectedIndex].text, select.options[select.selectedIndex].value);
+  select.addEventListener('change', function () {
+    addFillerTableRow(
+      select.options[select.selectedIndex].text,
+      select.options[select.selectedIndex].value
+    );
     fillerIds.push(this.value);
     for (let i = 0; i < select.length; i++) {
-      if (select.options[i].value == this.value)
-        select.remove(i);
+      if (select.options[i].value == this.value) select.remove(i);
     }
     select.selectedIndex = 0;
-    (document.getElementsByClassName('save-filler')[0] as HTMLButtonElement).disabled = false;
+    (
+      document.getElementsByClassName('save-filler')[0] as HTMLButtonElement
+    ).disabled = false;
   });
 }
 
 function addButtonListener() {
-  let element = document.getElementsByClassName('add-question')[0] as HTMLButtonElement;
+  let element = document.getElementsByClassName(
+    'add-question'
+  )[0] as HTMLButtonElement;
   element.addEventListener('click', function () {
     let form = document.getElementsByClassName('add-form')[0];
     form.classList.toggle('hide');
 
     if (form.classList.contains('hide')) {
-      element.innerText = "Fragenset hinzufügen";
+      element.innerText = 'Fragenset hinzufügen';
     } else {
-      element.innerText = "Formular verstecken";
+      element.innerText = 'Formular verstecken';
     }
   });
 
-  let addQuizSetButton = document.getElementsByClassName('add-quizset-button')[0];
+  let addQuizSetButton =
+    document.getElementsByClassName('add-quizset-button')[0];
   addQuizSetButton.addEventListener('click', function () {
     addQuizSet();
   });
@@ -254,18 +290,26 @@ function addButtonListener() {
 }
 
 async function addFillerToAnswer() {
-  const res = await game.addMatchesToAnswer(currentSelectedAnswerId, [], fillerIds);
-  let saveFillerMessageElem = document.getElementsByClassName('save-filler-message')[0];
+  const res = await game.addMatchesToAnswer(
+    currentSelectedAnswerId,
+    [],
+    fillerIds
+  );
+  let saveFillerMessageElem = document.getElementsByClassName(
+    'save-filler-message'
+  )[0];
   if (!res) {
-    saveFillerMessageElem.innerHTML = 'Etwas lief schief.'
+    saveFillerMessageElem.innerHTML = 'Etwas lief schief.';
   }
-  (document.getElementsByClassName('save-filler')[0] as HTMLButtonElement).disabled = true;
+  (
+    document.getElementsByClassName('save-filler')[0] as HTMLButtonElement
+  ).disabled = true;
 
   let filter = document.getElementById('filter') as HTMLSelectElement;
   reset(filter.options[filter.selectedIndex].value);
 
   fillerIds = [];
-  saveFillerMessageElem.innerHTML = 'Filler erfolgreich aktualisiert.'
+  saveFillerMessageElem.innerHTML = 'Filler erfolgreich aktualisiert.';
   saveFillerMessageElem.classList.add('success');
 }
 
@@ -274,7 +318,9 @@ async function getGameobjectsByCategory(category: string) {
   await game.getAnswerByCategory(category);
   storedQuestions = localStorage.getItem('questions');
   storedAnswers = localStorage.getItem('answers');
-  questions = ref<Question[]>(storedQuestions ? JSON.parse(storedQuestions) : []);
+  questions = ref<Question[]>(
+    storedQuestions ? JSON.parse(storedQuestions) : []
+  );
   answers = ref<Answer[]>(storedAnswers ? JSON.parse(storedAnswers) : []);
 }
 
@@ -283,7 +329,9 @@ async function getGameobjects() {
   await game.getAnswers();
   storedQuestions = localStorage.getItem('questions');
   storedAnswers = localStorage.getItem('answers');
-  questions = ref<Question[]>(storedQuestions ? JSON.parse(storedQuestions) : []);
+  questions = ref<Question[]>(
+    storedQuestions ? JSON.parse(storedQuestions) : []
+  );
   answers = ref<Answer[]>(storedAnswers ? JSON.parse(storedAnswers) : []);
 }
 
@@ -295,45 +343,57 @@ function addFillerTableRow(question: string, id: string) {
       if (j == 0) {
         continue;
       }
-      if ((table.children[i].children[j] as HTMLTableCellElement).innerText == '') {
+      if (
+        (table.children[i].children[j] as HTMLTableCellElement).innerText == ''
+      ) {
         hasEmptyRow = true;
-        (table.children[i].children[j] as HTMLTableCellElement).innerHTML = `<span>${question}</span>` + '<i class="fa-solid fa-close remove-filler"></i>';;
+        (table.children[i].children[j] as HTMLTableCellElement).innerHTML =
+          `<span>${question}</span>` +
+          '<i class="fa-solid fa-close remove-filler"></i>';
         return;
-      };
+      }
     }
   }
   if (!hasEmptyRow) {
     let row = table.insertRow();
     row.insertCell();
     let cell2 = row.insertCell();
-    cell2.innerHTML = `<span>${question}</span>` + '<i class="fa-solid fa-close remove-filler"></i>';;
+    cell2.innerHTML =
+      `<span>${question}</span>` +
+      '<i class="fa-solid fa-close remove-filler"></i>';
   }
 
   let button = Array.from(document.querySelectorAll('.remove-filler')).pop();
-  button.addEventListener("click", function () {
+  button.addEventListener('click', function () {
     button.parentElement.innerHTML = '';
-    (document.getElementsByClassName('save-filler')[0] as HTMLButtonElement).disabled = false;
+    (
+      document.getElementsByClassName('save-filler')[0] as HTMLButtonElement
+    ).disabled = false;
     removedFillerIds.push(id);
-  })
+  });
 }
 
 async function confirmDeleteAnswer() {
   document.getElementById('confirm-modal').style.display = 'none';
   if (answerIdToDelete != '') {
     deleteAnswer(answerIdToDelete);
-    answerIdToDelete = ''
+    answerIdToDelete = '';
   }
 }
 
 async function cancelDeleteAnswer() {
   document.getElementById('confirm-modal').style.display = 'none';
-  answerIdToDelete = ''
+  answerIdToDelete = '';
 }
 
 async function fillTable(id: string) {
-  (document.getElementsByClassName('save-filler')[0] as HTMLButtonElement).disabled = true;
-  let saveFillerMessageElem = document.getElementsByClassName('save-filler-message')[0];
-  saveFillerMessageElem.innerHTML = ''
+  (
+    document.getElementsByClassName('save-filler')[0] as HTMLButtonElement
+  ).disabled = true;
+  let saveFillerMessageElem = document.getElementsByClassName(
+    'save-filler-message'
+  )[0];
+  saveFillerMessageElem.innerHTML = '';
   saveFillerMessageElem.classList.remove('success');
 
   let table = $('#tableBody').get(0);
@@ -382,9 +442,13 @@ async function fillTable(id: string) {
     if (filler[i] != undefined) {
       let fillerAnswer = await game.getAnswerById(filler[i].match);
       if (fillerAnswer) {
-        cell2.innerHTML = `<span>(${fillerAnswer.text}) ${filler[i].text}</span>` + '<i class="fa-solid fa-close remove-filler"></i>';
+        cell2.innerHTML =
+          `<span>(${fillerAnswer.text}) ${filler[i].text}</span>` +
+          '<i class="fa-solid fa-close remove-filler"></i>';
       } else {
-        cell2.innerHTML = `<span>${filler[i].text}</span>` + '<i class="fa-solid fa-close remove-filler"></i>';
+        cell2.innerHTML =
+          `<span>${filler[i].text}</span>` +
+          '<i class="fa-solid fa-close remove-filler"></i>';
       }
     }
   }
@@ -392,13 +456,17 @@ async function fillTable(id: string) {
   let removeButtons = document.getElementsByClassName('remove-filler');
   for (let i = 0; i < removeButtons.length; i++) {
     removeButtons[i].addEventListener('click', function () {
-      (document.getElementsByClassName('save-filler')[0] as HTMLButtonElement).disabled = false;
-      removedFillerIds.push(filler[i].id)
+      (
+        document.getElementsByClassName('save-filler')[0] as HTMLButtonElement
+      ).disabled = false;
+      removedFillerIds.push(filler[i].id);
       removeButtons[i].parentElement.innerHTML = '';
     });
   }
 
-  (document.getElementsByClassName('current-answer')[0] as HTMLParagraphElement).innerHTML = 'Antwort: ' + answer.text.toString();
+  (
+    document.getElementsByClassName('current-answer')[0] as HTMLParagraphElement
+  ).innerHTML = 'Antwort: ' + answer.text.toString();
 
   addFillerOptions(answer);
   currentSelectedAnswerId = answer.id;
@@ -410,11 +478,9 @@ onMounted(() => {
   addButtonListener();
   addSelectFillerListener();
 });
-
 </script>
 <template>
   <div class="game-manager">
-    <NavbarForm />
     <div class="main">
       <div class="delete-confirmation">
         <div class="modal-container" id="confirm-modal">
@@ -445,7 +511,7 @@ onMounted(() => {
         </div>
       </div>
       <div class="right">
-        <p class="current-answer">Antwort: </p>
+        <p class="current-answer">Antwort:</p>
         <table>
           <thead>
             <tr>
@@ -458,23 +524,25 @@ onMounted(() => {
           </tbody>
         </table>
         <select name="filler" id="filler">
-          <option value="" disabled selected>Wähle Filler für die Antwort aus.</option>
+          <option value="" disabled selected>
+            Wähle Filler für die Antwort aus.
+          </option>
         </select>
         <button class="save-filler" disabled>Speichern</button>
         <p class="save-filler-message"></p>
 
         <div class="add-gameobjects">
           <div class="add-button">
-            <button class="add-question">
-              Fragenset hinzufügen
-            </button>
+            <button class="add-question">Fragenset hinzufügen</button>
           </div>
           <form class="add-form hide">
             <div class="form-container">
               <h2 class="heading">Neues Quizpaar</h2>
               <label class="category" for="category">Kategorie</label>
               <select name="category" id="category">
-                <option disabled selected value>Wähle eine Kategorie aus.</option>
+                <option disabled selected value>
+                  Wähle eine Kategorie aus.
+                </option>
                 <option value="number">Zahlen</option>
                 <option value="person">Personen</option>
                 <option value="place">Orte</option>
@@ -482,16 +550,30 @@ onMounted(() => {
               <div class="form">
                 <div class="form-element">
                   <label class="answer-label" for="answer-input">Antwort</label>
-                  <input type="text" id="answer-input" name="answer-input" placeholder="Hamburg">
+                  <input
+                    type="text"
+                    id="answer-input"
+                    name="answer-input"
+                    placeholder="Hamburg"
+                  />
                 </div>
                 <div class="form-element">
-                  <label class="question-label" for="question-input">Frage</label>
-                  <input type="text" id="question-input" name="question-input" required
-                    placeholder="Wo steht die Elbphilharmonie?">
+                  <label class="question-label" for="question-input"
+                    >Frage</label
+                  >
+                  <input
+                    type="text"
+                    id="question-input"
+                    name="question-input"
+                    required
+                    placeholder="Wo steht die Elbphilharmonie?"
+                  />
                 </div>
               </div>
               <p class="message"></p>
-              <button type='button' class="add-quizset-button">hinzufügen</button>
+              <button type="button" class="add-quizset-button">
+                hinzufügen
+              </button>
             </div>
           </form>
         </div>
@@ -698,7 +780,7 @@ onMounted(() => {
 
         .add-form {
           display: flex;
-          font-size: .5rem;
+          font-size: 0.5rem;
           justify-content: space-between;
 
           .form-container {

@@ -58,7 +58,6 @@ nav div {
   margin: auto;
   display: flex;
   flex-direction: column;
-  min-height: 100vh;
   justify-content: flex-start;
   align-items: center;
   background-position: center;
@@ -658,9 +657,6 @@ span label:hover {
   color: white;
 }
 
-span:hover {
-  background: #7c7c7c;
-}
 
 input[type='radio'] {
   position: relative;

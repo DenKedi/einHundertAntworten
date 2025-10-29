@@ -30,24 +30,25 @@ import java.util.List;
 
 @Configuration
 @EnableWebSecurity
-public class SecurityConfig  {
+public class SecurityConfig {
 
     private final RsaKeyProperties rsaKeys;
     private final CustomUserDetailsService customUserDetailsService;
+
     public SecurityConfig(RsaKeyProperties rsaKeys, CustomUserDetailsService customUserDetailsService) {
         this.rsaKeys = rsaKeys;
         this.customUserDetailsService = customUserDetailsService;
     }
 
     /*
-    @Bean
-    public SecurityFilterChain filterChain(HttpSecurity http) throws Exception{
-        return http.csrf(AbstractHttpConfigurer::disable).authorizeRequests(auth-> {
-                    auth.requestMatchers("/").permitAll().requestMatchers("/").authenticated();
-                })
-                .build();
-    }
-*/
+     * @Bean
+     * public SecurityFilterChain filterChain(HttpSecurity http) throws Exception{
+     * return http.csrf(AbstractHttpConfigurer::disable).authorizeRequests(auth-> {
+     * auth.requestMatchers("/").permitAll().requestMatchers("/").authenticated();
+     * })
+     * .build();
+     * }
+     */
 
     @Bean
     public AuthenticationManager authManager(HttpSecurity http) throws Exception {
@@ -56,20 +57,20 @@ public class SecurityConfig  {
         return auth.build();
     }
 
-
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         return http
                 .cors(Customizer.withDefaults())
                 .csrf(csrf -> csrf.disable())
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/user/register", "/user/login", "/home", "/login", "/game/getAllQuestions", "/game/getAllAnswers", "/overview").permitAll()
-                        .requestMatchers("/css/**", "/img/**", "/js/**").permitAll() // Permit access to static resources
-                        .anyRequest().authenticated()
-                )
+                        .requestMatchers("/user/register", "/user/login", "/home", "/login", "/game/getAllQuestions",
+                                "/game/getAllAnswers", "/overview")
+                        .permitAll()
+                        .requestMatchers("/css/**", "/img/**", "/js/**").permitAll() // Permit access to static
+                                                                                     // resources
+                        .anyRequest().authenticated())
                 .oauth2ResourceServer(oauth2 -> oauth2
-                        .jwt(withDefaults())
-                )
+                        .jwt(withDefaults()))
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .httpBasic(Customizer.withDefaults())
                 .build();
@@ -79,14 +80,13 @@ public class SecurityConfig  {
     JwtDecoder jwtDecoder() {
         return NimbusJwtDecoder.withPublicKey(rsaKeys.publicKey()).build();
     }
+
     @Bean
     JwtEncoder jwtEncoder() {
         JWK jwk = new RSAKey.Builder(rsaKeys.publicKey()).privateKey(rsaKeys.privateKey()).build();
         JWKSource<SecurityContext> jwks = new ImmutableJWKSet<>(new JWKSet(jwk));
         return new NimbusJwtEncoder(jwks);
     }
-
-
 
     @Bean
     public PasswordEncoder passwordEncoder() {
@@ -98,16 +98,16 @@ public class SecurityConfig  {
         CorsConfiguration configuration = new CorsConfiguration();
         // Production: Whitelist specific origins
         configuration.setAllowedOrigins(List.of(
-                "http://localhost:5173",  // Local development
-                "http://localhost:3000",  // Local backend dev
-                "https://einhundertantworten.pages.dev",  // Cloudflare Pages production
-                "https://einhundertantworten.bleck.it"    // Custom domain
+                "http://localhost:5173", // Local development
+                "http://localhost:3000", // Local backend dev
+                "https://einhundertantworten.pages.dev", // Cloudflare Pages production
+                "https://einhundertantworten.bleck.it" // Custom domain
         ));
         configuration.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));
-        configuration.setAllowedHeaders(List.of("*"));  // Allow all headers
-        configuration.setExposedHeaders(List.of("Authorization"));  // Expose auth header to client
-        configuration.setAllowCredentials(true);  // Allow credentials (cookies, auth headers)
-        configuration.setMaxAge(3600L);  // Cache preflight for 1 hour
+        configuration.setAllowedHeaders(List.of("*")); // Allow all headers
+        configuration.setExposedHeaders(List.of("Authorization")); // Expose auth header to client
+        configuration.setAllowCredentials(true); // Allow credentials (cookies, auth headers)
+        configuration.setMaxAge(3600L); // Cache preflight for 1 hour
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         source.registerCorsConfiguration("/**", configuration);
         return source;

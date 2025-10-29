@@ -1,5 +1,4 @@
 <script lang="ts" setup>
-import NavbarForm from '../components/NavbarForm.vue';
 import { useAuthStore } from '@/stores/auth';
 import { onMounted } from 'vue';
 
@@ -66,7 +65,6 @@ function convertDateFormat(inputDate: string): string {
 </script>
 
 <template>
-  <NavbarForm />
   <div class="center">
     <div class="card">
       <div class="additional">

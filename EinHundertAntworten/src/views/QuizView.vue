@@ -1,5 +1,4 @@
 <script setup lang="ts">
-import NavbarForm from '../components/NavbarForm.vue';
 import { ref, onMounted } from 'vue';
 import { useAuthStore } from '@/stores/auth';
 import { useGameStore } from '@/stores/game';
@@ -12,8 +11,8 @@ onMounted(async () => {
         Authorization: `Bearer ${token}`,
       },
     });
-    game.getAnswers();
-    game.getQuestions();
+    await game.getAnswers();
+    await game.getQuestions();
     startNewGame();
   } catch (error) {
     console.log(error);
@@ -367,8 +366,6 @@ window.getCurrentGameObject = getCurrentGameObject;
 
 <template>
   <main>
-    <NavbarForm />
-
     <div class="modal-container" id="score-modal">
       <div class="modal-content-container">
         <h1>ENDEEEE.</h1>
