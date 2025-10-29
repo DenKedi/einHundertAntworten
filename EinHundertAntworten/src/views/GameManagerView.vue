@@ -83,6 +83,48 @@ function fillAnswers() {
   }
 }
 
+function fillAnswersSorted() {
+  // Sort answers: first by category, then alphabetically within each category
+  const sortedAnswers = [...answers.value].sort((a, b) => {
+    // First sort by category
+    if (a.category < b.category) return -1;
+    if (a.category > b.category) return 1;
+
+    // Then sort alphabetically within the same category
+    return String(a.text).localeCompare(String(b.text));
+  });
+
+  for (let i = 0; i < sortedAnswers.length; i++) {
+    let answerId: string;
+    if (i % 2 == 0) {
+      answerId = 'answers-left';
+    } else {
+      answerId = 'answers-right';
+    }
+
+    $(
+      `<div class="answer " id="${sortedAnswers[i].id}"><p>${sortedAnswers[i].text}</p><i class="fa-solid fa-close answer-delete"></i></div>`
+    ).appendTo(`#${answerId}`);
+  }
+
+  let elements = document.getElementsByClassName('answer');
+  for (let element of elements) {
+    element.addEventListener('click', function () {
+      fillTable(element.id);
+    });
+  }
+
+  let closeButtons = document.getElementsByClassName('answer-delete');
+  for (let close of closeButtons) {
+    close.addEventListener('click', function () {
+      document.getElementById('confirm-modal').style.display = 'flex';
+      document.getElementsByClassName('deleted-answer')[0].innerHTML =
+        close.parentElement.innerText;
+      answerIdToDelete = close.parentElement.id;
+    });
+  }
+}
+
 async function deleteAnswer(id: string) {
   await game.deleteAnswerById(id);
   document.getElementById(id).remove();
@@ -195,7 +237,12 @@ async function reset(category: string) {
   } else {
     await getGameobjects();
   }
-  fillAnswers();
+  // Use sorted display when showing all answers
+  if (filter.options[filter.selectedIndex].value === 'all') {
+    fillAnswersSorted();
+  } else {
+    fillAnswers();
+  }
 }
 
 async function addFillerOptions(answer: Answer) {
@@ -474,7 +521,7 @@ async function fillTable(id: string) {
 
 onMounted(() => {
   getGameobjects();
-  fillAnswers();
+  fillAnswersSorted(); // Use sorted display by default
   addButtonListener();
   addSelectFillerListener();
 });
@@ -594,6 +641,7 @@ onMounted(() => {
     .modal-content-container {
       justify-content: center;
       height: 15rem;
+      padding: 2rem;
 
       h2 {
         margin: 0;

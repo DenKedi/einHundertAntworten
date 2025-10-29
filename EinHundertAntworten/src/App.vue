@@ -49,7 +49,7 @@ const credits = [
   { name: 'Cedric Bleck', url: 'https://github.com/DenKedi', target: '_blank' },
   { name: 'Tommy Ngo', url: 'https://github.com/tommyngo98', target: '_blank' },
   { name: 'Ida Cyriax', url: 'https://github.com/ideycy', target: '_blank' },
-] as const;
+];
 </script>
 
 <style scoped>

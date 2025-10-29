@@ -423,7 +423,7 @@ window.getCurrentGameObject = getCurrentGameObject;
             <h2>Ich meine, es ist ein Quiz, entscheide dich!</h2>
 
             <div class="modal-button-container">
-              <button @click="closeOptionModal">Okay,okay...</button>
+              <button @click="closeOptionModal">Okay, okay...</button>
             </div>
           </div>
         </div>
